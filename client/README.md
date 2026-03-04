@@ -1,3 +1,19 @@
+# Prerequisite 
+Install Node.js and npm. Follow [instruction](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+
+# Local Setup 
+1. Install npm modules 
+```
+npm install
+```
+2. Start a development server
+```
+npm run dev
+```
+
+# Deployment 
+The app is deployed through vercel and can be accessed [here](https://fantasy-drafting-tool.vercel.app/)
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
