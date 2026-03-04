@@ -12,7 +12,7 @@ npm run dev
 ```
 
 # Deployment 
-The app is deployed through vercel and can be accessed [here](https://fantasy-drafting-tool-qzyhc0esd-yuetang2s-projects.vercel.app/)
+The app is deployed through vercel and can be accessed [here](https://fantasy-drafting-tool.vercel.app/)
 
 # React + Vite
 
