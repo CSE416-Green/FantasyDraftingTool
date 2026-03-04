@@ -40,3 +40,34 @@
 .read-the-docs {
   color: #888;
 }
+
+
+/* ------------------------PlayerPool css------------------------ */
+
+.roster-wrap {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  height: max-content;
+  text-align: left;
+  gap: 8px;
+  background-color: #D9D9D9;
+  padding: 16px;
+}
+
+.roster-select {
+  padding: 8px;
+  text-align: center;
+}
+
+.roster-setview {
+  display: flex;
+  align-items: center;
+}
+
+.roster-budget {
+  font-size: large;
+}
+
+
+/* ------------------------PlayerPool css------------------------ */
