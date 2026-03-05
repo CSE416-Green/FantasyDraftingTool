@@ -17,4 +17,4 @@ npm start
 ```
 
 # Deployment 
-The app is deployed through render and can be accessed at https://fantasydraftingtool-1.onrender.com 
+The app is deployed through render and can be accessed at https://fantasydraftingtool.onrender.com/
