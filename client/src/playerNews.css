@@ -1,0 +1,64 @@
+.news-container {
+  width: 100%;
+}
+
+.news-card {
+  display: flex;
+  padding: 20px;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  background: #f4f4f4;
+  color: #555;
+  text-align: left;
+}
+
+.news-left {
+  display: flex;
+  width: 30%;
+  gap: 20px;
+}
+
+.news-image img,
+.image-placeholder {
+  width: 120px;
+  height: 120px;
+  background: #ccc;
+  object-fit: cover;
+}
+
+.news-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-name {
+  margin: 0;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.team-info {
+  margin: 4px 0;
+  color: gray;
+}
+
+.time {
+  margin-top: auto;
+  font-size: 14px;
+  color: #555;
+}
+
+.news-right {
+  width: 70%;
+}
+
+.news-title {
+  font-size: 26px;
+  font-weight: bold;
+  margin: 0px;
+}
+
+.news-description {
+  color: #444;
+  line-height: 1.5;
+}

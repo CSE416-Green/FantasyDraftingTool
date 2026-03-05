@@ -9,6 +9,14 @@ import Note from './Note'
 import LeagueConfiguration from './LeagueConfig'
 import UpdatePlayerEligibility from './UpdatePlayerEligibility'
 import AddPlayerToPool from './AddPlayerToPool'
+import PlayerNews from './PlayerNews'
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
+
 function App() {
   const [count, setCount] = useState(0)
   const [team, setTeam] = useState("Team 1")
@@ -19,7 +27,7 @@ function App() {
   }
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       {/* <div>Welcome, Green.</div> */}
       <MainPage />
       <TeamRoster />
@@ -36,7 +44,8 @@ function App() {
       <LeagueConfiguration />
       <UpdatePlayerEligibility />
       <AddPlayerToPool />
-    </>
+      <PlayerNews />
+    </QueryClientProvider>
   )
 }
 
