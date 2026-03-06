@@ -22,8 +22,8 @@ function App() {
     <>
       {/* <div>Welcome, Green.</div> */}
       <MainPage />
-      <TeamRoster />
-      <PlayerPool
+      <PlayerPool/>
+      <TeamRoster 
         team={team}
         view={view}
         onTeamChange={setTeam}
