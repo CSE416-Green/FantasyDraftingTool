@@ -199,9 +199,9 @@ export default function TeamRoster({
         </div>
 
         {view === "roster" ? (
-          <RosterTable rosterPlayers={rosterPlayers} />
+          <RosterTable rosterPlayers={rosterPlayers} view={view} />
         ) : (
-          <RosterTable rosterPlayers={farmPlayers} />
+          <RosterTable rosterPlayers={farmPlayers} view={view} />
         )}
 
 
@@ -215,9 +215,14 @@ function getBudget(rosterPlayers = []) { // this function is AI generated to cal
 }
 
 
-function RosterTable({ rosterPlayers }) {
+function RosterTable({ rosterPlayers, view }) {
   return (
     <table className="roster-table">
+      {view === "roster" ? (
+        <></>
+      ) : (
+        <caption>Farm's total Salary: ${getBudget(rosterPlayers)}</caption>
+      )}
       <thead>
         <tr>
           <th>Position</th>
