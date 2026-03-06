@@ -23,7 +23,14 @@
   }
 
 .form-wrap {
-    padding-bottom: 18px;  /* add this */
+    padding-bottom: 16px;
+  }
+
+  .form-buttom {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 8px 16px;
   }
   
   /* Save button */
@@ -52,3 +59,5 @@
     resize: vertical;
     box-sizing: border-box;
   }
+
+  
