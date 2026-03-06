@@ -30,6 +30,7 @@ function MainPage() {
         <div className="drafting-page">
 
           <div className="team-roster">
+              <h1>Team Rosters</h1>
               <TeamRoster
               team={team}
                     view={view}
@@ -39,12 +40,13 @@ function MainPage() {
               />
           </div>
           <div className="player-pool">
+              <h1>Player Pool</h1>
               <PlayerPool
               />
           </div>
           <div className="notes"> 
-          <Note />
-          <div>Domonstration Purpose, not actually on this page...</div>
+              <Note />
+
           </div>
           <div className="news-history">
             <Drawer/>
