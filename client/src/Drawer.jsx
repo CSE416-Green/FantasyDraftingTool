@@ -6,9 +6,9 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { grey } from '@mui/material/colors';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import PlayerNews from './PlayerNews'
 
 const drawerBleeding = 56;
 
@@ -62,11 +62,8 @@ function SwipeableEdgeDrawer(props) {
           },
         }}
       />
-      <>
-        <Box sx={{ textAlign: 'center', pt: 1 }}>
-            <Button onClick={toggleDrawer(true)}>Open</Button>
-        </Box>
       <SwipeableDrawer
+        allowSwipeInChildren={true}
         container={container}
         anchor="bottom"
         open={open}
@@ -76,7 +73,6 @@ function SwipeableEdgeDrawer(props) {
         disableSwipeToOpen={false}
         keepMounted
       >
-        
         <StyledBox
           sx={{
             position: 'absolute',
@@ -89,13 +85,20 @@ function SwipeableEdgeDrawer(props) {
           }}
         >
         <Puller />
-          <Typography sx={{ p: 2, color: 'text.secondary' }}>51 results</Typography>
+        {open ?
+            <Box sx={{ textAlign: 'right', pt: 1 }}>
+                <Button onClick={toggleDrawer(false)}>Close Notifications</Button>
+            </Box> :   
+            <Box sx={{ textAlign: 'right', pt: 1 }}>
+                <Button onClick={toggleDrawer(true)}>Open Notifications</Button>
+            </Box>
+        }
+        <p></p>
         </StyledBox>
         <StyledBox sx={{ px: 2, pb: 2, height: '100%', overflow: 'auto' }}>
-          <Skeleton variant="rectangular" height="100%" />
+          <PlayerNews/>
         </StyledBox>
       </SwipeableDrawer>
-      </>
     </Root>
   );
 }

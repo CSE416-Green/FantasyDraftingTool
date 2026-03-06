@@ -14,14 +14,14 @@
 
 .news-left {
   display: flex;
-  width: 30%;
+  width: 40%;
   gap: 20px;
 }
 
 .news-image img,
 .image-placeholder {
-  width: 120px;
-  height: 120px;
+  width: 60px;
+  height: 60px;
   background: #ccc;
   object-fit: cover;
 }
@@ -33,7 +33,7 @@
 
 .player-name {
   margin: 0;
-  font-size: 26px;
+  font-size: 20px;
   font-weight: bold;
 }
 
@@ -49,11 +49,11 @@
 }
 
 .news-right {
-  width: 70%;
+  width: 60%;
 }
 
 .news-title {
-  font-size: 26px;
+  font-size: 20px;
   font-weight: bold;
   margin: 0px;
 }
