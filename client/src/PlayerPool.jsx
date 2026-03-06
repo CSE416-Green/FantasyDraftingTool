@@ -53,7 +53,7 @@ const data = [
   },
 ];
 
-const TeamRoster = () => {
+const PlayerPool = () => {
   //should be memoized or stable
   const columns = useMemo(
     () => [
@@ -94,4 +94,4 @@ const TeamRoster = () => {
   return <MaterialReactTable table={table} />;
 };
 
-export default TeamRoster;
+export default PlayerPool;
