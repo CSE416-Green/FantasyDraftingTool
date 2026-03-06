@@ -8,6 +8,7 @@ import AddPlayerToPool from './AddPlayerToPool'
 import PlayerNews from './PlayerNews'
 import Drawer from './Drawer'
 import './css/mainPage.css'
+import './css/settingsPage.css'
 import Header from './Header';
 
 const pages = ['Main Page', 'Setting'];
@@ -47,11 +48,12 @@ function MainPage() {
             <Drawer/>
           </div>
         </div> :         
-          <>
+        <div className="settings-page">
+          <h1 className="settings-title">Draft Settings</h1>
           <LeagueConfiguration />
           <UpdatePlayerEligibility />
           <AddPlayerToPool />
-          </>
+        </div>
         }
     </div>
   );

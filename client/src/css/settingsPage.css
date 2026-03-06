@@ -1,0 +1,54 @@
+  
+
+.settings-page {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .settings-title {
+    color: rgb(20, 72, 27);
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  .form-buttom button {
+    padding: 8px 24px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+.form-wrap {
+    padding-bottom: 18px;  /* add this */
+  }
+  
+  /* Save button */
+  .form-buttom button[type="submit"] {
+    background-color: #305839;
+    color: white;
+    border: none;
+  }
+  
+  .form-buttom button[type="submit"]:hover {
+    background-color: #1d3a28;
+  }
+  
+  /* Cancel button */
+  .form-buttom button[type="button"] {
+    background-color: transparent;
+    color: #305839;
+    border: 1px solid #305839;
+  }
+  
+  .form-buttom button[type="button"]:hover {
+    background-color: #f0f0f0;
+  }
+ textarea.form-input {
+    width: 100%;
+    resize: vertical;
+    box-sizing: border-box;
+  }
