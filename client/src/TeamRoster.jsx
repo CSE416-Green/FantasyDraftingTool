@@ -4,7 +4,7 @@ import EditRosterForm from "./EditRosterForm";
 import DraftPlayerForm from "./DraftPlayerForm";
 axios.defaults.baseURL = "http://localhost:3000";
 
-if (process.env.ENVIRONMENT == "prod") {
+if (process.env.ENVIRONMENT == "produuction") {
   axios.defaults.baseURL = "https://fantasydraftingtool.onrender.com/";
 }
 
