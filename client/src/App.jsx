@@ -13,6 +13,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <MainPage />
     </QueryClientProvider>
+
   )
 }
 
