@@ -34,9 +34,29 @@
   color: #888;
 }
 
-
 /* ------------------------PlayerPool css start------------------------ */
 
+.player-pool {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+/* ------------------------PlayerPool css end------------------------ */
+
+
+/* ------------------------Note css start------------------------ */
+.notes {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+/* ------------------------Note css end------------------------ */
+
+
+/* ------------------------Roster css start------------------------ */
+.team-roster {
+  margin-right: 10px;
+  margin-left: 10px;
+}
 .roster-wrap {
   display: flex;
   flex-direction: column;
@@ -62,7 +82,7 @@
 }
 
 
-/* ------------------------PlayerPool css end------------------------ */
+/* ------------------------Roster css end------------------------ */
 
 /* ------------------------Form css start------------------------ */
 
@@ -90,8 +110,29 @@
 }
 
 .form-buttom {
-  display: flex;
+  /* display: flex; */
   justify-content: flex-end;
+  margin: 8px;
+}
+.form-input {
+  padding: 8px;
+}
+
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.form-row label {
+    margin-right: 20px;
+}
+
+.form-select,
+.form-input {
+    padding: 8px;
+    width: 200px;
 }
 
 /* ------------------------Form css end------------------------ */

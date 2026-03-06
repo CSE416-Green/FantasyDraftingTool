@@ -28,9 +28,11 @@ function MainPage() {
         <Header pages={pages} onPageChange={handlePageChange}/>
         {currentPage === "Main Page" ? 
         <div className="drafting-page">
+
           <div className="team-roster">
-              <PlayerPool
-                    team={team}
+              <h1>Team Rosters</h1>
+              <TeamRoster
+              team={team}
                     view={view}
                     onTeamChange={setTeam}
                     onRosterPlayers={() => setView("roster")} 
@@ -38,11 +40,13 @@ function MainPage() {
               />
           </div>
           <div className="player-pool">
-              <TeamRoster/>
+              <h1>Player Pool</h1>
+              <PlayerPool
+              />
           </div>
           <div className="notes"> 
-          <Note />
-          <div>Domonstration Purpose, not actually on this page...</div>
+              <Note />
+
           </div>
           <div className="news-history">
             <Drawer/>
