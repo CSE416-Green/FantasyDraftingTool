@@ -98,8 +98,29 @@
 }
 
 .form-buttom {
-  display: flex;
+  /* display: flex; */
   justify-content: flex-end;
+  margin: 8px;
+}
+.form-input {
+  padding: 8px;
+}
+
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.form-row label {
+    margin-right: 20px;
+}
+
+.form-select,
+.form-input {
+    padding: 8px;
+    width: 200px;
 }
 
 /* ------------------------Form css end------------------------ */

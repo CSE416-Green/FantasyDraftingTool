@@ -56,9 +56,9 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
     <form onSubmit={handleSubmit}>
       <h2>Edit {view === "roster" ? "Roster" : "Farm Players"} for {team.teamName}</h2>
 
-      <div>
+      <div className="form-row">
         <label>Select Player: </label>
-        <select value={selectedIndex} onChange={handlePlayerChange}>
+        <select className="form-select" value={selectedIndex} onChange={handlePlayerChange}>
           {players.map((player, index) => (
             <option key={index} value={index}>
               {player.name} - {player.position}
@@ -67,9 +67,9 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
         </select>
       </div>
 
-      <div>
+      <div className="form-row">
         <label>Position: </label>
-        <select value={position} onChange={(e) => setPosition(e.target.value)}>
+        <select className="form-select" value={position} onChange={(e) => setPosition(e.target.value)}>
           {POSITION_OPTIONS.map((p) => (
             <option key={p} value={p}>
               {p}
@@ -78,9 +78,10 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
         </select>
       </div>
 
-      <div>
+      <div className="form-row">
         <label>Status: </label>
         <input
+          className="form-input"
           type="text"
           value={status}
           onChange={(e) => setStatus(e.target.value)}
@@ -88,9 +89,10 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
         />
       </div>
 
-      <div>
+      <div className="form-row">
         <label>Cost: </label>
         <input
+          className="form-input"
           type="number"
           value={cost}
           onChange={(e) => setCost(e.target.value)}
@@ -98,10 +100,10 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
         />
       </div>
 
-      <button type="button" onClick={onCancel}>
+      <button className="form-buttom" type="button" onClick={onCancel}>
         Cancel
       </button>
-      <button type="submit">
+      <button className="form-buttom" type="submit">
         Save
       </button>
     </form>

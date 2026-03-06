@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState, useMemo } from "react";
 import EditRosterForm from "./EditRosterForm";
+import DraftPlayerForm from "./DraftPlayerForm";
 axios.defaults.baseURL = "http://localhost:3000";
 
 // these sample tables are AI generated
@@ -121,6 +122,7 @@ export default function TeamRoster({
   const key = useMemo(() => team.replace(/\s/g, ""), [team]); 
   const [teams, setTeams] = useState([]);
   const [isEditingTeam, setIsEditingTeam] = useState(false);
+  const [isDrafting, setIsDrafting] = useState(false);
 
   // fetch from backend
   useEffect(() => {
@@ -152,6 +154,17 @@ export default function TeamRoster({
   const spent = getBudget(rosterPlayers);
   const left = budget - spent;
 
+  // state handlers
+  function clickDraft() {
+    setIsDrafting(!isDrafting);
+    setIsEditingTeam(false);
+  }
+
+  function clickEdit() {
+    setIsEditingTeam(!isEditingTeam);
+    setIsDrafting(false);
+  }
+
 
   return (
     <div className="roster-wrap">
@@ -167,10 +180,10 @@ export default function TeamRoster({
                 <option>Team 3</option>
             </select>
 
-            <button type="button" onClick={onRosterPlayers}>
+            <button className="form-buttom" type="button" onClick={onRosterPlayers}>
                 Roster
             </button>
-            <button type="button" onClick={onFarmPlayers}>
+            <button className="form-buttom" type="button" onClick={onFarmPlayers}>
                 Farm Players
             </button>
             
@@ -183,8 +196,11 @@ export default function TeamRoster({
         </div>
 
         <div>
-            <button type="button" onClick={() => setIsEditingTeam(!isEditingTeam)}>
+            <button className="form-buttom" type="button" onClick={() => clickEdit()}>
                 Edit
+            </button>
+            <button className="form-buttom" type="button" onClick={() => clickDraft()}>
+                Draft
             </button>
             {isEditingTeam && (
               <EditRosterForm
@@ -196,6 +212,15 @@ export default function TeamRoster({
                 }}
               />
             )}
+            {isDrafting && (
+              <DraftPlayerForm
+                teamName={teamData?.teamName || key}
+                onCancel={() => setIsDrafting(false)}
+                onDraft={() => {
+                  setIsDrafting(false);
+                }}
+              />
+            )}  
         </div>
 
         {view === "roster" ? (
@@ -244,4 +269,6 @@ function RosterTable({ rosterPlayers, view }) {
     </table>
   );
 }
+
+
 

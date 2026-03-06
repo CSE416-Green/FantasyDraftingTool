@@ -88,6 +88,49 @@ app.post("/updateTeam", async (req, res) => {
   }
 });
 
+
+// draft player to roster
+        // const draftedPlayer = {
+        //     teamName: teamName,
+        //     name: selectedPlayer,
+        //     position,
+        //     cost,
+        //     status,
+        // };
+app.post("/draftPlayer", async (req, res) => {
+  try {
+    const { teamName, name, position, cost, status } = req.body;
+    if (!teamName || !name || !position || !cost || !status) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const team = await Team.findOne({ teamName });
+    if (!team) {
+      console.log(`Team ${teamName} not found: `);
+      return res.status(404).json({ error: "Team not found" });
+    }
+
+    // add the player to the team's roster
+    const newPlayer = {
+      name: name,
+      position: position,
+      cost: cost,
+      status: status,
+    };
+
+    team.rosterPlayers.push(newPlayer);
+    await team.save();
+    
+    res.json({ message: "Player drafted successfully!", team });
+
+  } catch (error) {
+    console.error("Error drafting player:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 app.listen(port, () => {
   console.log(`fantasyDraftingTool server listening on port ${port}`)
 })
+
+  
