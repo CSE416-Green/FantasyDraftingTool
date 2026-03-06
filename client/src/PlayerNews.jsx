@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import "./playerNews.css";
+import "./css/playerNews.css";
 import Drawer from './Drawer';
 
 export default function PlayerNews() {
