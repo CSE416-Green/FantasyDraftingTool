@@ -4,6 +4,10 @@ import EditRosterForm from "./EditRosterForm";
 import DraftPlayerForm from "./DraftPlayerForm";
 axios.defaults.baseURL = "http://localhost:3000";
 
+if (process.env.ENVIRONMENT == "prod") {
+  axios.defaults.baseURL = "https://fantasydraftingtool.onrender.com/";
+}
+
 // these sample tables are AI generated
 const rosterPlayers_Team1 = [
   { position: "C", name: "JJust Team 1", status: "--", cost: "10" },
