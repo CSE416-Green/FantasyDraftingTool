@@ -8,19 +8,24 @@ import AddPlayerToPool from './AddPlayerToPool'
 import PlayerNews from './PlayerNews'
 import Drawer from './Drawer'
 import './css/mainPage.css'
+import Header from './Header';
+
+const pages = ['Main Page', 'Setting'];
 
 function MainPage() {
-  const [count, setCount] = useState(0)
   const [team, setTeam] = useState("Team 1")
   const [view, setView] = useState("roster") // roster or farm
 
+  const [currentPage, setCurrentPage] = useState(pages[0]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className="main-page">
-        <header className="main-header">
-            <span>Fantasy Baseball Draft Kit</span>
-            <button>Main Page</button >
-            <button>Settings</button >
-        </header>
+        <Header pages={pages} onPageChange={handlePageChange}/>
+        {currentPage === "Main Page" ? 
         <div className="drafting-page">
           <div className="team-roster">
               <PlayerPool
@@ -34,28 +39,22 @@ function MainPage() {
           <div className="player-pool">
               <TeamRoster/>
           </div>
+          <div className="notes"> 
+          <Note />
+          <div>Domonstration Purpose, not actually on this page...</div>
+          </div>
           <div className="news-history">
             <Drawer/>
           </div>
-        </div>
-
-        <LeagueConfiguration />
-        <UpdatePlayerEligibility />
-        <AddPlayerToPool />
-        <Note />
-        <div>Domonstration Purpose, not actually on this page...</div>
+        </div> :         
+          <>
+          <LeagueConfiguration />
+          <UpdatePlayerEligibility />
+          <AddPlayerToPool />
+          </>
+        }
     </div>
   );
 }
 
 export default MainPage;
-
-/**
- * 
- *      <LeagueConfiguration />
-        <UpdatePlayerEligibility />
-        <AddPlayerToPool />
-        <Note />
-        <div>Domonstration Purpose, not actually on this page...</div>
-
- */
