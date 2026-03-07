@@ -7,6 +7,7 @@ export default function EnterPastPlayerForm({ team, onSubmit, onCancel }) {
     const [position, setPosition] = useState("");
     const [cost, setCost] = useState("");
     const [status, setStatus] = useState("");
+    const [RosterOrFarm, setRosterOrFarm] = useState("");
 
     const POSITIONS = [
     "C","1B","3B","CI","2B","SS","MI",
@@ -24,14 +25,16 @@ export default function EnterPastPlayerForm({ team, onSubmit, onCancel }) {
             position,
             cost,
             status,
+            rosterOrFarm: RosterOrFarm,
         };
 
-        if (!playerName || !position || !cost || !status) {
+
+        if (!playerName || !position || !cost || !status || !RosterOrFarm) {
             alert("Please fill in all fields");
             return;
         }
 
-        if (!availablePositions.includes(position)) {
+        if (RosterOrFarm === "roster" && !availablePositions.includes(position)) {
             alert(`You cannot add a player at ${position}, your team already has the maximum number of player(s) allowed at this position.`);
             return;
         }
@@ -72,6 +75,15 @@ export default function EnterPastPlayerForm({ team, onSubmit, onCancel }) {
             <div className="form-row">
                 <label>Status:</label>
                 <input className="form-input" type="text" value={status} onChange={(e) => setStatus(e.target.value)} placeholder="Status" />
+            </div>
+            <div className="form-row">
+                <label>Add to:</label>
+                {/* Roster or Farm */}
+                <select className="form-input" value={position} onChange={(e) => setRosterOrFarm(e.target.value)}>
+                    <option value="">Select Roster or Farm</option>
+                    <option value="roster">Roster</option>
+                    <option value="farm">Farm</option>
+                </select>
             </div>
 
             <button className="form-buttom" type="button" onClick={onCancel}>

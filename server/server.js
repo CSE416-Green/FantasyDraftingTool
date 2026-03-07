@@ -133,20 +133,33 @@ app.post("/draftPlayer", async (req, res) => {
 // User add players they drafted in the past to the roster
 app.post("/addPastPlayer", async (req, res) => {
   try {
-    // console.log("POST /addPastPlayer with body: ", req.body);
-    const { teamName, name, position, cost, status } = req.body;
+    console.log("POST /addPastPlayer with body: ", req.body);
+    const { teamName, name, position, cost, status, rosterOrFarm  } = req.body;
 
     const team = await Team.findOne({ teamName });
     if (!team) {
       console.log(`Team ${teamName} not found: `);
       return res.status(404).json({ error: "Team not found" });
     }
-    team.rosterPlayers.push({
+
+    if (rosterOrFarm  === "roster") {
+      console.log(`Adding player ${name} to roster of team ${teamName}`);
+      team.rosterPlayers.push({
       name: name,
       position: position,
       cost: cost,
       status: status
-    });
+      });
+    } else {
+        console.log(`Adding player ${name} to farm players of team ${teamName}`);
+      team.farmPlayers.push({
+        name: name,
+        position: position,
+        cost: cost,
+        status: status
+      });
+    }
+
     await team.save();
 
     res.json({ message: "Player drafted successfully!", team });
