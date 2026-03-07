@@ -12,33 +12,26 @@ console.log("Current environment:", process.env.NODE_ENV);
 // these sample tables are AI generated
 const rosterPlayers_Team1 = [
   { position: "C", name: "JJust Team 1", status: "--", cost: "10" },
-  { position: "C", name: "Just Team 1", status: "--", cost: "11" },
   { position: "1B", name: "Player 3", status: "--", cost: "5" },
   { position: "3B", name: "Player 4", status: "--", cost: "7" },
   { position: "CI", name: "Player 5", status: "--", cost: "8" },
   { position: "2B", name: "Player 6", status: "--", cost: "10" },
   { position: "SS", name: "Player 7", status: "--", cost: "9" },
-  { position: "MI", name: "Player 8", status: "--", cost: "7" },
   { position: "OF", name: "Player 9", status: "--", cost: "3" },
   { position: "OF", name: "Player 10", status: "--", cost: "4" },
-  { position: "OF", name: "Player 11", status: "--", cost: "8" },
   { position: "OF", name: "Player 12", status: "--", cost: "5" },
-  { position: "OF", name: "Player 13", status: "--", cost: "10" },
   { position: "U", name: "Player 14", status: "--", cost: "8" },
   { position: "P", name: "Player 15", status: "--", cost: "6" },
   { position: "P", name: "Player 16", status: "--", cost: "5" },
   { position: "P", name: "Player 17", status: "--", cost: "5" },
-  { position: "P", name: "Player 18", status: "--", cost: "3" },
   { position: "P", name: "Player 19", status: "--", cost: "8" },
-  { position: "P", name: "Player 20", status: "--", cost: "9" },
   { position: "P", name: "Player 21", status: "--", cost: "4" },
   { position: "P", name: "Player 22", status: "--", cost: "5" },
-  { position: "P", name: "Player 23", status: "--", cost: "7" },
 ];
 
 const rosterPlayers_Team2 = [
-  { position: "C", name: "Just Team 2", status: "--", cost: "7" },
-  { position: "C", name: "Just Team 2", status: "--", cost: "3" },
+  { position: "C", name: "Just Team 2A", status: "--", cost: "7" },
+  { position: "C", name: "Just Team 2B", status: "--", cost: "3" },
   { position: "1B", name: "Player 3", status: "--", cost: "5" },
   { position: "3B", name: "Player 4", status: "--", cost: "7" },
   { position: "CI", name: "Player 5", status: "--", cost: "8" },
@@ -219,7 +212,7 @@ export default function TeamRoster({
             )}
             {isDrafting && (
               <DraftPlayerForm
-                teamName={teamData?.teamName || key}
+                team={teamData || { teamName: key, rosterPlayers, farmPlayers }}
                 onCancel={() => setIsDrafting(false)}
                 onDraft={() => {
                   setIsDrafting(false);
@@ -244,8 +237,36 @@ function getBudget(rosterPlayers = []) { // this function is AI generated to cal
   return rosterPlayers.reduce((sum, p) => sum + Number(p.cost || 0), 0);
 }
 
+// to convert the roster players to the order we want to display, and fill in the empty rows empty value
+function ConvertToFormattedRoster(rosterPlayers) {
+  
+  const rosterOrder = [
+    "C","C","1B","3B","CI","2B","SS","MI",
+    "OF","OF","OF","OF","OF",
+    "U",
+    "P","P","P","P","P","P","P","P","P"
+  ];
+
+  const remaining = [...rosterPlayers];
+  const formatted = rosterOrder.map(pos => {
+    const index = remaining.findIndex(p => p.position === pos);
+    if (index !== -1) { // if a player with the position exists
+      const player = remaining.splice(index, 1)[0]; // remove the player from remaining
+      return player;
+    }
+    // else that row is empty, fill in with default value
+    return { position: pos, name: "", status: "", cost: "" };
+  });
+  return formatted;
+
+}
+
+
 
 function RosterTable({ rosterPlayers, view }) {
+
+  const FormattedRoster = ConvertToFormattedRoster(rosterPlayers);
+  
   return (
     <table className="roster-table">
       {view === "roster" ? (
@@ -262,7 +283,7 @@ function RosterTable({ rosterPlayers, view }) {
         </tr>
       </thead>
       <tbody>
-        {rosterPlayers.map((player, index) => (
+        {FormattedRoster.map((player, index) => (
           <tr key={index}>
             <td>{player.position}</td>
             <td>{player.name}</td>
