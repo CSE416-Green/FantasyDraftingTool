@@ -126,21 +126,37 @@ export default function TeamRoster({
   const [isDrafting, setIsDrafting] = useState(false);
   const [isEnteringPast, setIsEnteringPast] = useState(false);
 
-  // fetch from backend
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await axios.get("/allteams");
+  // // fetch from backend
+  // useEffect(() => {
+  //   async function load() {
+  //     try {
+  //       const res = await axios.get("/allteams");
 
-        setTeams(res.data); 
+  //       setTeams(res.data); 
 
-      } catch (e) {
-        console.error("Failed to fetch teams: ", e);
-      }
+  //     } catch (e) {
+  //       console.error("Failed to fetch teams: ", e);
+  //     }
+  //   }
+
+  //   load();
+  // }, []); 
+
+  //  to reload teams
+  const loadTeams = async () => {
+    try {
+      const res = await axios.get("/allteams");
+      setTeams(res.data);
+    } catch (e) {
+      console.error("Failed to fetch teams: ", e);
     }
+  };
 
-    load();
-  }, []); 
+  useEffect(() => {
+    loadTeams();
+  }, []);
+
+  const listOfTeamNames = teams.map(t => t.teamName);
 
 
   // find selected team
@@ -155,7 +171,7 @@ export default function TeamRoster({
   // const rosterPlayers = rosters[key] ?? rosters[0];
   const spent = getBudget(rosterPlayers);
   const left = budget - spent;
-  const maxNextCost = rosterPlayers.length === maxNumberofMembers ? 0 : left - (maxNumberofMembers - rosterPlayers.length - 1); 
+  const maxNextCost = left - (maxNumberofMembers - rosterPlayers.length - 1); 
   
   function clickEnterPast() {
     setIsEnteringPast(!isEnteringPast);
@@ -184,9 +200,11 @@ export default function TeamRoster({
             value={team}
             onChange={(e) => onTeamChange?.(e.target.value)}
             >
-                <option>Team 1</option>
-                <option>Team 2</option>
-                <option>Team 3</option>
+                {teams.map(t => (
+                  <option key={t.teamName} value={t.teamName}>
+                    {t.teamName}
+                  </option>
+                ))}
             </select>
 
             <button className="form-buttom" type="button" onClick={onRosterPlayers}>
@@ -225,7 +243,8 @@ export default function TeamRoster({
               <EnterPastPlayerForm
                 team={teamData || { teamName: key, rosterPlayers, farmPlayers }}
                 onCancel={() => setIsEnteringPast(false)}
-                onSubmit={() => {
+                onSubmit={async() => {
+                  await loadTeams();
                   setIsEnteringPast(false);
                 }
                 }
@@ -236,7 +255,8 @@ export default function TeamRoster({
                 team={teamData || { teamName: key, rosterPlayers, farmPlayers }}
                 view={view}
                 onCancel={() => setIsEditingTeam(false)}
-                onSave={() => {
+                onSave={async() => {
+                  await loadTeams();
                   setIsEditingTeam(false);
                 }}
                 maxNextCost={maxNextCost}
@@ -246,7 +266,8 @@ export default function TeamRoster({
               <DraftPlayerForm
                 team={teamData || { teamName: key, rosterPlayers, farmPlayers }}
                 onCancel={() => setIsDrafting(false)}
-                onDraft={() => {
+                onDraft={async() => {
+                  await loadTeams();
                   setIsDrafting(false);
                 }}
                 maxNextCost={maxNextCost}

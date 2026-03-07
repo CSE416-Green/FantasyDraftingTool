@@ -79,7 +79,7 @@ export default function EnterPastPlayerForm({ team, onSubmit, onCancel }) {
             <div className="form-row">
                 <label>Add to:</label>
                 {/* Roster or Farm */}
-                <select className="form-input" value={position} onChange={(e) => setRosterOrFarm(e.target.value)}>
+                <select className="form-input" value={RosterOrFarm} onChange={(e) => setRosterOrFarm(e.target.value)}>
                     <option value="">Select Roster or Farm</option>
                     <option value="roster">Roster</option>
                     <option value="farm">Farm</option>
