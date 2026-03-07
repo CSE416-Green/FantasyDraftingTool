@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState, useMemo } from "react";
 import EditRosterForm from "./EditRosterForm";
 import DraftPlayerForm from "./DraftPlayerForm";
+import EnterPastPlayerForm from "./EnterPastPlayerForm";
 axios.defaults.baseURL = "http://localhost:3000";
 
 if (process.env.NODE_ENV == "production") {
@@ -121,6 +122,7 @@ export default function TeamRoster({
   const [teams, setTeams] = useState([]);
   const [isEditingTeam, setIsEditingTeam] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);
+  const [isEnteringPast, setIsEnteringPast] = useState(false);
 
   // fetch from backend
   useEffect(() => {
@@ -153,12 +155,19 @@ export default function TeamRoster({
   const left = budget - spent;
 
   // state handlers
+  function clickEnterPast() {
+    setIsEnteringPast(!isEnteringPast);
+    setIsDrafting(false);
+    setIsEditingTeam(false);
+  }
   function clickDraft() {
+    setIsEnteringPast(false);
     setIsDrafting(!isDrafting);
     setIsEditingTeam(false);
   }
 
   function clickEdit() {
+    setIsEnteringPast(false);
     setIsEditingTeam(!isEditingTeam);
     setIsDrafting(false);
   }
@@ -194,12 +203,25 @@ export default function TeamRoster({
         </div>
 
         <div>
+            <button className="form-buttom" type="button" onClick={() => clickEnterPast()}>
+                Enter Past Players
+            </button>
             <button className="form-buttom" type="button" onClick={() => clickEdit()}>
                 Edit
             </button>
             <button className="form-buttom" type="button" onClick={() => clickDraft()}>
                 Draft
             </button>
+            {isEnteringPast && (
+              <EnterPastPlayerForm
+                team={teamData || { teamName: key, rosterPlayers, farmPlayers }}
+                onCancel={() => setIsEnteringPast(false)}
+                onSubmit={() => {
+                  setIsEnteringPast(false);
+                }
+                }
+              />
+            )}
             {isEditingTeam && (
               <EditRosterForm
                 team={teamData || { teamName: key, rosterPlayers, farmPlayers }}
@@ -265,8 +287,11 @@ function ConvertToFormattedRoster(rosterPlayers) {
 
 function RosterTable({ rosterPlayers, view }) {
 
-  const FormattedRoster = ConvertToFormattedRoster(rosterPlayers);
-  
+  let FormattedRoster = rosterPlayers;
+  if (view === "roster") {
+    FormattedRoster = ConvertToFormattedRoster(rosterPlayers);
+  }
+
   return (
     <table className="roster-table">
       {view === "roster" ? (

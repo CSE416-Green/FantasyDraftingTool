@@ -41,6 +41,11 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool=fa
             status,
         };
 
+        if (!selectedPlayer || !position || !cost || !status) {
+            alert("Please fill in all fields");
+            return;
+        };
+
         const availablePositions = getAvailablePositions(team.rosterPlayers);
 
         if (!availablePositions.includes(position)) {

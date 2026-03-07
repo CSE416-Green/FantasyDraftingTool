@@ -129,8 +129,35 @@ app.post("/draftPlayer", async (req, res) => {
   }
 });
 
+
+// User add players they drafted in the past to the roster
+app.post("/addPastPlayer", async (req, res) => {
+  try {
+    // console.log("POST /addPastPlayer with body: ", req.body);
+    const { teamName, name, position, cost, status } = req.body;
+
+    const team = await Team.findOne({ teamName });
+    if (!team) {
+      console.log(`Team ${teamName} not found: `);
+      return res.status(404).json({ error: "Team not found" });
+    }
+    team.rosterPlayers.push({
+      name: name,
+      position: position,
+      cost: cost,
+      status: status
+    });
+    await team.save();
+
+    res.json({ message: "Player drafted successfully!", team });
+
+  } catch (error) {
+    console.error("Error drafting player:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 app.listen(port, () => {
   console.log(`fantasyDraftingTool server listening on port ${port}`)
 })
 
-  
