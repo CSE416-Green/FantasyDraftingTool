@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 
-export default function EditRosterForm({ team, view = "roster", onSave, onCancel }) {
+export default function EditRosterForm({ team, view = "roster", onSave, onCancel, maxNextCost }) {
   const POSITION_OPTIONS = [
     "C",
     "1B", "2B", "3B", "SS", "MI", "CI",
@@ -41,6 +41,11 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
       updatedCost: cost,
       view, // roster or farm
     };
+
+    if (cost <= 0 || cost > maxNextCost) {
+      alert(`Cost must be between 1 and ${maxNextCost}`);
+      return;
+    }
 
     try {
       await axios.post("/updateTeam", updatedInfo);
