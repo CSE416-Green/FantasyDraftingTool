@@ -21,13 +21,13 @@ const fakePool = [
     {name: "Yoshinobu Yamamoto", position: ["P"]},
     {name: "Tarik Skubal", position: ["P"]},
 ]
-export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool=fakePool }) {
+export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool=fakePool, maxNextCost }) {
 
     // for now the [playerPool] only has name and position
     const [selectedPlayer, setSelectedPlayer] = useState("");
     const [position, setPosition] = useState("");
     const [cost, setCost] = useState("");
-    const [status, setStatus] = useState("--");
+    const [status, setStatus] = useState("");
 
 
     async function handleSubmit(e) {
@@ -45,6 +45,11 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool=fa
             alert("Please fill in all fields");
             return;
         };
+
+        if (cost <= 0 || cost > maxNextCost) {
+            alert(`Cost must be between 1 and ${maxNextCost}`);
+            return;
+        }
 
         const availablePositions = getAvailablePositions(team.rosterPlayers);
 
@@ -70,14 +75,20 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool=fa
 
             <div className="form-row">
                 <label>Select Player:</label>
-                <select className="form-select" value={selectedPlayer} onChange={(e) => setSelectedPlayer(e.target.value)}>
-                    <option value="">Select a player:</option>
+                <input
+                    list="players"
+                    value={selectedPlayer}
+                    onChange={(e) => setSelectedPlayer(e.target.value)}
+                    className="form-select"
+                    placeholder="Type to Search"
+                />
+                <datalist id="players">
                     {playerPool.map((player, index) => (
                         <option key={index} value={player.name}>
-                            {player.name} | {player.position.join(" ")}
+                        {player.position.join(" ")}
                         </option>
                     ))}
-                </select>
+                </datalist>
             </div>
 
             <div className="form-row">
@@ -94,12 +105,18 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool=fa
 
             <div className="form-row">
                 <label>Cost:</label>
-                <input className="form-input" type="number" value={cost} onChange={(e) => setCost(e.target.value)} />
+                <input 
+                    className="form-input"
+                    type="number"
+                    value={cost}
+                    placeholder="Cost"
+                    onChange={(e) => setCost(e.target.value)}
+                />
             </div>
 
             <div className="form-row">
                 <label>Status:</label>
-                <input className="form-input" type="text" value={status} onChange={(e) => setStatus(e.target.value)} />
+                <input className="form-input" type="text" placeholder="Status" value={status} onChange={(e) => setStatus(e.target.value)} />
             </div>
             <div className="form-button-group">
 

@@ -10,6 +10,8 @@ if (process.env.NODE_ENV == "production") {
 }
 console.log("Current environment:", process.env.NODE_ENV);
 
+const maxNumberofMembers = 23;
+
 // these sample tables are AI generated
 const rosterPlayers_Team1 = [
   { position: "C", name: "JJust Team 1", status: "--", cost: "10" },
@@ -153,8 +155,8 @@ export default function TeamRoster({
   // const rosterPlayers = rosters[key] ?? rosters[0];
   const spent = getBudget(rosterPlayers);
   const left = budget - spent;
-
-  // state handlers
+  const maxNextCost = rosterPlayers.length === maxNumberofMembers ? 0 : left - (maxNumberofMembers - rosterPlayers.length - 1); 
+  
   function clickEnterPast() {
     setIsEnteringPast(!isEnteringPast);
     setIsDrafting(false);
@@ -198,8 +200,12 @@ export default function TeamRoster({
         </div>
 
         <div className="roster-budget">
-            <div>Total Salary: ${spent}</div>
+            <div>Roster Players: {rosterPlayers.length}</div>
+            <div>Farm Players: {farmPlayers.length}</div>
+            <div>Total Roster Salary: ${spent}</div>
+            <div>Total Farm Salary: ${getBudget(farmPlayers)}</div>
             <div>Budget left: ${left}</div>
+            <div>Max Salary on Next Player: ${maxNextCost}</div>
         </div>
 
         <div>
@@ -233,6 +239,7 @@ export default function TeamRoster({
                 onSave={() => {
                   setIsEditingTeam(false);
                 }}
+                maxNextCost={maxNextCost}
               />
             )}
             {isDrafting && (
@@ -242,6 +249,7 @@ export default function TeamRoster({
                 onDraft={() => {
                   setIsDrafting(false);
                 }}
+                maxNextCost={maxNextCost}
               />
             )}  
         </div>
@@ -297,11 +305,11 @@ function RosterTable({ rosterPlayers, view }) {
 
   return (
     <table className="roster-table">
-      {view === "roster" ? (
+      {/* {view === "roster" ? (
         <></>
       ) : (
         <caption>Farm's total Salary: ${getBudget(rosterPlayers)}</caption>
-      )}
+      )} */}
       <thead>
         <tr>
           <th>Position</th>
