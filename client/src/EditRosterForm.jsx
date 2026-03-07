@@ -9,6 +9,7 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
     "U",
     "P"
   ];
+  const availablePositions = getAvailablePositions(team.rosterPlayers);
 
   const players = view === "roster" ? team.rosterPlayers : team.farmPlayers;
 
@@ -70,7 +71,7 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
       <div className="form-row">
         <label>Position: </label>
         <select className="form-select" value={position} onChange={(e) => setPosition(e.target.value)}>
-          {POSITION_OPTIONS.map((p) => (
+          {availablePositions.map((p) => (
             <option key={p} value={p}>
               {p}
             </option>
@@ -108,4 +109,49 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
       </button>
     </form>
   );
+}
+
+// to return the draftable positions based on the current roster
+function getAvailablePositions(rosterPlayers) {
+  // a team has 2 C, 1 1B, 1 3B, 1 CI, 1 2B, 1 SS, 1 MI, 5 OF, 1 U, 9 P
+  let available = [
+    "C","1B","3B","CI","2B","SS","MI",
+    "OF",
+    "U",
+    "P",];
+  const counts = {};
+  rosterPlayers.forEach(p => {
+    counts[p.position] = (counts[p.position] || 0) + 1;
+  });
+  if (counts["C"] >= 2) {
+    available = available.filter(pos => pos !== "C"); 
+  }
+  if (counts["1B"] >= 1) {
+    available = available.filter(pos => pos !== "1B");
+  }
+  if (counts["3B"] >= 1) {
+    available = available.filter(pos => pos !== "3B");
+  }
+  if (counts["CI"] >= 1) {
+    available = available.filter(pos => pos !== "CI");
+  }
+  if (counts["2B"] >= 1) {
+    available = available.filter(pos => pos !== "2B");
+  }
+  if (counts["SS"] >= 1) {
+    available = available.filter(pos => pos !== "SS");
+  }
+  if (counts["MI"] >= 1) {
+    available = available.filter(pos => pos !== "MI");
+  }
+  if (counts["OF"] >= 5) {
+    available = available.filter(pos => pos !== "OF");
+  }
+  if (counts["U"] >= 1) {
+    available = available.filter(pos => pos !== "U");
+  }
+  if (counts["P"] >= 9) {
+    available = available.filter(pos => pos !== "P");
+  }
+  return available;
 }

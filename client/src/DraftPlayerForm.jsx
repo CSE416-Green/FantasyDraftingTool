@@ -1,7 +1,9 @@
 import axios from "axios";
 import { useState } from "react";
 
-
+// desired format
+// name: string
+// position: string array
 const fakePool = [
     {name: "Shohei Ohtani", position: ["P", "U", "GOAT"]},
     {name: "Juan Soto", position: ["OF"]},
@@ -19,7 +21,7 @@ const fakePool = [
     {name: "Yoshinobu Yamamoto", position: ["P"]},
     {name: "Tarik Skubal", position: ["P"]},
 ]
-export default function DraftPlayerForm({ teamName, onDraft, onCancel, playerPool=fakePool }) {
+export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool=fakePool }) {
 
     // for now the [playerPool] only has name and position
     const [selectedPlayer, setSelectedPlayer] = useState("");
@@ -32,12 +34,19 @@ export default function DraftPlayerForm({ teamName, onDraft, onCancel, playerPoo
         e.preventDefault();
 
         const draftedPlayer = {
-            teamName: teamName,
+            teamName: team.teamName,
             name: selectedPlayer,
             position,
             cost,
             status,
         };
+
+        const availablePositions = getAvailablePositions(team.rosterPlayers);
+
+        if (!availablePositions.includes(position)) {
+            alert(`Your team already has a player at position ${position}. You may not draft another player at this position.`);
+            return;
+        }
 
         // add the player to the [teamName] through server
         try{
@@ -52,7 +61,7 @@ export default function DraftPlayerForm({ teamName, onDraft, onCancel, playerPoo
 
     return (
         <form onSubmit={handleSubmit}>
-            <h2>Draft Player for {teamName}</h2>
+            <h2>Draft Player for {team.teamName}</h2>
 
             <div className="form-row">
                 <label>Select Player:</label>
@@ -98,3 +107,47 @@ export default function DraftPlayerForm({ teamName, onDraft, onCancel, playerPoo
     )
 }
 
+// to return the draftable positions based on the current roster
+function getAvailablePositions(rosterPlayers) {
+  // a team has 2 C, 1 1B, 1 3B, 1 CI, 1 2B, 1 SS, 1 MI, 5 OF, 1 U, 9 P
+  let available = [
+    "C","1B","3B","CI","2B","SS","MI",
+    "OF",
+    "U",
+    "P",];
+  const counts = {};
+  rosterPlayers.forEach(p => {
+    counts[p.position] = (counts[p.position] || 0) + 1;
+  });
+  if (counts["C"] >= 2) {
+    available = available.filter(pos => pos !== "C"); 
+  }
+  if (counts["1B"] >= 1) {
+    available = available.filter(pos => pos !== "1B");
+  }
+  if (counts["3B"] >= 1) {
+    available = available.filter(pos => pos !== "3B");
+  }
+  if (counts["CI"] >= 1) {
+    available = available.filter(pos => pos !== "CI");
+  }
+  if (counts["2B"] >= 1) {
+    available = available.filter(pos => pos !== "2B");
+  }
+  if (counts["SS"] >= 1) {
+    available = available.filter(pos => pos !== "SS");
+  }
+  if (counts["MI"] >= 1) {
+    available = available.filter(pos => pos !== "MI");
+  }
+  if (counts["OF"] >= 5) {
+    available = available.filter(pos => pos !== "OF");
+  }
+  if (counts["U"] >= 1) {
+    available = available.filter(pos => pos !== "U");
+  }
+  if (counts["P"] >= 9) {
+    available = available.filter(pos => pos !== "P");
+  }
+  return available;
+}
