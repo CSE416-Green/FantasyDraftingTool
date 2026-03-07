@@ -101,13 +101,15 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool=fa
                 <label>Status:</label>
                 <input className="form-input" type="text" value={status} onChange={(e) => setStatus(e.target.value)} />
             </div>
+            <div className="form-button-group">
 
-            <button className="form-buttom" type="button" onClick={onCancel}>
-                Cancel
-            </button>
-            <button className="form-buttom" type="submit">
-                Save
-            </button>
+                <button className="form-buttom" type="button" onClick={onCancel}>
+                    Cancel
+                </button>
+                <button className="form-buttom" type="submit">
+                    Save
+                </button>
+            </div>
         </form>
     )
 }

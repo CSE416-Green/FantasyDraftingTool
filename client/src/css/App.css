@@ -114,15 +114,27 @@
   justify-content: flex-end;
   margin: 8px;
 }
+.form-buttom:hover {
+  background-color: #305839;
+  color: white;
+}
+
+.form-button-group {
+  display: flex;
+}
+
 .form-input {
+  font-size: large;
   padding: 8px;
 }
 
 .form-row {
+    font-size: large;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+    margin-right: 50%;
 }
 
 .form-row label {
@@ -131,6 +143,7 @@
 
 .form-select,
 .form-input {
+    font-size: large;
     padding: 8px;
     width: 200px;
 }

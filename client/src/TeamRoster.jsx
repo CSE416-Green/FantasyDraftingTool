@@ -203,6 +203,7 @@ export default function TeamRoster({
         </div>
 
         <div>
+          <div className="form-button-group">
             <button className="form-buttom" type="button" onClick={() => clickEnterPast()}>
                 Enter Past Players
             </button>
@@ -212,6 +213,8 @@ export default function TeamRoster({
             <button className="form-buttom" type="button" onClick={() => clickDraft()}>
                 Draft
             </button>
+          </div>
+
             {isEnteringPast && (
               <EnterPastPlayerForm
                 team={teamData || { teamName: key, rosterPlayers, farmPlayers }}

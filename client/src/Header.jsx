@@ -8,7 +8,11 @@ import Button from '@mui/material/Button';
 
 function Header({ pages, onPageChange }) {
   return (
-    <AppBar position="static">
+    <AppBar position="static"
+      sx={{
+        backgroundColor: '#305839',
+      }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
@@ -31,7 +35,7 @@ function Header({ pages, onPageChange }) {
               <Button
                 key={page}
                 onClick={() => onPageChange(page)}
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                sx={{ my: 2, color: 'white', display: 'block', ":hover": { backgroundColor: '#D9D9D9', color: 'black' } }}
               >
                 {page}
               </Button>
