@@ -24,9 +24,9 @@ export default function UpdatePlayerEligibility() {
                             <option value="P">P</option>
                         </select>
                     </div>
-                    <div className="form-buttom">  
-                        <button type="button">Cancel</button>
-                        <button type="submit">Save</button>
+                    <div className="form-button-group">  
+                        <button className="form-buttom" type="button">Cancel</button>
+                        <button className="form-buttom" type="submit">Save</button>
                     </div>
                 </form>
             </div>

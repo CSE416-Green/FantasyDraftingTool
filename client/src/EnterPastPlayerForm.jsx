@@ -85,13 +85,15 @@ export default function EnterPastPlayerForm({ team, onSubmit, onCancel }) {
                     <option value="farm">Farm</option>
                 </select>
             </div>
-
-            <button className="form-buttom" type="button" onClick={onCancel}>
+            <div className="form-button-group">
+                <button className="form-buttom" type="button" onClick={onCancel}>
                 Cancel
-            </button>
-            <button className="form-buttom" type="submit">
-                Enter
-            </button>
+                </button>
+                <button className="form-buttom" type="submit">
+                    Enter
+                </button>
+            </div>
+            
         </form>
     )
 }

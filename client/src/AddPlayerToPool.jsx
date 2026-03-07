@@ -31,9 +31,9 @@ export default function AddPlayerToPool() {
                         <label>Note: </label>
                         <textarea className="form-input" id="note" name="note"/>
                     </div>
-                    <div className="form-buttom">  
-                        <button type="button">Cancel</button>
-                        <button type="submit">Save</button>
+                    <div className="form-button-group">  
+                        <button className="form-buttom" type="button">Cancel</button>
+                        <button className="form-buttom" type="submit">Save</button>
                     </div>
                 </form>
             </div>

@@ -25,9 +25,9 @@ export default function LeagueConfiguration() {
                         <label>Team Budget: </label>
                         <input type="number" className="form-input" id="teamBudget" name="teamBudget" min="100"/>
                     </div>
-                    <div className="form-buttom">  
-                        <button type="button">Cancel</button>
-                        <button type="submit">Save</button>
+                    <div className="form-button-group">  
+                        <button className="form-buttom" type="button">Cancel</button>
+                        <button className="form-buttom" type="submit">Save</button>
                     </div>
                 </form>
             </div>

@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  background-color: dodgerblue;
+  background-color: #E5E5E5;
   padding: 10px;
 }
 
