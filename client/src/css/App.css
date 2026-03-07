@@ -34,14 +34,6 @@
   color: #888;
 }
 
-/* ------------------------PlayerPool css start------------------------ */
-
-.player-pool {
-  margin-right: 10px;
-  margin-left: 10px;
-}
-
-/* ------------------------PlayerPool css end------------------------ */
 
 
 /* ------------------------Note css start------------------------ */
@@ -53,10 +45,6 @@
 
 
 /* ------------------------Roster css start------------------------ */
-.team-roster {
-  margin-right: 10px;
-  margin-left: 10px;
-}
 .roster-wrap {
   display: flex;
   flex-direction: column;
