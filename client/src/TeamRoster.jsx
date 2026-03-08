@@ -14,7 +14,7 @@ const maxNumberofMembers = 23;
 
 // these sample tables are AI generated
 const rosterPlayers_Team1 = [
-  { position: "-", name: "Loading...", status: "--", cost: "--" },
+  { position: "C", name: "Loading...", status: "--", cost: "--" },
 ];
 
 const rosterPlayers_Team2 = [
