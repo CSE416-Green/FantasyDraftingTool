@@ -14,7 +14,7 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
   const players = view === "roster" ? team.rosterPlayers : team.farmPlayers;
 
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [position, setPosition] = useState(players[0]?.position || "");
+  const [position, setPosition] = useState("");
   const [status, setStatus] = useState(players[0]?.status || "");
   const [cost, setCost] = useState(players[0]?.cost || "");
 
@@ -76,6 +76,7 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
       <div className="form-row">
         <label>Position: </label>
         <select className="form-select" value={position} onChange={(e) => setPosition(e.target.value)}>
+          <option value="">Select a Position:</option>
           {availablePositions.map((p) => (
             <option key={p} value={p}>
               {p}

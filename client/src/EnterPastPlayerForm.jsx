@@ -60,7 +60,7 @@ export default function EnterPastPlayerForm({ team, onSubmit, onCancel }) {
             <div className="form-row">
                 <label>Position:</label>
                 <select className="form-input" value={position} onChange={(e) => setPosition(e.target.value)}>
-                    <option value="">Select Position</option>
+                    <option value="">Select a Position</option>
                     {POSITIONS.map((pos) => (
                         <option key={pos} value={pos}>
                             {pos}
