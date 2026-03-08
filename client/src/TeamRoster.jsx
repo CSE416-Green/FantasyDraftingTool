@@ -156,7 +156,6 @@ export default function TeamRoster({
     loadTeams();
   }, []);
 
-  const listOfTeamNames = teams.map(t => t.teamName);
 
 
   // find selected team

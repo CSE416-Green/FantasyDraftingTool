@@ -4,6 +4,7 @@ dotenv.config({ path: './.env' });
 const mongoose = require("mongoose");
 let mongoDB = "mongodb://127.0.0.1/cse416-FantasyDraftingTool";
 if (process.env.ENVIRONMENT == "prod") {
+  console.log("in prod")
   mongoDB = process.env.MONGODB_URL;
 }
 
@@ -11,7 +12,8 @@ mongoose.connect(mongoDB)
 let db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
 db.on("connected", function () {
-  console.log("Connected to database");
+  console.log("Connected to database of name:", mongoose.connection.name);
+
 });
 
 // npm install express and cors
@@ -31,7 +33,7 @@ app.get('/', async (req, res) => {
 // to get all teams and their rosters and farm players
 app.get("/allteams", async (req, res) => {
   try {
-    // console.log("GET /allteams");
+    console.log("GET /allteams");
     const teams = await Team.find({});
     res.json(teams);
   } catch (err) {
