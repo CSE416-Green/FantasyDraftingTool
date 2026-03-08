@@ -42,6 +42,11 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
       view, // roster or farm
     };
 
+    if (!selectedPlayer.name || !position || !status || !cost) {
+        alert("Please fill in all fields");
+        return;
+    }
+
     if (cost <= 0 || cost > maxNextCost) {
       alert(`Cost must be between 1 and ${maxNextCost}`);
       return;
@@ -76,6 +81,7 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
       <div className="form-row">
         <label>Position: </label>
         <select className="form-select" value={position} onChange={(e) => setPosition(e.target.value)}>
+          <option value="">Select a Position:</option>
           {availablePositions.map((p) => (
             <option key={p} value={p}>
               {p}

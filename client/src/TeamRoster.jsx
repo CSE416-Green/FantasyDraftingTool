@@ -50,7 +50,7 @@ const farmPlayers_backup = {
 };
 
 export default function TeamRoster({
-  budget = 160,
+  budget = budget,
   team = "Team 1",
   view = "roster",
   onTeamChange,
@@ -63,6 +63,7 @@ export default function TeamRoster({
   const [isEditingTeam, setIsEditingTeam] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);
   const [isEnteringPast, setIsEnteringPast] = useState(false);
+  // const [budget, setBudget] = useState(160);
 
   // // fetch from backend
   // useEffect(() => {
@@ -103,7 +104,7 @@ export default function TeamRoster({
   }, [teams, key]);
 
   const rosterPlayers = teamData ? teamData.rosterPlayers : (rosters_backup[key] ?? []);
-const farmPlayers = teamData ? teamData.farmPlayers : (farmPlayers_backup[key] ?? []);
+  const farmPlayers = teamData ? teamData.farmPlayers : (farmPlayers_backup[key] ?? []);
 
   // const rosterPlayers = rosters[key] ?? rosters[0];
   const spent = getBudget(rosterPlayers);
@@ -185,6 +186,7 @@ const farmPlayers = teamData ? teamData.farmPlayers : (farmPlayers_backup[key] ?
                   setIsEnteringPast(false);
                 }
                 }
+                maxNextCost={maxNextCost}
               />
             )}
             {isEditingTeam && (
