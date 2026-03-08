@@ -53,17 +53,28 @@ async function fetchPlayerStats() {
     throw new Error(`Error Fetching Player Data ${res.status}`);
   }
 
-  const playerData = await res.json();
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder('utf-8');
+  const playerData = []; // array to collect all players
 
-  if (Array.isArray(playerData)) {
-    return playerData;
+  let playerStatsJson = '';
+  while (true) {
+    const { done, value } = await reader.read();
+    const chunkText = decoder.decode(value, { stream: true });
+    playerStatsJson += chunkText;
+    if (done) {
+      break;
+    };
   }
 
-  if (Array.isArray(playerData.data)) {
-    return playerData.data;
+  try {
+    const parsedData = JSON.parse(playerStatsJson);
+    playerData.push(...parsedData);
+  } catch (error) {
+    console.error('Error parsing player stats JSON:', error);
   }
-
-  return [];
+  
+  return playerData;
 }
 
 export default function PlayerPool() {
