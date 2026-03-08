@@ -94,7 +94,7 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool=fa
             <div className="form-row">
                 <label>Position:</label>
                 <select className="form-select" value={position} onChange={(e) => setPosition(e.target.value)}>
-                    <option value="">Select a position:</option>
+                    <option value="">Select a Position:</option>
                     {selectedPlayer && playerPool
                         .find(p => p.name === selectedPlayer)?.position
                         .map((pos, index) => (

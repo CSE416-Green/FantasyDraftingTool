@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 
-export default function EnterPastPlayerForm({ team, onSubmit, onCancel }) {
+export default function EnterPastPlayerForm({ team, onSubmit, onCancel, maxNextCost }) {
 
     const [playerName, setPlayerName] = useState("");
     const [position, setPosition] = useState("");
@@ -33,6 +33,11 @@ export default function EnterPastPlayerForm({ team, onSubmit, onCancel }) {
             alert("Please fill in all fields");
             return;
         }
+        
+        if (cost <= 0 || cost > maxNextCost) {
+            alert(`Cost must be between 1 and ${maxNextCost}`);
+            return;
+            }
 
         if (RosterOrFarm === "roster" && !availablePositions.includes(position)) {
             alert(`You cannot add a player at ${position}, your team already has the maximum number of player(s) allowed at this position.`);
@@ -60,7 +65,7 @@ export default function EnterPastPlayerForm({ team, onSubmit, onCancel }) {
             <div className="form-row">
                 <label>Position:</label>
                 <select className="form-input" value={position} onChange={(e) => setPosition(e.target.value)}>
-                    <option value="">Select Position</option>
+                    <option value="">Select a Position</option>
                     {POSITIONS.map((pos) => (
                         <option key={pos} value={pos}>
                             {pos}

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import TeamRoster from './TeamRoster'
 import PlayerPool from './PlayerPool'
 import Note from './Note'
@@ -10,18 +10,36 @@ import Drawer from './Drawer'
 import './css/mainPage.css'
 import './css/settingsPage.css'
 import Header from './Header';
+import axios from "axios";
 
 const pages = ['Main Page', 'Setting'];
 
 function MainPage() {
   const [team, setTeam] = useState("Team 1")
   const [view, setView] = useState("roster") // roster or farm
+  const [totalBudget, setTotalBudget] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(pages[0]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+
+    // to load league settings
+    const loadLeagueSettings = async () => {
+      try {
+        const res = await axios.get("/settings/league");
+
+        setTotalBudget(res.data.teamBudget);
+      } catch (e) {
+        console.error("Failed to fetch league settings");
+      }
+    }
+  
+    useEffect(() => {
+      loadLeagueSettings();
+    }, []);
+  
 
   return (
     <div className="main-page">
@@ -32,7 +50,8 @@ function MainPage() {
           <div className="team-roster">
               <h1>Team Rosters</h1>
               <TeamRoster
-              team={team}
+                    budget={totalBudget}
+                    team={team}
                     view={view}
                     onTeamChange={setTeam}
                     onRosterPlayers={() => setView("roster")} 
