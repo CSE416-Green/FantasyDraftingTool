@@ -18,6 +18,7 @@ db.on("connected", function () {
 const express = require('express')
 const cors = require("cors");
 const Team = require("./models/TeamSchema");
+const Settings = require('./models/settings');
 const app = express()
 app.use(cors());
 app.use(express.json());
@@ -167,6 +168,49 @@ app.post("/addPastPlayer", async (req, res) => {
   } catch (error) {
     console.error("Error drafting player:", error);
     res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.post("/settings/league", async (req, res) => {
+  try {
+    const { numTeams, teamBudget } = req.body;
+    
+    const settings = await Settings.findOneAndUpdate(
+      {},
+      { numTeams, teamBudget },
+      { upsert: true, new: true }
+    );
+
+    //number of Teams
+    const existingTeams = await Team.find({});
+    const currentCount = existingTeams.length;
+
+    if (currentCount < numTeams) {
+      for (let i = currentCount + 1; i <= numTeams; i++) {
+        await Team.create({
+          teamName: `Team${i}`,
+          rosterPlayers: [],
+          farmPlayers: []
+        });
+      }
+    } else if (currentCount > numTeams) {
+      for (let i = numTeams + 1; i <= currentCount; i++) {
+        await Team.deleteOne({ teamName: `Team${i}` });
+      }
+    }
+
+    res.json(settings);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/settings/league", async (req, res) => {
+  try {
+    const settings = await Settings.findOne();
+    res.json(settings);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
