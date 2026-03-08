@@ -1,86 +1,205 @@
 import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
   MaterialReactTable,
   useMaterialReactTable,
 } from 'material-react-table';
 
-//nested data is ok, see accessorKeys in ColumnDef below
-const data = [
-  {
-    name: {
-      firstName: 'John',
-      lastName: 'Doe',
-    },
-    address: '261 Erdman Ford',
-    city: 'East Daphne',
-    state: 'Kentucky',
-  },
-  {
-    name: {
-      firstName: 'Jane',
-      lastName: 'Doe',
-    },
-    address: '769 Dominic Grove',
-    city: 'Columbus',
-    state: 'Ohio',
-  },
-  {
-    name: {
-      firstName: 'Joe',
-      lastName: 'Doe',
-    },
-    address: '566 Brakus Inlet',
-    city: 'South Linda',
-    state: 'West Virginia',
-  },
-  {
-    name: {
-      firstName: 'Kevin',
-      lastName: 'Vandy',
-    },
-    address: '722 Emie Stream',
-    city: 'Lincoln',
-    state: 'Nebraska',
-  },
-  {
-    name: {
-      firstName: 'Joshua',
-      lastName: 'Rolluffs',
-    },
-    address: '32188 Larkin Turnpike',
-    city: 'Omaha',
-    state: 'Nebraska',
-  },
-];
+function parsePlayerString(playerString) {
+  if (!playerString || typeof playerString !== 'string') {
+    return {
+      name: '',
+      position: '',
+      team: '',
+    };
+  }
 
-const PlayerPool = () => {
-  //should be memoized or stable
+  const trimmedPlayerString = playerString.trim();
+  const splitPlayerString = trimmedPlayerString.split('|');
+
+  const leftSide = splitPlayerString[0]?.trim() || '';
+  const rightSide = splitPlayerString[1]?.trim() || '';
+
+  if (!leftSide) {
+    return {
+      name: '',
+      position: '',
+      team: rightSide,
+    };
+  }
+
+  const leftSideParts = leftSide.split(' ');
+  const position = leftSideParts.pop() || '';
+  const name = leftSideParts.join(' ');
+
+  return {
+    name,
+    position,
+    team: rightSide,
+  };
+}
+
+async function fetchPlayerStats() {
+  const res = await fetch(
+    'https://fantasybaseballplayerstatsapi.onrender.com/stats/2025',
+    {
+      headers: {
+        "x-api-key": "zzAhs_uA60tnnluR"
+      }
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error(`Error Fetching Player Data ${res.status}`);
+  }
+
+  const playerData = await res.json();
+
+  if (Array.isArray(playerData)) {
+    return playerData;
+  }
+
+  if (Array.isArray(playerData.data)) {
+    return playerData.data;
+  }
+
+  return [];
+}
+
+export default function PlayerPool() {
+  const {
+    data: playerStats = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['player-stats'],
+    queryFn: fetchPlayerStats,
+  });
+
+  const data = useMemo(() => {
+    return playerStats.map((player) => {
+      const parsedPlayer = parsePlayerString(player.Player ?? '');
+
+      return {
+        name: parsedPlayer.name,
+        position: parsedPlayer.position,
+        team: parsedPlayer.team,
+        AB: player.AB ?? '',
+        R: player.R ?? '',
+        H: player.H ?? '',
+        '1B': player['1B'] ?? '',
+        '2B': player['2B'] ?? '',
+        '3B': player['3B'] ?? '',
+        HR: player.HR ?? '',
+        RBI: player.RBI ?? '',
+        BB: player.BB ?? '',
+        K: player.K ?? '',
+        SB: player.SB ?? '',
+        CS: player.CS ?? '',
+        AVG: player.AVG ?? '',
+        OBP: player.OBP ?? '',
+        SLG: player.SLG ?? '',
+        FPTS: player.FPTS ?? '',
+      };
+    });
+  }, [playerStats]);
+
   const columns = useMemo(
     () => [
       {
-        accessorKey: 'name.firstName', //access nested data with dot notation
-        header: 'First Name',
-        size: 150,
+        accessorKey: 'name',
+        header: 'Player Name',
+        size: 100
       },
       {
-        accessorKey: 'name.lastName',
-        header: 'Last Name',
-        size: 150,
+        accessorKey: 'position',
+        header: 'Position',
+        size: 60
       },
       {
-        accessorKey: 'address', //normal accessorKey
-        header: 'Address',
-        size: 200,
+        accessorKey: 'team',
+        header: 'Team Name',
+        size: 80
       },
       {
-        accessorKey: 'city',
-        header: 'City',
-        size: 150,
+        accessorKey: 'AB',
+        header: 'AB',
+        size: 60
       },
       {
-        accessorKey: 'state',
-        header: 'State',
-        size: 150,
+        accessorKey: 'R',
+        header: 'R',
+        size: 60
+      },
+      {
+        accessorKey: 'H',
+        header: 'H',
+        size: 60
+      },
+      {
+        accessorKey: '1B',
+        header: '1B',
+        size: 60
+      },
+      {
+        accessorKey: '2B',
+        header: '2B',
+        size: 60
+      },
+      {
+        accessorKey: '3B',
+        header: '3B',
+        size: 60
+      },
+      {
+        accessorKey: 'HR',
+        header: 'HR',
+        size: 60
+      },
+      {
+        accessorKey: 'RBI',
+        header: 'RBI',
+        size: 60
+      },
+      {
+        accessorKey: 'BB',
+        header: 'BB',
+        size: 60
+      },
+      {
+        accessorKey: 'K',
+        header: 'K',
+        size: 60
+      },
+      {
+        accessorKey: 'SB',
+        header: 'SB',
+        size: 60
+      },
+      {
+        accessorKey: 'CS',
+        header: 'CS',
+        size: 60
+      },
+      {
+        accessorKey: 'AVG',
+        header: 'AVG',
+        size: 60
+      },
+      {
+        accessorKey: 'OBP',
+        header: 'OBP',
+        size: 60
+      },
+      {
+        accessorKey: 'SLG',
+        header: 'SLG',
+        size: 60
+      },
+      {
+        accessorKey: 'FPTS',
+        header: 'FPTS',
+        size: 60
       },
     ],
     [],
@@ -88,10 +207,12 @@ const PlayerPool = () => {
 
   const table = useMaterialReactTable({
     columns,
-    data, //data must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
+    data,
+    state: {
+      isLoading,
+      showAlertBanner: Boolean(error),
+    },
   });
 
   return <MaterialReactTable table={table} />;
-};
-
-export default PlayerPool;
+}
