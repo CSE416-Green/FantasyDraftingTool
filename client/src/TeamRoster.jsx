@@ -14,89 +14,27 @@ const maxNumberofMembers = 23;
 
 // these sample tables are AI generated
 const rosterPlayers_Team1 = [
-  { position: "C", name: "JJust Team 1", status: "--", cost: "10" },
-  { position: "1B", name: "Player 3", status: "--", cost: "5" },
-  { position: "3B", name: "Player 4", status: "--", cost: "7" },
-  { position: "CI", name: "Player 5", status: "--", cost: "8" },
-  { position: "2B", name: "Player 6", status: "--", cost: "10" },
-  { position: "SS", name: "Player 7", status: "--", cost: "9" },
-  { position: "OF", name: "Player 9", status: "--", cost: "3" },
-  { position: "OF", name: "Player 10", status: "--", cost: "4" },
-  { position: "OF", name: "Player 12", status: "--", cost: "5" },
-  { position: "U", name: "Player 14", status: "--", cost: "8" },
-  { position: "P", name: "Player 15", status: "--", cost: "6" },
-  { position: "P", name: "Player 16", status: "--", cost: "5" },
-  { position: "P", name: "Player 17", status: "--", cost: "5" },
-  { position: "P", name: "Player 19", status: "--", cost: "8" },
-  { position: "P", name: "Player 21", status: "--", cost: "4" },
-  { position: "P", name: "Player 22", status: "--", cost: "5" },
+  { position: "-", name: "Loading...", status: "--", cost: "--" },
 ];
 
 const rosterPlayers_Team2 = [
   { position: "C", name: "Just Team 2A", status: "--", cost: "7" },
-  { position: "C", name: "Just Team 2B", status: "--", cost: "3" },
-  { position: "1B", name: "Player 3", status: "--", cost: "5" },
-  { position: "3B", name: "Player 4", status: "--", cost: "7" },
-  { position: "CI", name: "Player 5", status: "--", cost: "8" },
-  { position: "2B", name: "Player 6", status: "--", cost: "10" },
-  { position: "SS", name: "Player 7", status: "--", cost: "9" },
-  { position: "MI", name: "Player 8", status: "--", cost: "7" },
-  { position: "OF", name: "Player 9", status: "--", cost: "3" },
-  { position: "OF", name: "Player 10", status: "--", cost: "4" },
-  { position: "OF", name: "Player 11", status: "--", cost: "8" },
-  { position: "OF", name: "Player 12", status: "--", cost: "5" },
-  { position: "OF", name: "Player 13", status: "--", cost: "10" },
-  { position: "U", name: "Player 14", status: "--", cost: "8" },
-  { position: "P", name: "Player 15", status: "--", cost: "6" },
-  { position: "P", name: "Player 16", status: "--", cost: "5" },
-  { position: "P", name: "Player 17", status: "--", cost: "5" },
-  { position: "P", name: "Player 18", status: "--", cost: "3" },
-  { position: "P", name: "Player 19", status: "--", cost: "8" },
-  { position: "P", name: "Player 20", status: "--", cost: "9" },
-  { position: "P", name: "Player 21", status: "--", cost: "4" },
-  { position: "P", name: "Player 22", status: "--", cost: "5" },
-  { position: "P", name: "Player 23", status: "--", cost: "7" },
 ];
 
 const rosterPlayers_Team3 = [
   { position: "C", name: "Just Team 3", status: "--", cost: "9" },
-  { position: "C", name: "Just Team 3", status: "--", cost: "3" },
-  { position: "1B", name: "Player 3", status: "--", cost: "5" },
-  { position: "3B", name: "Player 4", status: "--", cost: "7" },
-  { position: "CI", name: "Player 5", status: "--", cost: "8" },
-  { position: "2B", name: "Player 6", status: "--", cost: "10" },
-  { position: "SS", name: "Player 7", status: "--", cost: "9" },
-  { position: "MI", name: "Player 8", status: "--", cost: "7" },
-  { position: "OF", name: "Player 9", status: "--", cost: "3" },
-  { position: "OF", name: "Player 10", status: "--", cost: "4" },
-  { position: "OF", name: "Player 11", status: "--", cost: "8" },
-  { position: "OF", name: "Player 12", status: "--", cost: "5" },
-  { position: "OF", name: "Player 13", status: "--", cost: "10" },
-  { position: "U", name: "Player 14", status: "--", cost: "8" },
-  { position: "P", name: "Player 15", status: "--", cost: "6" },
-  { position: "P", name: "Player 16", status: "--", cost: "5" },
-  { position: "P", name: "Player 17", status: "--", cost: "5" },
-  { position: "P", name: "Player 18", status: "--", cost: "3" },
-  { position: "P", name: "Player 19", status: "--", cost: "8" },
-  { position: "P", name: "Player 20", status: "--", cost: "9" },
-  { position: "P", name: "Player 21", status: "--", cost: "4" },
-  { position: "P", name: "Player 22", status: "--", cost: "5" },
-  { position: "P", name: "Player 23", status: "--", cost: "7" },
 ];
 
 const farmPlayers_Team1 = [
   { position: "P", name: "Farm Team 1-A", status: "--", cost: "1" },
-  { position: "P", name: "Farm Team 1-B", status: "--", cost: "3" },
 ];
 
 const farmPlayers_Team2 = [
   { position: "1B", name: "Farm Team 2-A", status: "--", cost: "4" },
-  { position: "CF", name: "Farm Team 2-B", status: "--", cost: "1" },
 ];
 
 const farmPlayers_Team3 = [
   { position: "SS", name: "Farm Team 3-A", status: "--", cost: "2" },
-  { position: "P", name: "Farm Team 3-B", status: "--", cost: "2" },
 ];
 
 const rosters_backup = {
