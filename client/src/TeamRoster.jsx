@@ -102,9 +102,8 @@ export default function TeamRoster({
     return teams.find((t) => t.teamName === key) || null;
   }, [teams, key]);
 
-  const rosterPlayers = teamData ? teamData.rosterPlayers : rosters_backup[key] ?? rosters_backup[0];
-  const farmPlayers = teamData ? teamData.farmPlayers : farmPlayers_backup[key] ?? farmPlayers_backup[0];
-
+  const rosterPlayers = teamData ? teamData.rosterPlayers : (rosters_backup[key] ?? []);
+const farmPlayers = teamData ? teamData.farmPlayers : (farmPlayers_backup[key] ?? []);
 
   // const rosterPlayers = rosters[key] ?? rosters[0];
   const spent = getBudget(rosterPlayers);
