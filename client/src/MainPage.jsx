@@ -4,7 +4,6 @@ import PlayerPool, { fetchPlayerStats } from './PlayerPool'
 import Note from './Note'
 import LeagueConfiguration from './LeagueConfig'
 import UpdatePlayerEligibility from './UpdatePlayerEligibility'
-import LeagueStats from './LeagueStats'
 import AddPlayerToPool from './AddPlayerToPool'
 import PlayerNews from './PlayerNews'
 import Drawer from './Drawer'
@@ -88,7 +87,6 @@ function MainPage() {
         <div className="settings-page">
           <h1 className="settings-title">Draft Settings</h1>
           <LeagueConfiguration />
-          <LeagueStats />
           <UpdatePlayerEligibility />
           <AddPlayerToPool />
         </div>
