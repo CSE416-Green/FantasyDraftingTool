@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+// import { useQuery } from '@tanstack/react-query';
 import {
   MaterialReactTable,
   useMaterialReactTable,
 } from 'material-react-table';
 
-function parsePlayerString(playerString) {
+export function parsePlayerString(playerString) {
   if (!playerString || typeof playerString !== 'string') {
     return {
       name: '',
@@ -39,7 +39,7 @@ function parsePlayerString(playerString) {
   };
 }
 
-async function fetchPlayerStats() {
+export async function fetchPlayerStats() {
   const res = await fetch(
     'https://fantasybaseballplayerstatsapi.onrender.com/stats/2025',
     {
@@ -77,15 +77,15 @@ async function fetchPlayerStats() {
   return playerData;
 }
 
-export default function PlayerPool() {
-  const {
-    data: playerStats = [],
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['player-stats'],
-    queryFn: fetchPlayerStats,
-  });
+export default function PlayerPool({ playerStats, isLoading, error }) {
+  // const {
+  //   data: playerStats = [],
+  //   isLoading,
+  //   error,
+  // } = useQuery({
+  //   queryKey: ['player-stats'],
+  //   queryFn: fetchPlayerStats,
+  // });
 
   const data = useMemo(() => {
     return playerStats.map((player) => {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import TeamRoster from './TeamRoster'
-import PlayerPool from './PlayerPool'
+import PlayerPool, { fetchPlayerStats } from './PlayerPool'
 import Note from './Note'
 import LeagueConfiguration from './LeagueConfig'
 import UpdatePlayerEligibility from './UpdatePlayerEligibility'
@@ -11,7 +11,7 @@ import './css/mainPage.css'
 import './css/settingsPage.css'
 import Header from './Header';
 import axios from "axios";
-
+import { useQuery } from '@tanstack/react-query';
 const pages = ['Main Page', 'Setting'];
 
 function MainPage() {
@@ -20,6 +20,15 @@ function MainPage() {
   const [totalBudget, setTotalBudget] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(pages[0]);
+
+  const {
+    data: playerStats = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["player-stats"],
+    queryFn: fetchPlayerStats,
+  });
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -56,11 +65,15 @@ function MainPage() {
                     onTeamChange={setTeam}
                     onRosterPlayers={() => setView("roster")} 
                     onFarmPlayers={() => setView("farm")}
+                    playerStats={playerStats}
               />
           </div>
           <div className="player-pool">
               <h1>Player Pool</h1>
               <PlayerPool
+                playerStats={playerStats}
+                isLoading={isLoading}
+                error={error}
               />
           </div>
           <div className="notes"> 
