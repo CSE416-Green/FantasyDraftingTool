@@ -5,7 +5,7 @@ export default function LeagueConfiguration() {
     const [teamBudget, setTeamBudget] = useState("");
     
     useEffect(() => {
-        axios.get("http://localhost:3000/settings/league")
+        axios.get("/settings/league")
         .then(res => {
             if (res.data) {
             setNumTeams(res.data.numTeams);
@@ -24,7 +24,7 @@ export default function LeagueConfiguration() {
         console.log("Update League Configuration:");
         console.log("numTeams: ", numTeams);
         console.log("teamBudget: ", teamBudget);
-        axios.post("http://localhost:3000/settings/league", { numTeams: Number(numTeams), teamBudget: Number(teamBudget)  })
+        axios.post("/settings/league", { numTeams: Number(numTeams), teamBudget: Number(teamBudget)  })
         .then(res => console.log("Saved!", res.data))
         .catch(err => console.error("Error:", err));
     
