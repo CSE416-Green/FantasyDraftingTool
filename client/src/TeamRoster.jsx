@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import EditRosterForm from "./EditRosterForm";
 import DraftPlayerForm from "./DraftPlayerForm";
 import EnterPastPlayerForm from "./EnterPastPlayerForm";
+import { parsePlayerString } from './PlayerPool';
 axios.defaults.baseURL = "http://localhost:3000";
 
 if (process.env.NODE_ENV == "production") {
@@ -56,6 +57,7 @@ export default function TeamRoster({
   onTeamChange,
   onRosterPlayers,
   onFarmPlayers,
+  playerStats
 }) {
 
   const key = useMemo(() => team.replace(/\s/g, ""), [team]); 
@@ -63,23 +65,19 @@ export default function TeamRoster({
   const [isEditingTeam, setIsEditingTeam] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);
   const [isEnteringPast, setIsEnteringPast] = useState(false);
-  // const [budget, setBudget] = useState(160);
 
-  // // fetch from backend
-  // useEffect(() => {
-  //   async function load() {
-  //     try {
-  //       const res = await axios.get("/allteams");
+  const playerPool = playerStats.map((player) => {
+  const parsed = parsePlayerString(player.Player ?? "");
 
-  //       setTeams(res.data); 
+  const positions = parsed.position
+    ? parsed.position.split(/[\/,]/).map(p => p.trim())
+    : [];
 
-  //     } catch (e) {
-  //       console.error("Failed to fetch teams: ", e);
-  //     }
-  //   }
-
-  //   load();
-  // }, []); 
+  return {
+    name: parsed.name,
+    position: positions,
+  };
+});
 
   //  to reload teams
   const loadTeams = async () => {
@@ -210,6 +208,7 @@ export default function TeamRoster({
                   setIsDrafting(false);
                 }}
                 maxNextCost={maxNextCost}
+                playerPool={playerPool}
               />
             )}  
         </div>

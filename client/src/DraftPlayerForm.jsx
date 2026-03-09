@@ -21,7 +21,7 @@ const fakePool = [
     {name: "Yoshinobu Yamamoto", position: ["P"]},
     {name: "Tarik Skubal", position: ["P"]},
 ]
-export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool=fakePool, maxNextCost }) {
+export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, maxNextCost }) {
 
     // for now the [playerPool] only has name and position
     const [selectedPlayer, setSelectedPlayer] = useState("");
