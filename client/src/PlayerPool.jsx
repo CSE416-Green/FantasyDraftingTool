@@ -40,41 +40,18 @@ export function parsePlayerString(playerString) {
 }
 
 export async function fetchPlayerStats() {
-  const res = await fetch(
-    'https://fantasybaseballplayerstatsapi.onrender.com/stats/2025',
-    {
-      headers: {
-        "x-api-key": "zzAhs_uA60tnnluR"
-      }
-    }
-  );
-
+  const res = await fetch('https://fantasydraftingtool.onrender.com/playerStats/2025');
   if (!res.ok) {
     throw new Error(`Error Fetching Player Data ${res.status}`);
   }
 
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder('utf-8');
-  const playerData = []; // array to collect all players
-
-  let playerStatsJson = '';
-  while (true) {
-    const { done, value } = await reader.read();
-    const chunkText = decoder.decode(value, { stream: true });
-    playerStatsJson += chunkText;
-    if (done) {
-      break;
-    };
-  }
-
   try {
-    const parsedData = JSON.parse(playerStatsJson);
-    playerData.push(...parsedData);
+    const playerStatsJson = await res.json();
+    const playerData = [...playerStatsJson];
+    return playerData;
   } catch (error) {
     console.error('Error parsing player stats JSON:', error);
   }
-  
-  return playerData;
 }
 
 export default function PlayerPool({ playerStats, isLoading, error }) {
