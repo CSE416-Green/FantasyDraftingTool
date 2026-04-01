@@ -19,6 +19,7 @@ const express = require('express')
 const cors = require("cors");
 const Team = require("./models/TeamSchema");
 const Settings = require('./models/settings');
+const HitterStat = require("./models/HitterStatSchema");
 const app = express()
 app.use(cors());
 app.use(express.json());
@@ -191,7 +192,7 @@ app.post("/settings/league", async (req, res) => {
           teamName: `Team${i}`,
           rosterPlayers: [],
           farmPlayers: []
-        });
+        }); 
       }
     } else if (currentCount > numTeams) {
       for (let i = numTeams + 1; i <= currentCount; i++) {
@@ -213,6 +214,31 @@ app.get("/settings/league", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+app.get("/stat/hitter/:year", async(req, res) => {
+  try {
+    // const { AVG, OBP, SLG, HR, RBI, SB } = req.body;
+    const year = Number(req.params.year);
+    const stats = await HitterStat.findOne({ Year: year });
+
+    if (!stats) {
+      return res.status(404).json({ message: "No stats found for that year" });
+    }
+
+    res.send(stats);
+  } catch(error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+})
+
+app.get("/stat/pitcher", async(req, res) => {
+  try {
+    const { ERA, WHIP, K, W, SV, IP, BB } = req.body;
+
+  } catch(error) {
+    
+  }
+})
 
 app.listen(port, () => {
   console.log(`fantasyDraftingTool server listening on port ${port}`)

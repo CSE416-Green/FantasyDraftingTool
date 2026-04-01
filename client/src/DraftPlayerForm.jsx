@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
+import RecommendedSalary from './RecommendedSalary';
 
 // desired format
 // name: string
@@ -29,6 +30,7 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, m
     const [cost, setCost] = useState("");
     const [status, setStatus] = useState("");
 
+    const fullPlayer = playerPool.find(p => p.name === selectedPlayer);
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -89,6 +91,15 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, m
                         </option>
                     ))}
                 </datalist>
+            </div>
+            
+            <div className="form-row">
+                {fullPlayer && (
+                    <RecommendedSalary
+                        player={fullPlayer}
+                        maxNextCost={maxNextCost}
+                    />
+                )}
             </div>
 
             <div className="form-row">
