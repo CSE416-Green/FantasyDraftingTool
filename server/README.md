@@ -11,6 +11,11 @@ npm install
 
 2. Create and start a MongoDB database named `cse416-FantasyDraftingTool` 
 
+3. create an .env file with
+```
+API_KEY="your-api-key-for-player-stats-api"
+```
+
 3. Start a development server
 ```
 npm start
