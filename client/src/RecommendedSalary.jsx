@@ -63,18 +63,13 @@ export default function RecommendedSalary({ player, maxNextCost }) {
           performance = computePitcherPerformance(player, stats);
         }
 
-
-        performance *= 0.4 // just to cut it down
+        const cap = maxNextCost * 0.3;
 
         let calculatedSalary =
-          baseSalary + performance * (maxNextCost - baseSalary);
+          baseSalary + performance * (cap - baseSalary);
 
-          
-        // console.log("performance ", performance)
-        // console.log("maxNextCost", maxNextCost)
-        // console.log("calculateSalary ", calculatedSalary)
 
-        calculatedSalary = Math.min(calculatedSalary, maxNextCost);
+        calculatedSalary = Math.min(calculatedSalary, cap);
         calculatedSalary = Math.floor(calculatedSalary);
 
 
