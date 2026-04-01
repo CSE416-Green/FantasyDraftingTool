@@ -23,6 +23,8 @@ const HitterStat = require("./models/HitterStatSchema");
 const app = express()
 app.use(cors());
 app.use(express.json());
+const playerStatsRouter = require("./routes/playerStats");
+app.use("/playerStats", playerStatsRouter);
 const port = 3000
 
 app.get('/', async (req, res) => {
