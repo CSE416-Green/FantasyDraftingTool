@@ -22,7 +22,7 @@ const fakePool = [
     {name: "Yoshinobu Yamamoto", position: ["P"]},
     {name: "Tarik Skubal", position: ["P"]},
 ]
-export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, maxNextCost }) {
+export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, maxNextCost, leagueName, year }) {
 
     // for now the [playerPool] only has name and position
     const [selectedPlayer, setSelectedPlayer] = useState("");
@@ -68,6 +68,19 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, m
             }
         } catch (err) {
             console.error("Failed to draft player:", err);
+        }
+
+        // also update the draft history
+        try {
+            await axios.post("/draftHistory/addPlayer", {
+                leagueName: leagueName,
+                year: year,
+                playerName: selectedPlayer,
+                cost: cost,
+                teamName: team.teamName
+            });
+        } catch (err) {
+            console.error("Failed to update draft history:", err);
         }
     }
 
