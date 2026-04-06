@@ -6,6 +6,7 @@ import LeagueConfiguration from './LeagueConfig'
 import UpdatePlayerEligibility from './UpdatePlayerEligibility'
 import AddPlayerToPool from './AddPlayerToPool'
 import PlayerNews from './PlayerNews'
+import DraftHistory from './DraftHistory'
 import Drawer from './Drawer'
 import './css/mainPage.css'
 import './css/settingsPage.css'
@@ -48,6 +49,9 @@ function MainPage() {
     useEffect(() => {
       loadLeagueSettings();
     }, []);
+
+    const leagueName = "LeagueNo1";
+    const year = 2025;
   
 
   return (
@@ -66,6 +70,8 @@ function MainPage() {
                     onRosterPlayers={() => setView("roster")} 
                     onFarmPlayers={() => setView("farm")}
                     playerStats={playerStats}
+                    leagueName={leagueName}
+                    year={year}
               />
           </div>
           <div className="player-pool">
@@ -79,6 +85,9 @@ function MainPage() {
           <div className="notes"> 
               <Note />
 
+          </div>
+          <div className="draft-history">
+              <DraftHistory />
           </div>
           <div className="news-history">
             <Drawer/>

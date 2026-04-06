@@ -20,6 +20,7 @@ const cors = require("cors");
 const Team = require("./models/TeamSchema");
 const Settings = require('./models/settings');
 const HitterStat = require("./models/HitterStatSchema");
+const DraftHistory = require("./models/DraftHistorySchema");
 const app = express()
 app.use(cors());
 app.use(express.json());
@@ -238,7 +239,62 @@ app.get("/stat/pitcher", async(req, res) => {
     const { ERA, WHIP, K, W, SV, IP, BB } = req.body;
 
   } catch(error) {
-    
+    res.status(500).json({ error: err.message });
+  }
+})
+
+// in mongodb, to create a draft history cluster (only used once when I first set up the database):
+app.post("/draftHistory", async (req, res) => {
+  try {
+    const { leagueName, year, draftedPlayers } = req.body;
+    const newHistory = new DraftHistory({
+      LeagueName: leagueName,
+      Year: year,
+      DraftedPlayers: draftedPlayers
+    });
+    await newHistory.save();
+    res.json({ message: "Draft history saved successfully!", history: newHistory });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// when a user drafts a player, add that player to the draft history for the league and year
+app.post("/draftHistory/addPlayer", async (req, res) => {
+  try {
+    const { leagueName, year, playerName, teamName, cost } = req.body;
+
+    console.log(`Adding player ${playerName} to draft history for league ${leagueName} and year ${year}`);
+    const history = await DraftHistory.findOne({ LeagueName: leagueName, Year: year });
+    if (!history) {
+      return res.status(404).json({ message: "No draft history found for that league and year" });
+    }
+    const pick = history.DraftedPlayers.length + 1;
+    history.DraftedPlayers.push({
+      PlayerName: playerName,
+      Pick: pick,
+      TeamName: teamName,
+      Cost: cost
+    });
+    await history.save();
+    res.json({ message: "Player added to draft history successfully!", history });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
+// to get the draft history for a league and year
+app.get("/draftHistory/:leagueName/:year", async (req, res) => {
+  try {
+    const { leagueName, year } = req.params;
+
+    const history = await DraftHistory.findOne({ LeagueName: leagueName, Year: year });
+    if (!history) {
+      return res.status(404).json({ message: "No draft history found for that league and year" });
+    }
+    res.json(history);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 })
 

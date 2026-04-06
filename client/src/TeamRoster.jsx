@@ -57,7 +57,9 @@ export default function TeamRoster({
   onTeamChange,
   onRosterPlayers,
   onFarmPlayers,
-  playerStats
+  playerStats,
+  leagueName,
+  year
 }) {
 
   const key = useMemo(() => team.replace(/\s/g, ""), [team]); 
@@ -210,6 +212,8 @@ export default function TeamRoster({
                 }}
                 maxNextCost={maxNextCost}
                 playerPool={playerPool}
+                leagueName={leagueName}
+                year={year}
               />
             )}  
         </div>
