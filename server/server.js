@@ -264,7 +264,6 @@ app.post("/draftHistory/addPlayer", async (req, res) => {
   try {
     const { leagueName, year, playerName, teamName, cost } = req.body;
 
-    console.log(`Adding player ${playerName} to draft history for league ${leagueName} and year ${year}`);
     const history = await DraftHistory.findOne({ LeagueName: leagueName, Year: year });
     if (!history) {
       return res.status(404).json({ message: "No draft history found for that league and year" });
