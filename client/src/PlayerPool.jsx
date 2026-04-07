@@ -67,33 +67,27 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
 
   const [draftedNames, setDraftedNames] = useState([]);
 
-  useEffect(() => {
-    const fetchDraftedPlayers = async () => {
-      try {
-        const res = await axios.get(`/draftHistory/${leagueName}/${year}`);
-        const names = res.data.DraftedPlayers.map((p) => 
-          p.PlayerName
-        );
-        setDraftedNames(names);
-      } catch (err) {
-        console.error('Failed to fetch draft history:', err);
-        setDraftedNames([]);
-      }
-    };
+  const fetchDraftedPlayers = async () => {
+  try {
+    const res = await axios.get(`/draftHistory/${leagueName}/${year}`);
+    const names = res.data.DraftedPlayers.map((p) => p.PlayerName);
+    setDraftedNames(names);
+  } catch (err) {
+    console.error('Failed to fetch draft history:', err);
+    setDraftedNames([]);
+  }
+  };
 
-    if (leagueName && year) {
-      fetchDraftedPlayers();
-    }
+  useEffect(() => {
+    fetchDraftedPlayers();
   }, [leagueName, year]);
 
 
   const data = useMemo(() => {
-    return playerStats.filter((player) => {
-        const parsedPlayer = parsePlayerString(player.Player ?? '');
-        return !draftedNames.includes(parsedPlayer.name);
-      })
+    return playerStats
       .map((player) => {
       const parsedPlayer = parsePlayerString(player.Player ?? '');
+      const isDrafted = draftedNames.includes(parsedPlayer.name);
 
       return {
         name: parsedPlayer.name,
@@ -115,6 +109,7 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
         OBP: player.OBP ?? '',
         SLG: player.SLG ?? '',
         FPTS: player.FPTS ?? '',
+        isDrafted,
       };
     });
   }, [playerStats, draftedNames]);
@@ -227,7 +222,23 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
       isLoading,
       showAlertBanner: Boolean(error),
     },
+    muiTableBodyRowProps: ({ row }) => ({
+      sx: {
+        '& td': {
+          color: row.original.isDrafted ? '#D5D5D5' : '#000000',
+        },
+      },
+    }),
   });
 
-  return <MaterialReactTable table={table} />;
+  return (
+  <div>
+    <button onClick={fetchDraftedPlayers} className="form-buttom">
+    Refresh Player Pool
+    </button>
+    <MaterialReactTable table={table} />
+  </div>
+  )
+
+  // return <MaterialReactTable table={table} />;
 }
