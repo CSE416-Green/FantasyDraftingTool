@@ -87,7 +87,10 @@ function MainPage() {
 
           </div>
           <div className="draft-history">
-              <DraftHistory />
+              <DraftHistory 
+                leagueName={leagueName}
+                year={year}
+              />
           </div>
           <div className="news-history">
             <Drawer/>

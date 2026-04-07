@@ -1,21 +1,20 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-
+// css
+import './css/mainPage.css';
 
 
 const fakeHistory = [
-    {'name': "Loading...", 'order': "-", 'team': "-", 'cost': "-"}
+    {'name': "Loading...", 'order': "1", 'team': "-", 'cost': "-"}
 
 ];
 
 
-export default function DraftHistory() {
+export default function DraftHistory({leagueName, year}) {
   const [history, setHistory] = useState(fakeHistory);
 
-  const leagueName = "LeagueNo1";
-  const year = 2025;
 
-  useEffect(() => {
+
     const fetchHistory = async () => {
       try {
         const res = await axios.get(`/draftHistory/${leagueName}/${year}` );
@@ -34,28 +33,32 @@ export default function DraftHistory() {
       }
     };
 
+  useEffect(() => {
     fetchHistory();
   }, []);
 
   return (
     <div className="historyWrapper">
       <h2>Draft History</h2>
+      <button onClick={fetchHistory} className="form-buttom">
+        Refresh History
+      </button>
       <table>
         <thead>
           <tr>
-            <th>Pick</th>
-            <th>Player</th>
-            <th>Team</th>
-            <th>Salary</th>
+            <th className="history-th">Pick</th>
+            <th className="history-th">Player</th>
+            <th className="history-th">Team</th>
+            <th className="history-th">Salary</th>
           </tr>
         </thead>
         <tbody>
           {history.map((p) => (
             <tr key={p.order}>
-              <td>{p.order}</td>
-              <td>{p.name}</td>
-              <td>{p.team}</td>
-              <td>{p.cost}</td>
+              <td className="history-td">{p.order}</td>
+              <td className="history-td">{p.name}</td>
+              <td className="history-td">{p.team}</td>
+              <td className="history-td">${p.cost}</td>
             </tr>
           ))}
         </tbody>
