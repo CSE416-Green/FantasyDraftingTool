@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
+import axios from 'axios';
 // import { useQuery } from '@tanstack/react-query';
 import {
   MaterialReactTable,
@@ -54,7 +55,7 @@ export async function fetchPlayerStats() {
   }
 }
 
-export default function PlayerPool({ playerStats, isLoading, error }) {
+export default function PlayerPool({ playerStats, isLoading, error, leagueName, year }) {
   // const {
   //   data: playerStats = [],
   //   isLoading,
@@ -64,8 +65,34 @@ export default function PlayerPool({ playerStats, isLoading, error }) {
   //   queryFn: fetchPlayerStats,
   // });
 
+  const [draftedNames, setDraftedNames] = useState([]);
+
+  useEffect(() => {
+    const fetchDraftedPlayers = async () => {
+      try {
+        const res = await axios.get(`/draftHistory/${leagueName}/${year}`);
+        const names = res.data.DraftedPlayers.map((p) => 
+          p.PlayerName
+        );
+        setDraftedNames(names);
+      } catch (err) {
+        console.error('Failed to fetch draft history:', err);
+        setDraftedNames([]);
+      }
+    };
+
+    if (leagueName && year) {
+      fetchDraftedPlayers();
+    }
+  }, [leagueName, year]);
+
+
   const data = useMemo(() => {
-    return playerStats.map((player) => {
+    return playerStats.filter((player) => {
+        const parsedPlayer = parsePlayerString(player.Player ?? '');
+        return !draftedNames.includes(parsedPlayer.name);
+      })
+      .map((player) => {
       const parsedPlayer = parsePlayerString(player.Player ?? '');
 
       return {
@@ -90,7 +117,7 @@ export default function PlayerPool({ playerStats, isLoading, error }) {
         FPTS: player.FPTS ?? '',
       };
     });
-  }, [playerStats]);
+  }, [playerStats, draftedNames]);
 
   const columns = useMemo(
     () => [
