@@ -80,6 +80,8 @@ function MainPage() {
                 playerStats={playerStats}
                 isLoading={isLoading}
                 error={error}
+                leagueName={leagueName}
+                year={year}
               />
           </div>
           <div className="notes"> 
