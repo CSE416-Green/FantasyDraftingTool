@@ -9,12 +9,12 @@ playerStatsRouter.get("/:year", async (req, res) => {
     }
 
     const response = await fetch(
-        `https://fantasybaseballplayerstatsapi.onrender.com/stats/${year}`,
+        `https://fantasybaseballgateway.onrender.com/api/stats/${year}`,
         {
             methods: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "x-api-key": process.env.API_KEY,
+                "Authorization": `apikey ${process.env.API_KEY}`,
             },
         }
     );
