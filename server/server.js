@@ -26,6 +26,8 @@ app.use(cors());
 app.use(express.json());
 const playerStatsRouter = require("./routes/playerStats");
 app.use("/playerStats", playerStatsRouter);
+const userAuthRouter=require("./routes/userAuth");
+app.use("/user", userAuthRouter);
 const port = 3000
 
 app.get('/', async (req, res) => {

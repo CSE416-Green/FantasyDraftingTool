@@ -1,4 +1,5 @@
 import * as React from 'react';
+import axios from 'axios';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -6,7 +7,20 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 
-function Header({ pages, onPageChange }) {
+function Header({ pages, onPageChange, onLogout }) {
+
+  const handleLogout = async () => {
+    try {
+      await axios.post('/user/logout');
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      onLogout(); 
+    }
+  };
+
   return (
     <AppBar position="static"
       sx={{
@@ -40,6 +54,11 @@ function Header({ pages, onPageChange }) {
                 {page}
               </Button>
             ))}
+            <Button
+                onClick={handleLogout}
+                sx={{ my: 2, color: 'white', display: 'block', ":hover": { backgroundColor: '#D9D9D9', color: 'black' } }}
+              >Logout
+              </Button>
           </Box>
         </Toolbar>
       </Container>

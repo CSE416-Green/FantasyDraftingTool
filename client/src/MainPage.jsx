@@ -15,7 +15,7 @@ import axios from "axios";
 import { useQuery } from '@tanstack/react-query';
 const pages = ['Main Page', 'Setting'];
 
-function MainPage() {
+function MainPage({user,onLogout}) {
   const [team, setTeam] = useState("Team 1")
   const [view, setView] = useState("roster") // roster or farm
   const [totalBudget, setTotalBudget] = useState(0);
@@ -56,7 +56,7 @@ function MainPage() {
 
   return (
     <div className="main-page">
-        <Header pages={pages} onPageChange={handlePageChange}/>
+        <Header pages={pages} onPageChange={handlePageChange} onLogout={onLogout}/>
         {currentPage === "Main Page" ? 
         <div className="drafting-page">
 
