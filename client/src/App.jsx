@@ -10,7 +10,10 @@ import {
 const queryClient = new QueryClient()
 
 function App() {
-  const [user,setUser]=useState(null)
+  const [user,setUser]=useState(()=>{
+    const stored = localStorage.getItem("user");
+    return stored ? JSON.parse(stored) : null;
+  });
   return (
     <QueryClientProvider client={queryClient}>
       {user? ( <MainPage user={user} onLogout={() => setUser(null)}/>):(<Login onLogin={(userData)=>setUser(userData)}/>)}

@@ -29,6 +29,7 @@ export default function Login({ onLogin }) {
             password: form.password,
             });
             localStorage.setItem("token", res.data.token);
+            localStorage.setItem("user", JSON.stringify(res.data.user));
             onLogin?.(res.data.user);
         }
         } catch (err) {
