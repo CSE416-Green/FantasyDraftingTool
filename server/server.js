@@ -262,7 +262,7 @@ app.post("/draftHistory", async (req, res) => {
 // when a user drafts a player, add that player to the draft history for the league and year
 app.post("/draftHistory/addPlayer", async (req, res) => {
   try {
-    const { leagueName, year, playerName, teamName, cost } = req.body;
+    const { leagueName, year, playerName, teamName, cost, broughtupby, position } = req.body;
 
     const history = await DraftHistory.findOne({ LeagueName: leagueName, Year: year });
     if (!history) {
@@ -273,7 +273,9 @@ app.post("/draftHistory/addPlayer", async (req, res) => {
       PlayerName: playerName,
       Pick: pick,
       TeamName: teamName,
-      Cost: cost
+      Cost: cost,
+      BroughtUpBy: broughtupby,
+      Position: position
     });
     await history.save();
     res.json({ message: "Player added to draft history successfully!", history });

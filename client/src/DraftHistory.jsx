@@ -23,7 +23,9 @@ export default function DraftHistory({leagueName, year}) {
           name: p.PlayerName,
           order: p.Pick,
           team: p.TeamName,
-          cost: p.Cost
+          cost: p.Cost,
+          broughtupby: p.BroughtUpBy,
+          position: p.Position
         }));
 
         setHistory(data);
@@ -47,7 +49,9 @@ export default function DraftHistory({leagueName, year}) {
         <thead>
           <tr>
             <th className="history-th">Pick</th>
+            <th className="history-th">Brought up by</th>
             <th className="history-th">Player</th>
+            <th className="history-th">Position</th>
             <th className="history-th">Team</th>
             <th className="history-th">Salary</th>
           </tr>
@@ -56,7 +60,9 @@ export default function DraftHistory({leagueName, year}) {
           {history.map((p) => (
             <tr key={p.order}>
               <td className="history-td">{p.order}</td>
+              <td className="history-td">{p.broughtupby}</td>
               <td className="history-td">{p.name}</td>
+              <td className="history-td">{p.position}</td>
               <td className="history-td">{p.team}</td>
               <td className="history-td">${p.cost}</td>
             </tr>
