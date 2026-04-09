@@ -14,6 +14,7 @@ npm install
 3. create an .env file with
 ```
 API_KEY="your-api-key-for-player-stats-api"
+JWT_SECRET="jwt-key"
 ```
 
 3. Start a development server

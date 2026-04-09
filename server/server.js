@@ -26,6 +26,8 @@ app.use(cors());
 app.use(express.json());
 const playerStatsRouter = require("./routes/playerStats");
 app.use("/playerStats", playerStatsRouter);
+const userAuthRouter=require("./routes/userAuth");
+app.use("/user", userAuthRouter);
 const port = 3000
 
 app.get('/', async (req, res) => {
@@ -298,6 +300,85 @@ app.get("/draftHistory/:leagueName/:year", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 })
+
+//Start of new code
+app.post("/tradePlayers", async (req, res) => {
+  try {
+    const {
+      fromTeamName,
+      toTeamName,
+      fromPlayerName,
+      toPlayerName,
+      fromView,
+      toView
+    } = req.body;
+
+    if (
+      !fromTeamName ||
+      !toTeamName ||
+      !fromPlayerName ||
+      !toPlayerName ||
+      !fromView ||
+      !toView
+    ) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    if (fromTeamName === toTeamName) {
+      return res.status(400).json({ error: "Teams must be different" });
+    }
+
+    const fromTeam = await Team.findOne({ teamName: fromTeamName });
+    const toTeam = await Team.findOne({ teamName: toTeamName });
+
+    if (!fromTeam || !toTeam) {
+      return res.status(404).json({ error: "One or both teams not found" });
+    }
+
+    const fromList =
+      fromView === "roster" ? fromTeam.rosterPlayers : fromTeam.farmPlayers;
+    const toList =
+      toView === "roster" ? toTeam.rosterPlayers : toTeam.farmPlayers;
+
+    const fromPlayerIndex = fromList.findIndex(
+      (p) => p.name === fromPlayerName
+    );
+    const toPlayerIndex = toList.findIndex(
+      (p) => p.name === toPlayerName
+    );
+
+    if (fromPlayerIndex === -1 || toPlayerIndex === -1) {
+      return res.status(404).json({ error: "One or both players not found" });
+    }
+
+    const fromPlayer = fromList[fromPlayerIndex].toObject
+      ? fromList[fromPlayerIndex].toObject()
+      : { ...fromList[fromPlayerIndex] };
+
+    const toPlayer = toList[toPlayerIndex].toObject
+      ? toList[toPlayerIndex].toObject()
+      : { ...toList[toPlayerIndex] };
+
+    fromList.splice(fromPlayerIndex, 1);
+    toList.splice(toPlayerIndex, 1);
+
+    fromList.push(toPlayer);
+    toList.push(fromPlayer);
+
+    await fromTeam.save();
+    await toTeam.save();
+
+    res.json({
+      message: "Trade completed successfully!",
+      fromTeam,
+      toTeam
+    });
+  } catch (error) {
+    console.error("Error trading players:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+//End of new code
 
 app.listen(port, () => {
   console.log(`fantasyDraftingTool server listening on port ${port}`)

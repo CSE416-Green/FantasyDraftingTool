@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import RecommendedSalary from './RecommendedSalary';
 
 // desired format
@@ -30,6 +30,29 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, m
     const [cost, setCost] = useState("");
     const [status, setStatus] = useState("");
     const [broughtupby, setBroughtupby] = useState("");
+    const [draftedNames, setDraftedNames] = useState([]);
+
+  useEffect(() => {
+    const fetchDraftedPlayers = async () => {
+      try {
+        const res = await axios.get(`/draftHistory/${leagueName}/${year}`);
+        const names = res.data.DraftedPlayers.map((p) => 
+          p.PlayerName
+        );
+        setDraftedNames(names);
+      } catch (err) {
+        console.error('Failed to fetch draft history:', err);
+        setDraftedNames([]);
+      }
+    };
+
+    if (leagueName && year) {
+      fetchDraftedPlayers();
+    }
+  }, [leagueName, year]);
+
+
+
 
     const fullPlayer = playerPool.find(p => p.name === selectedPlayer);
 
@@ -118,7 +141,8 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, m
                     placeholder="Type to Search"
                 />
                 <datalist id="players">
-                    {playerPool.map((player, index) => (
+                    {playerPool.filter(p => !draftedNames.includes(p.name))
+                        .map((player, index) => (
                         <option key={index} value={player.name}>
                         {player.position.join(" ")}
                         </option>

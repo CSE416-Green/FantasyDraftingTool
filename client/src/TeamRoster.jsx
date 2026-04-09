@@ -4,6 +4,7 @@ import EditRosterForm from "./EditRosterForm";
 import DraftPlayerForm from "./DraftPlayerForm";
 import EnterPastPlayerForm from "./EnterPastPlayerForm";
 import { parsePlayerString } from './PlayerPool';
+import TradePlayersForm from "./TradePlayersForm";
 axios.defaults.baseURL = "http://localhost:3000";
 
 if (process.env.NODE_ENV == "production") {
@@ -67,6 +68,7 @@ export default function TeamRoster({
   const [isEditingTeam, setIsEditingTeam] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);
   const [isEnteringPast, setIsEnteringPast] = useState(false);
+  const [isTrading, setIsTrading] = useState(false);
 
   const playerPool = playerStats.map((player) => {
   const parsed = parsePlayerString(player.Player ?? "");
@@ -116,19 +118,29 @@ export default function TeamRoster({
     setIsEnteringPast(!isEnteringPast);
     setIsDrafting(false);
     setIsEditingTeam(false);
+    setIsTrading(false);
   }
+
   function clickDraft() {
     setIsEnteringPast(false);
     setIsDrafting(!isDrafting);
     setIsEditingTeam(false);
+    setIsTrading(false);
   }
 
   function clickEdit() {
     setIsEnteringPast(false);
     setIsEditingTeam(!isEditingTeam);
     setIsDrafting(false);
+    setIsTrading(false);
   }
 
+  function clickTrade() {
+    setIsEnteringPast(false);
+    setIsEditingTeam(false);
+    setIsDrafting(false);
+    setIsTrading(!isTrading);
+  }
 
   return (
     <div className="roster-wrap">
@@ -176,6 +188,9 @@ export default function TeamRoster({
             <button className="form-buttom" type="button" onClick={() => clickDraft()}>
                 Draft
             </button>
+            <button className="form-buttom" type="button" onClick={() => clickTrade()}>
+                Trade
+            </button>
           </div>
 
             {isEnteringPast && (
@@ -215,6 +230,17 @@ export default function TeamRoster({
                 leagueName={leagueName}
                 year={year}
                 teams={teams}
+              />
+            )}
+            {isTrading && (
+              <TradePlayersForm
+                teams={teams}
+                currentTeamName={teamData?.teamName || key}
+                onCancel={() => setIsTrading(false)}
+                onTrade={async () => {
+                  await loadTeams();
+                  setIsTrading(false);
+                }}
               />
             )}  
         </div>
