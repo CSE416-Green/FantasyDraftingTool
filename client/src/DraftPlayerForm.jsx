@@ -22,13 +22,14 @@ const fakePool = [
     {name: "Yoshinobu Yamamoto", position: ["P"]},
     {name: "Tarik Skubal", position: ["P"]},
 ]
-export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, maxNextCost, leagueName, year }) {
+export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, maxNextCost, leagueName, year, teams }) {
 
     // for now the [playerPool] only has name and position
     const [selectedPlayer, setSelectedPlayer] = useState("");
     const [position, setPosition] = useState("");
     const [cost, setCost] = useState("");
     const [status, setStatus] = useState("");
+    const [broughtupby, setBroughtupby] = useState("");
     const [draftedNames, setDraftedNames] = useState([]);
 
   useEffect(() => {
@@ -52,6 +53,7 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, m
 
 
 
+
     const fullPlayer = playerPool.find(p => p.name === selectedPlayer);
 
     async function handleSubmit(e) {
@@ -63,9 +65,10 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, m
             position,
             cost,
             status,
+            broughtupby
         };
 
-        if (!selectedPlayer || !position || !cost || !status) {
+        if (!selectedPlayer || !position || !cost || !status || !broughtupby) {
             alert("Please fill in all fields");
             return;
         };
@@ -99,7 +102,9 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, m
                 year: year,
                 playerName: selectedPlayer,
                 cost: cost,
-                teamName: team.teamName
+                teamName: team.teamName,
+                position: position,
+                broughtupby: broughtupby
             });
         } catch (err) {
             console.error("Failed to update draft history:", err);
@@ -108,7 +113,23 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, m
 
     return (
         <form onSubmit={handleSubmit}>
-            <h2>Draft Player for {team.teamName}</h2>
+            <h2>Draft Player for <u>{team.teamName}</u></h2>
+
+            <div className="form-row">
+                <label>Brought up by:</label>
+                <select
+                    className="form-select"
+                    value={broughtupby}
+                    onChange={(e) => setBroughtupby(e.target.value)}
+                >
+                    <option value="">Select a Team:</option>
+                    {teams.map((t, index) => (
+                        <option key={index} value={t.teamName}>
+                            {t.teamName}
+                        </option>
+                    ))}
+                </select>
+            </div>
 
             <div className="form-row">
                 <label>Select Player:</label>

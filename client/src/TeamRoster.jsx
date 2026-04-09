@@ -229,6 +229,7 @@ export default function TeamRoster({
                 playerPool={playerPool}
                 leagueName={leagueName}
                 year={year}
+                teams={teams}
               />
             )}
             {isTrading && (
