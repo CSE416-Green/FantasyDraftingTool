@@ -85,11 +85,12 @@ export default function TradePlayersForm({ teams, currentTeamName, onCancel, onT
 
   return (
     <form onSubmit={submitTrade} className="edit-form">
-      <h3>Trade Players</h3>
+      <h2>Trade Players</h2>
 
-      <div>
+      <div className="form-row">
         <label>From Team</label>
         <select
+          className="form-select"
           value={fromTeamName}
           onChange={(e) => {
             setFromTeamName(e.target.value);
@@ -105,9 +106,10 @@ export default function TradePlayersForm({ teams, currentTeamName, onCancel, onT
         </select>
       </div>
 
-      <div>
+      <div className="form-row">
         <label>From Team Section</label>
         <select
+          className="form-select"
           value={fromView}
           onChange={(e) => {
             setFromView(e.target.value);
@@ -119,9 +121,10 @@ export default function TradePlayersForm({ teams, currentTeamName, onCancel, onT
         </select>
       </div>
 
-      <div>
+      <div className="form-row">
         <label>Player From First Team</label>
         <select
+          className="form-select"
           value={fromPlayerName}
           onChange={(e) => setFromPlayerName(e.target.value)}
         >
@@ -134,9 +137,10 @@ export default function TradePlayersForm({ teams, currentTeamName, onCancel, onT
         </select>
       </div>
 
-      <div>
+      <div className="form-row">
         <label>To Team</label>
         <select
+          className="form-select"
           value={toTeamName}
           onChange={(e) => {
             setToTeamName(e.target.value);
@@ -152,9 +156,10 @@ export default function TradePlayersForm({ teams, currentTeamName, onCancel, onT
         </select>
       </div>
 
-      <div>
+      <div className="form-row">
         <label>To Team Section</label>
         <select
+          className="form-select"
           value={toView}
           onChange={(e) => {
             setToView(e.target.value);
@@ -166,9 +171,10 @@ export default function TradePlayersForm({ teams, currentTeamName, onCancel, onT
         </select>
       </div>
 
-      <div>
+      <div className="form-row">
         <label>Player From Second Team</label>
         <select
+          className="form-select"
           value={toPlayerName}
           onChange={(e) => setToPlayerName(e.target.value)}
         >
