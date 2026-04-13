@@ -17,13 +17,13 @@ export default function RecommendedSalary({ player, maxNextCost }) {
         const requestBody = {
           DraftState: true,
           maxNextCost: maxNextCost,
-          baseSalary: 1,
+          baseSalary: baseSalary,
           players: [player],
         };
 
         const response = await axios.post(
-          "http://localhost:3000/getSalaryForPlayers/compute",
-          // "https://fantasydraftingtool.onrender.com/getSalaryForPlayers/compute",
+          // "http://localhost:3000/GetSalaryForPlayers/compute/",
+          "https://fantasydraftingtool.onrender.com/GetSalaryForPlayers/compute/",
           requestBody,
         );
 
@@ -41,7 +41,7 @@ export default function RecommendedSalary({ player, maxNextCost }) {
 
   return (
     <div>
-      Recommended Salary: {salary !== -1 ? salary : "-"}
+      Recommended Salary: {salary !== -1 ? salary : "Not Available"}
     </div>
   );
 }
