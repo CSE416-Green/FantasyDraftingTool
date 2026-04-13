@@ -60,7 +60,8 @@ export default function TeamRoster({
   onFarmPlayers,
   playerStats,
   leagueName,
-  year
+  year,
+  user,
 }) {
 
   const key = useMemo(() => team.replace(/\s/g, ""), [team]); 
@@ -87,7 +88,7 @@ export default function TeamRoster({
   //  to reload teams
   const loadTeams = async () => {
     try {
-      const res = await axios.get("/allteams");
+      const res = await axios.post("/allteams", { leagueId: user.league });
       setTeams(res.data);
     } catch (e) {
       console.error("Failed to fetch teams: ", e);
@@ -230,6 +231,7 @@ export default function TeamRoster({
                 leagueName={leagueName}
                 year={year}
                 teams={teams}
+                leagueId={user.league}
               />
             )}
             {isTrading && (

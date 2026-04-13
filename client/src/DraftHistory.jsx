@@ -10,14 +10,14 @@ const fakeHistory = [
 ];
 
 
-export default function DraftHistory({leagueName, year}) {
+export default function DraftHistory({leagueName, year, leagueId}) {
   const [history, setHistory] = useState(fakeHistory);
 
 
 
     const fetchHistory = async () => {
       try {
-        const res = await axios.get(`/draftHistory/${leagueName}/${year}` );
+        const res = await axios.post(`/draftHistory/${year}`, { leagueId: leagueId});
 
         const data = res.data.DraftedPlayers.map((p) => ({
           name: p.PlayerName,

@@ -21,6 +21,7 @@ const Team = require("./models/TeamSchema");
 const Settings = require('./models/settings');
 const HitterStat = require("./models/HitterStatSchema");
 const DraftHistory = require("./models/DraftHistorySchema");
+const League = require("./models/LeagueSchema");
 const app = express()
 app.use(cors());
 app.use(express.json());
@@ -38,10 +39,13 @@ app.get('/', async (req, res) => {
 
 
 // to get all teams and their rosters and farm players
-app.get("/allteams", async (req, res) => {
+app.post("/allteams", async (req, res) => {
   try {
-    // console.log("GET /allteams");
-    const teams = await Team.find({});
+    const leagueId = req.body.leagueId;
+    const league = await League.findById(leagueId);
+    const teams = await Team.find({
+      _id: { $in: league.TeamsID },
+    });
     res.json(teams);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -222,6 +226,18 @@ app.get("/settings/league", async (req, res) => {
   }
 });
 
+app.post("/league/info", async (req, res) => {
+  try {
+    const leagueInfo = await League.findOne({
+      _id: req.body.leagueId,
+    });
+
+    res.json(leagueInfo);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+})
+
 app.get("/stat/hitter/:year", async(req, res) => {
   try {
     // const { AVG, OBP, SLG, HR, RBI, SB } = req.body;
@@ -289,11 +305,13 @@ app.post("/draftHistory/addPlayer", async (req, res) => {
 })
 
 // to get the draft history for a league and year
-app.get("/draftHistory/:leagueName/:year", async (req, res) => {
-  try {
-    const { leagueName, year } = req.params;
+app.post("/draftHistory/:year", async (req, res) => {
 
-    const history = await DraftHistory.findOne({ LeagueName: leagueName, Year: year });
+  try {
+    const { year } = req.params;
+    const leagueId = req.body.leagueId;
+
+    const history = await DraftHistory.findOne({ League: leagueId, Year: year });
     if (!history) {
       return res.status(404).json({ message: "No draft history found for that league and year" });
     }

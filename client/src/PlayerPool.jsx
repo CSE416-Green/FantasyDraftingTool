@@ -55,7 +55,7 @@ export async function fetchPlayerStats() {
   }
 }
 
-export default function PlayerPool({ playerStats, isLoading, error, leagueName, year }) {
+export default function PlayerPool({ playerStats, isLoading, error, leagueName, year, leagueId }) {
   // const {
   //   data: playerStats = [],
   //   isLoading,
@@ -69,7 +69,7 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
 
   const fetchDraftedPlayers = async () => {
   try {
-    const res = await axios.get(`/draftHistory/${leagueName}/${year}`);
+    const res = await axios.post(`/draftHistory/${year}`, { leagueId: leagueId });
     const names = res.data.DraftedPlayers.map((p) => p.PlayerName);
     setDraftedNames(names);
   } catch (err) {
@@ -79,8 +79,10 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
   };
 
   useEffect(() => {
-    fetchDraftedPlayers();
-  }, [leagueName, year]);
+    if (leagueId && year) {
+      fetchDraftedPlayers();
+    }
+  }, [leagueId, year]);
 
 
   const data = useMemo(() => {
