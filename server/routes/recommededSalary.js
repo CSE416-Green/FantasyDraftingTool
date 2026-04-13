@@ -6,9 +6,7 @@ const recommendedSalaryRouter = express.Router();
 
 recommendedSalaryRouter.post("/", async (req, res) => {
     try {
-        // send a post request to calculate recommended salary
-        console.log("Received request for recommended salary for:", req.body.players[0].Player);
-        console.log("API KEY:", process.env.API_KEY);
+        console.log("calling gateway to calculate salary for player:", req.body.players[0].Player);
         
         const response = await fetch(
             "https://fantasybaseballgateway.onrender.com/api/GetSalaryForPlayers/compute",
@@ -17,7 +15,7 @@ recommendedSalaryRouter.post("/", async (req, res) => {
                 headers: {
                     "Content-Type": "application/json",
                     // "Authorization": `apikey ${process.env.API_KEY}`,
-                    "x-api-key": process.env.API_KEY,
+                    "Authorization": `apikey ${process.env.API_KEY}`,
                 },
                 body: JSON.stringify(req.body)
             }
