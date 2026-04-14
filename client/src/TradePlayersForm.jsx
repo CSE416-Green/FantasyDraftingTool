@@ -1,30 +1,30 @@
 import { useMemo, useState, useEffect } from "react";
 import axios from "axios";
 
-export default function TradePlayersForm({ teams, currentTeamName, onCancel, onTrade }) {
-    const [fromTeamName, setFromTeamName] = useState(currentTeamName || "");
-    const [toTeamName, setToTeamName] = useState("");
+export default function TradePlayersForm({ teams, currentTeamId, onCancel, onTrade }) {
+    const [fromTeamId, setFromTeamId] = useState(currentTeamId || "");
+    const [toTeamId, setToTeamId] = useState("");
 
     const [fromView, setFromView] = useState("roster");
     const [toView, setToView] = useState("roster");
 
     useEffect(() => {
-        if (teams.length > 0 && !toTeamName) {
-            const otherTeam = teams.find(t => t.teamName !== fromTeamName);
+        if (teams.length > 0 && !toTeamId) {
+            const otherTeam = teams.find(t => t._id !== fromTeamId);
             if (otherTeam) {
-                setToTeamName(otherTeam.teamName);
+                setToTeamId(otherTeam._id);
             }
         }
-    }, [teams, fromTeamName]);
+    }, [teams, fromTeamId]);
   
     const fromTeam = useMemo(
-        () => teams.find((t) => t.teamName === fromTeamName),
-        [teams, fromTeamName]
+        () => teams.find((t) => t._id === fromTeamId),
+        [teams, fromTeamId]
     );
 
     const toTeam = useMemo(
-        () => teams.find((t) => t.teamName === toTeamName),
-        [teams, toTeamName]
+        () => teams.find((t) => t._id === toTeamId),
+        [teams, toTeamId]
     );
 
     const fromPlayers = useMemo(() => {
@@ -46,8 +46,8 @@ export default function TradePlayersForm({ teams, currentTeamName, onCancel, onT
         setErrorMessage("");
 
     if (
-        !fromTeamName ||
-        !toTeamName ||
+        !fromTeamId ||
+        !toTeamId ||
         !fromPlayerName ||
         !toPlayerName ||
         !fromView ||
@@ -57,15 +57,15 @@ export default function TradePlayersForm({ teams, currentTeamName, onCancel, onT
         return;
     }
 
-    if (fromTeamName === toTeamName) {
+    if (fromTeamId === toTeamId) {
         setErrorMessage("Please choose two different teams.");
         return;
     }
 
     try {
         await axios.post("/tradePlayers", {
-            fromTeamName,
-            toTeamName,
+            fromTeamId,
+            toTeamId,
             fromPlayerName,
             toPlayerName,
             fromView,
@@ -91,15 +91,15 @@ export default function TradePlayersForm({ teams, currentTeamName, onCancel, onT
         <label>From Team</label>
         <select
           className="form-select"
-          value={fromTeamName}
+          value={fromTeamId}
           onChange={(e) => {
-            setFromTeamName(e.target.value);
+            setFromTeamId(e.target.value);
             setFromPlayerName("");
           }}
         >
           <option value="">Select Team</option>
           {teams.map((team) => (
-            <option key={team.teamName} value={team.teamName}>
+            <option key={team._id} value={team._id}>
               {team.teamName}
             </option>
           ))}
@@ -141,15 +141,15 @@ export default function TradePlayersForm({ teams, currentTeamName, onCancel, onT
         <label>To Team</label>
         <select
           className="form-select"
-          value={toTeamName}
+          value={toTeamId}
           onChange={(e) => {
-            setToTeamName(e.target.value);
+            setToTeamId(e.target.value);
             setToPlayerName("");
           }}
         >
           <option value="">Select Team</option>
           {teams.map((team) => (
-            <option key={team.teamName} value={team.teamName}>
+            <option key={team._id} value={team._id}>
               {team.teamName}
             </option>
           ))}

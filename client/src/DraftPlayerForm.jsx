@@ -57,7 +57,7 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, m
         e.preventDefault();
 
         const draftedPlayer = {
-            teamName: team.teamName,
+            teamId: team._id,
             name: selectedPlayer,
             position,
             cost,
@@ -95,7 +95,7 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, m
         // also update the draft history
         try {
             await axios.post("/draftHistory/addPlayer", {
-                leagueName: leagueName,
+                leagueId: leagueId,
                 year: year,
                 playerName: selectedPlayer,
                 cost: cost,
