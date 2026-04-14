@@ -32,7 +32,8 @@ router.post('/register', async (req,res)=>{
         lastName,
         username,
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        league: null,
     });
     try {
         await newUser.save();  //save user 
@@ -65,6 +66,7 @@ router.post('/login', async (req,res)=>{
             email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,
+            league: user.league,
         }
     });
 

@@ -24,7 +24,12 @@ const userSchema=new mongoose.Schema({
     password:{
         type: String,
         required: true,
-    }
+    },
+    league:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'League',
+        required: false
+    },
 },{timestamps:true});
 
 module.exports=mongoose.model("User", userSchema);

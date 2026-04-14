@@ -34,7 +34,7 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
     const selectedPlayer = players[selectedIndex];
 
     const updatedInfo = {
-      teamName: team.teamName,
+      teamId: team._id,
       playerName: selectedPlayer.name,
       updatedPosition: position,
       updatedStatus: status,

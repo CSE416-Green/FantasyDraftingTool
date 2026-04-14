@@ -16,9 +16,11 @@ import { useQuery } from '@tanstack/react-query';
 const pages = ['Main Page', 'Setting'];
 
 function MainPage({user,onLogout}) {
-  const [team, setTeam] = useState("Team 1")
+  const [team, setTeam] = useState("")
   const [view, setView] = useState("roster") // roster or farm
   const [totalBudget, setTotalBudget] = useState(0);
+  const [leagueName, setLeagueName] = useState("default league");
+  const [year, setYear] = useState(2025);
 
   const [currentPage, setCurrentPage] = useState(pages[0]);
 
@@ -50,8 +52,20 @@ function MainPage({user,onLogout}) {
       loadLeagueSettings();
     }, []);
 
-    const leagueName = "LeagueNo1";
-    const year = 2025;
+    const loadLeagueInfo = async () => {
+      try {
+        const res = await axios.post("/league/info", { leagueId: user.league });
+        setLeagueName(res.data.Name);
+        setYear(res.data.Year);
+      } catch (err) {
+        console.error("Failed to fetch league information")
+      }
+    }
+
+    useEffect(() => {
+      loadLeagueInfo();
+    }, []);
+
   
 
   return (
@@ -61,7 +75,7 @@ function MainPage({user,onLogout}) {
         <div className="drafting-page">
 
           <div className="team-roster">
-              <h1>Team Rosters</h1>
+              <h1>Team Rosters of {leagueName}</h1>
               <TeamRoster
                     budget={totalBudget}
                     team={team}
@@ -72,6 +86,7 @@ function MainPage({user,onLogout}) {
                     playerStats={playerStats}
                     leagueName={leagueName}
                     year={year}
+                    user={user}
               />
           </div>
           <div className="player-pool">
@@ -82,6 +97,7 @@ function MainPage({user,onLogout}) {
                 error={error}
                 leagueName={leagueName}
                 year={year}
+                leagueId={user.league}
               />
           </div>
           <div className="notes"> 
@@ -92,6 +108,7 @@ function MainPage({user,onLogout}) {
               <DraftHistory 
                 leagueName={leagueName}
                 year={year}
+                leagueId={user.league}
               />
           </div>
           <div className="news-history">

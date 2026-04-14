@@ -14,56 +14,18 @@ console.log("Current environment:", process.env.NODE_ENV);
 
 const maxNumberofMembers = 23;
 
-// these sample tables are AI generated
-const rosterPlayers_Team1 = [
-  { position: "C", name: "Loading...", status: "--", cost: "--" },
-];
-
-const rosterPlayers_Team2 = [
-  { position: "C", name: "Just Team 2A", status: "--", cost: "7" },
-];
-
-const rosterPlayers_Team3 = [
-  { position: "C", name: "Just Team 3", status: "--", cost: "9" },
-];
-
-const farmPlayers_Team1 = [
-  { position: "P", name: "Farm Team 1-A", status: "--", cost: "1" },
-];
-
-const farmPlayers_Team2 = [
-  { position: "1B", name: "Farm Team 2-A", status: "--", cost: "4" },
-];
-
-const farmPlayers_Team3 = [
-  { position: "SS", name: "Farm Team 3-A", status: "--", cost: "2" },
-];
-
-const rosters_backup = {
-  Team1: rosterPlayers_Team1,
-  Team2: rosterPlayers_Team2,
-  Team3: rosterPlayers_Team3,
-};
-
-const farmPlayers_backup = {
-  Team1: farmPlayers_Team1,
-  Team2: farmPlayers_Team2,
-  Team3: farmPlayers_Team3,
-};
-
 export default function TeamRoster({
   budget = budget,
-  team = "Team 1",
+  team = "",
   view = "roster",
   onTeamChange,
   onRosterPlayers,
   onFarmPlayers,
   playerStats,
   leagueName,
-  year
+  year,
+  user,
 }) {
-
-  const key = useMemo(() => team.replace(/\s/g, ""), [team]); 
   const [teams, setTeams] = useState([]);
   const [isEditingTeam, setIsEditingTeam] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);
@@ -87,7 +49,7 @@ export default function TeamRoster({
   //  to reload teams
   const loadTeams = async () => {
     try {
-      const res = await axios.get("/allteams");
+      const res = await axios.post("/allteams", { leagueId: user.league });
       setTeams(res.data);
     } catch (e) {
       console.error("Failed to fetch teams: ", e);
@@ -95,19 +57,24 @@ export default function TeamRoster({
   };
 
   useEffect(() => {
-    loadTeams();
-  }, []);
+    if (user?.league) {
+      loadTeams();
+    }
+  }, [user?.league]);
 
-  const listOfTeamNames = teams.map(t => t.teamName);
+  useEffect(() => {
+    if (teams.length > 0 && !team) {
+      onTeamChange?.(teams[0].teamName);
+    }
+  }, [teams, team]);
+
 
 
   // find selected team
-  const teamData = useMemo(() => {
-    return teams.find((t) => t.teamName === key) || null;
-  }, [teams, key]);
-
-  const rosterPlayers = teamData ? teamData.rosterPlayers : (rosters_backup[key] ?? []);
-  const farmPlayers = teamData ? teamData.farmPlayers : (farmPlayers_backup[key] ?? []);
+  const teamData = teams.find(t => t.teamName === team);
+  
+  const rosterPlayers = teamData?.rosterPlayers ?? [];
+  const farmPlayers = teamData?.farmPlayers ?? [];
 
   // const rosterPlayers = rosters[key] ?? rosters[0];
   const spent = getBudget(rosterPlayers);
@@ -195,7 +162,7 @@ export default function TeamRoster({
 
             {isEnteringPast && (
               <EnterPastPlayerForm
-                team={teamData || { teamName: key, rosterPlayers, farmPlayers }}
+                team={teamData}
                 onCancel={() => setIsEnteringPast(false)}
                 onSubmit={async() => {
                   await loadTeams();
@@ -207,7 +174,7 @@ export default function TeamRoster({
             )}
             {isEditingTeam && (
               <EditRosterForm
-                team={teamData || { teamName: key, rosterPlayers, farmPlayers }}
+                team={teamData}
                 view={view}
                 onCancel={() => setIsEditingTeam(false)}
                 onSave={async() => {
@@ -219,7 +186,7 @@ export default function TeamRoster({
             )}
             {isDrafting && (
               <DraftPlayerForm
-                team={teamData || { teamName: key, rosterPlayers, farmPlayers }}
+                team={teamData}
                 onCancel={() => setIsDrafting(false)}
                 onDraft={async() => {
                   await loadTeams();
@@ -230,12 +197,13 @@ export default function TeamRoster({
                 leagueName={leagueName}
                 year={year}
                 teams={teams}
+                leagueId={user.league}
               />
             )}
             {isTrading && (
               <TradePlayersForm
                 teams={teams}
-                currentTeamName={teamData?.teamName || key}
+                currentTeamName={teamData?.teamName || ""}
                 onCancel={() => setIsTrading(false)}
                 onTrade={async () => {
                   await loadTeams();

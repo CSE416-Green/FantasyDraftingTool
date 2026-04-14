@@ -21,6 +21,8 @@ const Team = require("./models/TeamSchema");
 const Settings = require('./models/settings');
 const HitterStat = require("./models/HitterStatSchema");
 const DraftHistory = require("./models/DraftHistorySchema");
+const League = require("./models/LeagueSchema");
+const User = require("./models/UserSchema");
 const app = express()
 app.use(cors());
 app.use(express.json());
@@ -38,10 +40,13 @@ app.get('/', async (req, res) => {
 
 
 // to get all teams and their rosters and farm players
-app.get("/allteams", async (req, res) => {
+app.post("/allteams", async (req, res) => {
   try {
-    // console.log("GET /allteams");
-    const teams = await Team.find({});
+    const leagueId = req.body.leagueId;
+    const league = await League.findById(leagueId);
+    const teams = await Team.find({
+      _id: { $in: league.TeamsID },
+    });
     res.json(teams);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -53,7 +58,7 @@ app.post("/updateTeam", async (req, res) => {
   try {
     // console.log("POST /updateTeam with body: ", req.body);
     const {
-      teamName,
+      teamId,
       playerName,
       updatedPosition,
       updatedStatus,
@@ -61,14 +66,16 @@ app.post("/updateTeam", async (req, res) => {
       view,
     } = req.body;
 
-    if (!teamName || !playerName || !view) {
+    // console.log("update team: ", req.body);
+
+    if (!teamId || !playerName || !view) {
       console.log("Missing required fields in request body");
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const team = await Team.findOne({ teamName });
+    const team = await Team.findById(teamId);
     if (!team) {
-      console.log(`Team ${teamName} not found: `);
+      console.log(`Team not found: `);
       return res.status(404).json({ error: "Team not found" });
     }
 
@@ -77,7 +84,6 @@ app.post("/updateTeam", async (req, res) => {
     const player = playerList.find((p) => p.name === playerName);
 
     if (!player) {
-      console.log(`Player not found: ${playerName} in team ${teamName} (${view})`);
       return res.status(404).json({ error: "Player not found" });
     }
 
@@ -108,14 +114,14 @@ app.post("/updateTeam", async (req, res) => {
         // };
 app.post("/draftPlayer", async (req, res) => {
   try {
-    const { teamName, name, position, cost, status } = req.body;
-    if (!teamName || !name || !position || !cost || !status) {
+    const { teamId, name, position, cost, status } = req.body;
+    // console.log("POST /draftPlayer with body: ", req.body);
+    if (!teamId || !name || !position || !cost || !status) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const team = await Team.findOne({ teamName });
+    const team = await Team.findById(teamId);
     if (!team) {
-      console.log(`Team ${teamName} not found: `);
       return res.status(404).json({ error: "Team not found" });
     }
 
@@ -142,17 +148,16 @@ app.post("/draftPlayer", async (req, res) => {
 // User add players they drafted in the past to the roster
 app.post("/addPastPlayer", async (req, res) => {
   try {
-    console.log("POST /addPastPlayer with body: ", req.body);
-    const { teamName, name, position, cost, status, rosterOrFarm  } = req.body;
-
-    const team = await Team.findOne({ teamName });
+    // console.log("POST /addPastPlayer with body: ", req.body);
+    const { teamId, name, position, cost, status, rosterOrFarm  } = req.body;
+    // console.log("add past player: ", req.body);
+    const team = await Team.findById(teamId);
     if (!team) {
-      console.log(`Team ${teamName} not found: `);
+      console.log(`Team not found: `);
       return res.status(404).json({ error: "Team not found" });
     }
 
     if (rosterOrFarm  === "roster") {
-      console.log(`Adding player ${name} to roster of team ${teamName}`);
       team.rosterPlayers.push({
       name: name,
       position: position,
@@ -160,7 +165,6 @@ app.post("/addPastPlayer", async (req, res) => {
       status: status
       });
     } else {
-        console.log(`Adding player ${name} to farm players of team ${teamName}`);
       team.farmPlayers.push({
         name: name,
         position: position,
@@ -222,6 +226,18 @@ app.get("/settings/league", async (req, res) => {
   }
 });
 
+app.post("/league/info", async (req, res) => {
+  try {
+    const leagueInfo = await League.findOne({
+      _id: req.body.leagueId,
+    });
+
+    res.json(leagueInfo);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+})
+
 app.get("/stat/hitter/:year", async(req, res) => {
   try {
     // const { AVG, OBP, SLG, HR, RBI, SB } = req.body;
@@ -266,9 +282,12 @@ app.post("/draftHistory", async (req, res) => {
 // when a user drafts a player, add that player to the draft history for the league and year
 app.post("/draftHistory/addPlayer", async (req, res) => {
   try {
-    const { leagueName, year, playerName, teamName, cost, broughtupby, position } = req.body;
+    const { leagueId, year, playerName, teamName, cost, broughtupby, position } = req.body;
 
-    const history = await DraftHistory.findOne({ LeagueName: leagueName, Year: year });
+    // console.log("draft history add player ", req.body);
+
+    const history = await DraftHistory.findOne({ League: leagueId, Year: year });
+
     if (!history) {
       return res.status(404).json({ message: "No draft history found for that league and year" });
     }
@@ -289,11 +308,13 @@ app.post("/draftHistory/addPlayer", async (req, res) => {
 })
 
 // to get the draft history for a league and year
-app.get("/draftHistory/:leagueName/:year", async (req, res) => {
-  try {
-    const { leagueName, year } = req.params;
+app.post("/draftHistory/:year", async (req, res) => {
 
-    const history = await DraftHistory.findOne({ LeagueName: leagueName, Year: year });
+  try {
+    const { year } = req.params;
+    const leagueId = req.body.leagueId;
+
+    const history = await DraftHistory.findOne({ League: leagueId, Year: year });
     if (!history) {
       return res.status(404).json({ message: "No draft history found for that league and year" });
     }
@@ -307,8 +328,8 @@ app.get("/draftHistory/:leagueName/:year", async (req, res) => {
 app.post("/tradePlayers", async (req, res) => {
   try {
     const {
-      fromTeamName,
-      toTeamName,
+      fromTeamId,
+      toTeamId,
       fromPlayerName,
       toPlayerName,
       fromView,
@@ -316,8 +337,8 @@ app.post("/tradePlayers", async (req, res) => {
     } = req.body;
 
     if (
-      !fromTeamName ||
-      !toTeamName ||
+      !fromTeamId||
+      !toTeamId ||
       !fromPlayerName ||
       !toPlayerName ||
       !fromView ||
@@ -326,12 +347,12 @@ app.post("/tradePlayers", async (req, res) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    if (fromTeamName === toTeamName) {
+    if (fromTeamId === toTeamId) {
       return res.status(400).json({ error: "Teams must be different" });
     }
 
-    const fromTeam = await Team.findOne({ teamName: fromTeamName });
-    const toTeam = await Team.findOne({ teamName: toTeamName });
+    const fromTeam = await Team.findById({ _id: fromTeamId });
+    const toTeam = await Team.findById({ _id: toTeamId });
 
     if (!fromTeam || !toTeam) {
       return res.status(404).json({ error: "One or both teams not found" });
@@ -381,6 +402,94 @@ app.post("/tradePlayers", async (req, res) => {
   }
 });
 //End of new code
+
+
+// create a new league 
+app.post("/createLeague", async (req, res) => {
+  try {
+    const { leagueName, year, userId, username } = req.body;
+    let inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+    while (await League.findOne({ InviteCode: inviteCode })) {
+      inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    }
+
+    const newLeague = new League({
+      Name: leagueName,
+      Year: year,
+      TeamsID: [],
+      InviteCode: inviteCode,
+    });
+
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    user.league = newLeague._id;
+
+    const newDraftHistory = new DraftHistory({
+      LeagueName: leagueName,
+      Year: year,
+      DraftedPlayers: [],
+      League: newLeague._id
+    });
+
+    const newTeam = new Team({
+      teamName: username + "'s Team",
+      rosterPlayers: [],
+      farmPlayers: []
+    });
+
+    await newLeague.save();
+    await user.save();
+    await newDraftHistory.save();
+    await newTeam.save();
+    newLeague.TeamsID.push(newTeam._id);
+    await newLeague.save();
+
+    res.json({ message: "League created successfully!", league: newLeague });
+
+  } catch (error) {
+    console.error("Error creating league:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+})
+
+// join an existing league
+app.post("/joinLeague", async (req, res) => {
+  try {
+    const { inviteCode, userId, username } = req.body;
+    const league = await League.findOne({ InviteCode: inviteCode });
+    if (!league) {
+      return res.status(404).json({ message: "League not found" });
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const newTeam = new Team({
+      teamName: username + "'s Team",
+      rosterPlayers: [],
+      farmPlayers: []
+    });
+
+    user.league = league._id;
+    await user.save();
+
+    await newTeam.save();
+
+    league.TeamsID.push(newTeam._id);
+    await league.save();
+
+    res.json({ message: "Successfully joined the league!", user, newTeam });
+
+  } catch (error) {
+    console.error("Error joining league:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+})
 
 app.listen(port, () => {
   console.log(`fantasyDraftingTool server listening on port ${port}`)

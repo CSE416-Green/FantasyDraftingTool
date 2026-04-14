@@ -22,8 +22,7 @@ const fakePool = [
     {name: "Yoshinobu Yamamoto", position: ["P"]},
     {name: "Tarik Skubal", position: ["P"]},
 ]
-export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, maxNextCost, leagueName, year, teams }) {
-
+export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, maxNextCost, leagueName, year, teams, leagueId }) {
     // for now the [playerPool] only has name and position
     const [selectedPlayer, setSelectedPlayer] = useState("");
     const [position, setPosition] = useState("");
@@ -32,24 +31,22 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, m
     const [broughtupby, setBroughtupby] = useState("");
     const [draftedNames, setDraftedNames] = useState([]);
 
-  useEffect(() => {
     const fetchDraftedPlayers = async () => {
-      try {
-        const res = await axios.get(`/draftHistory/${leagueName}/${year}`);
-        const names = res.data.DraftedPlayers.map((p) => 
-          p.PlayerName
-        );
+    try {
+        const res = await axios.post(`/draftHistory/${year}`, { leagueId: leagueId });
+        const names = res.data.DraftedPlayers.map((p) => p.PlayerName);
         setDraftedNames(names);
-      } catch (err) {
+    } catch (err) {
         console.error('Failed to fetch draft history:', err);
         setDraftedNames([]);
-      }
+    }
     };
 
-    if (leagueName && year) {
-      fetchDraftedPlayers();
-    }
-  }, [leagueName, year]);
+    useEffect(() => {
+        if (leagueId && year) {
+        fetchDraftedPlayers();
+        }
+    }, [leagueId, year]);
 
 
 
@@ -59,8 +56,10 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, m
     async function handleSubmit(e) {
         e.preventDefault();
 
+        console.log("team: ", team);
+
         const draftedPlayer = {
-            teamName: team.teamName,
+            teamId: team._id,
             name: selectedPlayer,
             position,
             cost,
@@ -98,7 +97,7 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, m
         // also update the draft history
         try {
             await axios.post("/draftHistory/addPlayer", {
-                leagueName: leagueName,
+                leagueId: leagueId,
                 year: year,
                 playerName: selectedPlayer,
                 cost: cost,
