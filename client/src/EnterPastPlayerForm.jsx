@@ -20,7 +20,7 @@ export default function EnterPastPlayerForm({ team, onSubmit, onCancel, maxNextC
         const availablePositions = getAvailablePositions(team.rosterPlayers);
         e.preventDefault();
         const player = {
-            teamName: team.teamName,
+            teamId: team._id,
             name: playerName,
             position,
             cost,

@@ -16,7 +16,7 @@ import { useQuery } from '@tanstack/react-query';
 const pages = ['Main Page', 'Setting'];
 
 function MainPage({user,onLogout}) {
-  const [team, setTeam] = useState("Team 1")
+  const [team, setTeam] = useState("")
   const [view, setView] = useState("roster") // roster or farm
   const [totalBudget, setTotalBudget] = useState(0);
   const [leagueName, setLeagueName] = useState("default league");

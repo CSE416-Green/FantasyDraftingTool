@@ -56,6 +56,8 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, m
     async function handleSubmit(e) {
         e.preventDefault();
 
+        console.log("team: ", team);
+
         const draftedPlayer = {
             teamId: team._id,
             name: selectedPlayer,
