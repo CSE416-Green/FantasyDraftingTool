@@ -20,6 +20,7 @@ function MainPage({user,onLogout}) {
   const [view, setView] = useState("roster") // roster or farm
   const [totalBudget, setTotalBudget] = useState(0);
   const [leagueName, setLeagueName] = useState("default league");
+  const [leagueInviteCode, setLeagueInviteCode] = useState("N/A");
   const [year, setYear] = useState(2025);
 
   const [currentPage, setCurrentPage] = useState(pages[0]);
@@ -56,6 +57,7 @@ function MainPage({user,onLogout}) {
       try {
         const res = await axios.post("/league/info", { leagueId: user.league });
         setLeagueName(res.data.Name);
+        setLeagueInviteCode(res.data.InviteCode);
         setYear(res.data.Year);
       } catch (err) {
         console.error("Failed to fetch league information")
@@ -76,6 +78,7 @@ function MainPage({user,onLogout}) {
 
           <div className="team-roster">
               <h1>Team Rosters of {leagueName}</h1>
+              <div>League Invitation Code: {leagueInviteCode}</div>
               <TeamRoster
                     budget={totalBudget}
                     team={team}
