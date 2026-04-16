@@ -6,6 +6,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
+import LeagueFormContainer from './forms/leagueFormContainer'
 
 const queryClient = new QueryClient()
 
@@ -16,7 +17,10 @@ function App() {
   });
   return (
     <QueryClientProvider client={queryClient}>
-      {user? ( <MainPage user={user} onLogout={() => setUser(null)}/>):(<Login onLogin={(userData)=>setUser(userData)}/>)}
+      {user? ( 
+        !user.league ? 
+          (<LeagueFormContainer user={user} setUser={setUser}/>) : (<MainPage user={user} onLogout={() => setUser(null)}/>) ):
+        (<Login onLogin={(userData)=>setUser(userData)}/>)}
      
     </QueryClientProvider>
 
