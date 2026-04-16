@@ -407,7 +407,7 @@ app.post("/tradePlayers", async (req, res) => {
 // create a new league 
 app.post("/createLeague", async (req, res) => {
   try {
-    const { leagueName, year, userId, username } = req.body;
+    const { leagueName, year, userId, teamName } = req.body;
     let inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 
     while (await League.findOne({ InviteCode: inviteCode })) {
@@ -436,7 +436,7 @@ app.post("/createLeague", async (req, res) => {
     });
 
     const newTeam = new Team({
-      teamName: username + "'s Team",
+      teamName: teamName,
       rosterPlayers: [],
       farmPlayers: []
     });
@@ -448,7 +448,9 @@ app.post("/createLeague", async (req, res) => {
     newLeague.TeamsID.push(newTeam._id);
     await newLeague.save();
 
-    res.json({ message: "League created successfully!", league: newLeague });
+    res.json({ message: "League created successfully!", 
+      league: newLeague,
+      user: user,});
 
   } catch (error) {
     console.error("Error creating league:", error);
@@ -459,7 +461,8 @@ app.post("/createLeague", async (req, res) => {
 // join an existing league
 app.post("/joinLeague", async (req, res) => {
   try {
-    const { inviteCode, userId, username } = req.body;
+    // console.log("POST /joinLeague with body: ", req.body);
+    const { inviteCode, userId, teamName } = req.body;
     const league = await League.findOne({ InviteCode: inviteCode });
     if (!league) {
       return res.status(404).json({ message: "League not found" });
@@ -470,7 +473,7 @@ app.post("/joinLeague", async (req, res) => {
     }
 
     const newTeam = new Team({
-      teamName: username + "'s Team",
+      teamName: teamName,
       rosterPlayers: [],
       farmPlayers: []
     });
