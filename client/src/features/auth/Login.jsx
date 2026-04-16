@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import './css/login.css'
+import "../../css/login.css";
 export default function Login({ onLogin }) {
     const [isRegistering, setIsRegistering] = useState(false);
     const [form, setForm] = useState({

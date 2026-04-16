@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react'
-import TeamRoster from './TeamRoster'
-import PlayerPool, { fetchPlayerStats } from './PlayerPool'
-import Note from './Note'
-import LeagueConfiguration from './LeagueConfig'
-import UpdatePlayerEligibility from './UpdatePlayerEligibility'
-import AddPlayerToPool from './AddPlayerToPool'
-import PlayerNews from './PlayerNews'
-import DraftHistory from './DraftHistory'
-import Drawer from './Drawer'
-import './css/mainPage.css'
-import './css/settingsPage.css'
-import Header from './Header';
+import TeamRoster from '../../features/team-roster/TeamRoster'
+import PlayerPool, { fetchPlayerStats } from '../../features/player-pool/PlayerPool'
+import Note from '../../shared/components/Note'
+import LeagueConfiguration from '../../features/league-config/LeagueConfig'
+import UpdatePlayerEligibility from '../../features/update-player-eligibility/UpdatePlayerEligibility'
+import AddPlayerToPool from '../../features/add-player-to-pool/AddPlayerToPool'
+import DraftHistory from '../../features/draft-history/DraftHistory'
+import Drawer from '../../features/player-news/Drawer'
+import '../../css/mainPage.css'
+import '../../css/settingsPage.css'
+import Header from '../../shared/components/Header'
 import axios from "axios";
 import { useQuery } from '@tanstack/react-query';
 const pages = ['Main Page', 'Setting'];

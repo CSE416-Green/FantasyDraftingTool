@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 // css
-import './css/mainPage.css';
+import "../../css/mainPage.css";
 
 
 const fakeHistory = [

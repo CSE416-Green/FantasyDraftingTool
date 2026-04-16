@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useEffect, useState, useMemo } from "react";
-import EditRosterForm from "./EditRosterForm";
-import DraftPlayerForm from "./DraftPlayerForm";
-import EnterPastPlayerForm from "./EnterPastPlayerForm";
-import { parsePlayerString } from './PlayerPool';
-import TradePlayersForm from "./TradePlayersForm";
+import EditRosterForm from "./components/EditRosterForm";
+import DraftPlayerForm from "./components/DraftPlayerForm";
+import EnterPastPlayerForm from "./components/EnterPastPlayerForm";
+import { parsePlayerString } from "../player-pool/PlayerPool";
+import TradePlayersForm from "./components/TradePlayersForm";
 axios.defaults.baseURL = "http://localhost:3000";
 
 if (process.env.NODE_ENV == "production") {
@@ -203,7 +203,7 @@ export default function TeamRoster({
             {isTrading && (
               <TradePlayersForm
                 teams={teams}
-                currentTeamName={teamData?.teamName || ""}
+                currentTeamId={teamData?._id || ""}
                 onCancel={() => setIsTrading(false)}
                 onTrade={async () => {
                   await loadTeams();

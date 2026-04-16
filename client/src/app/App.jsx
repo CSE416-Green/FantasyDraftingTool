@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import './css/App.css'
-import MainPage from './MainPage'
-import Login from './Login'
+import '../css/App.css'
+import MainPage from '../pages/main-page/MainPage'
+import Login from '../features/auth/Login'
 import {
   QueryClient,
   QueryClientProvider,
