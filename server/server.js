@@ -286,7 +286,7 @@ app.post("/draftHistory/addPlayer", async (req, res) => {
 
     // console.log("draft history add player ", req.body);
 
-    const history = await DraftHistory.findOne({ League: leagueId, Year: year });
+    const history = await DraftHistory.findOne({ League: leagueId });
 
     if (!history) {
       return res.status(404).json({ message: "No draft history found for that league and year" });
@@ -308,13 +308,13 @@ app.post("/draftHistory/addPlayer", async (req, res) => {
 })
 
 // to get the draft history for a league and year
-app.post("/draftHistory/:year", async (req, res) => {
+app.post("/draftHistory/league", async (req, res) => {
 
   try {
     const { year } = req.params;
     const leagueId = req.body.leagueId;
 
-    const history = await DraftHistory.findOne({ League: leagueId, Year: year });
+    const history = await DraftHistory.findOne({ League: leagueId });
     if (!history) {
       return res.status(404).json({ message: "No draft history found for that league and year" });
     }

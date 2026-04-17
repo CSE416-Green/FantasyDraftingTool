@@ -20,7 +20,7 @@ function MainPage({user,onLogout}) {
   const [totalBudget, setTotalBudget] = useState(0);
   const [leagueName, setLeagueName] = useState("default league");
   const [leagueInviteCode, setLeagueInviteCode] = useState("N/A");
-  const [year, setYear] = useState(2025);
+  const [year, setYear] = useState();
 
   const [currentPage, setCurrentPage] = useState(pages[0]);
 
@@ -71,12 +71,12 @@ function MainPage({user,onLogout}) {
 
   return (
     <div className="main-page">
-        <Header pages={pages} onPageChange={handlePageChange} onLogout={onLogout}/>
+        <Header pages={pages} onPageChange={handlePageChange} onLogout={onLogout} user={user}/>
         {currentPage === "Main Page" ? 
         <div className="drafting-page">
 
           <div className="team-roster">
-              <h1>Team Rosters of {leagueName}</h1>
+              <h1>Team Rosters of {leagueName} of {year} season</h1>
               <div>League Invitation Code: {leagueInviteCode}</div>
               <TeamRoster
                     budget={totalBudget}

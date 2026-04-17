@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 
-function Header({ pages, onPageChange, onLogout }) {
+function Header({ pages, onPageChange, onLogout, user }) {
 
   const handleLogout = async () => {
     try {
@@ -60,6 +60,7 @@ function Header({ pages, onPageChange, onLogout }) {
               >Logout
               </Button>
           </Box>
+          <div>{user?.username}</div>
         </Toolbar>
       </Container>
     </AppBar>
