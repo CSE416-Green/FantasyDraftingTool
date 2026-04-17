@@ -202,7 +202,7 @@ export default function TeamRoster({
                 teams={teams}
                 leagueId={user.league}
                 setDraftHistory={setDraftHistory}
-                draftedNames={draftHistory.map(p => p.name)}
+                draftedNames={draftHistory.map(p => p.PlayerName)}
               />
             )}
             {isTrading && (
