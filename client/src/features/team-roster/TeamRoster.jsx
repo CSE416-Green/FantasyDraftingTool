@@ -5,6 +5,7 @@ import DraftPlayerForm from "./components/DraftPlayerForm";
 import EnterPastPlayerForm from "./components/EnterPastPlayerForm";
 import { parsePlayerString } from "../player-pool/PlayerPool";
 import TradePlayersForm from "./components/TradePlayersForm";
+import DraftHistory from "../draft-history/DraftHistory";
 axios.defaults.baseURL = "http://localhost:3000";
 
 if (process.env.NODE_ENV == "production") {
@@ -25,6 +26,8 @@ export default function TeamRoster({
   leagueName,
   year,
   user,
+  setDraftHistory,
+  draftHistory
 }) {
   const [teams, setTeams] = useState([]);
   const [isEditingTeam, setIsEditingTeam] = useState(false);
@@ -198,6 +201,8 @@ export default function TeamRoster({
                 year={year}
                 teams={teams}
                 leagueId={user.league}
+                setDraftHistory={setDraftHistory}
+                draftedNames={draftHistory.map(p => p.name)}
               />
             )}
             {isTrading && (

@@ -22,34 +22,24 @@ const fakePool = [
     {name: "Yoshinobu Yamamoto", position: ["P"]},
     {name: "Tarik Skubal", position: ["P"]},
 ]
-export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, maxNextCost, leagueName, year, teams, leagueId }) {
+export default function DraftPlayerForm({ 
+    team, 
+    onDraft, 
+    onCancel, 
+    playerPool, 
+    maxNextCost, 
+    leagueName, 
+    year, 
+    teams, 
+    leagueId,
+    setDraftHistory,
+    draftedNames}) {
     // for now the [playerPool] only has name and position
     const [selectedPlayer, setSelectedPlayer] = useState("");
     const [position, setPosition] = useState("");
     const [cost, setCost] = useState("");
     const [status, setStatus] = useState("");
     const [broughtupby, setBroughtupby] = useState("");
-    const [draftedNames, setDraftedNames] = useState([]);
-
-    const fetchDraftedPlayers = async () => {
-    try {
-        const res = await axios.post('/draftHistory/league', { leagueId: leagueId });
-        const names = res.data.DraftedPlayers.map((p) => p.PlayerName);
-        setDraftedNames(names);
-    } catch (err) {
-        console.error('Failed to fetch draft history:', err);
-        setDraftedNames([]);
-    }
-    };
-
-    useEffect(() => {
-        if (leagueId && year) {
-        fetchDraftedPlayers();
-        }
-    }, [leagueId, year]);
-
-
-
 
     const fullPlayer = playerPool.find(p => p.name === selectedPlayer);
 
@@ -96,7 +86,7 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, m
 
         // also update the draft history
         try {
-            await axios.post("/draftHistory/addPlayer", {
+            const res = await axios.post("/draftHistory/addPlayer", {
                 leagueId: leagueId,
                 year: year,
                 playerName: selectedPlayer,
@@ -105,6 +95,9 @@ export default function DraftPlayerForm({ team, onDraft, onCancel, playerPool, m
                 position: position,
                 broughtupby: broughtupby
             });
+            // update draft history in TeamRoster
+            // server res.json({ message: "Player added to draft history successfully!", history });
+            setDraftHistory(res.data.history.DraftedPlayers);
         } catch (err) {
             console.error("Failed to update draft history:", err);
         }

@@ -21,6 +21,7 @@ function MainPage({user,onLogout}) {
   const [leagueName, setLeagueName] = useState("default league");
   const [leagueInviteCode, setLeagueInviteCode] = useState("N/A");
   const [year, setYear] = useState();
+  const [draftHistory, setDraftHistory] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(pages[0]);
 
@@ -67,6 +68,32 @@ function MainPage({user,onLogout}) {
       loadLeagueInfo();
     }, []);
 
+
+    const fetchHistory = async () => {
+      try {
+        const leagueId = user.league;
+        const res = await axios.post('/draftHistory/league', { leagueId: leagueId});
+
+        const data = res.data.DraftedPlayers.map((p) => ({
+          PlayerName: p.PlayerName,
+          Pick: p.Pick,
+          TeamName: p.TeamName,
+          Cost: p.Cost,
+          BroughtUpBy: p.BroughtUpBy,
+          Position: p.Position
+        }));
+
+        setDraftHistory(data);
+
+    } catch (err) {
+        console.error("Failed to fetch draft history:", err);
+      }
+    };
+
+  useEffect(() => {
+    fetchHistory();
+  }, []);
+
   
 
   return (
@@ -89,6 +116,8 @@ function MainPage({user,onLogout}) {
                     leagueName={leagueName}
                     year={year}
                     user={user}
+                    setDraftHistory={setDraftHistory}
+                    draftHistory={draftHistory}
               />
           </div>
           <div className="player-pool">
@@ -111,6 +140,7 @@ function MainPage({user,onLogout}) {
                 leagueName={leagueName}
                 year={year}
                 leagueId={user.league}
+                history={draftHistory}
               />
           </div>
           <div className="news-history">
