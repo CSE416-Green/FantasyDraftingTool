@@ -6,7 +6,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
-import LeagueFormContainer from './forms/leagueFormContainer'
+import LeagueFormContainer from '../forms/leagueFormContainer'
 
 const queryClient = new QueryClient()
 

@@ -17,7 +17,7 @@ export default function DraftHistory({leagueName, year, leagueId}) {
 
     const fetchHistory = async () => {
       try {
-        const res = await axios.post(`/draftHistory/${year}`, { leagueId: leagueId});
+        const res = await axios.post('/draftHistory/league', { leagueId: leagueId});
 
         const data = res.data.DraftedPlayers.map((p) => ({
           name: p.PlayerName,

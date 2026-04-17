@@ -69,7 +69,7 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
 
   const fetchDraftedPlayers = async () => {
   try {
-    const res = await axios.post(`/draftHistory/${year}`, { leagueId: leagueId });
+    const res = await axios.post('/draftHistory/league', { leagueId: leagueId });
     const names = res.data.DraftedPlayers.map((p) => p.PlayerName);
     setDraftedNames(names);
   } catch (err) {
