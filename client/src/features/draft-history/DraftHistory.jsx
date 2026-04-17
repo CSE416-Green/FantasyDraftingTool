@@ -12,8 +12,6 @@ const fakeHistory = [
 
 export default function DraftHistory({leagueName, year, leagueId, history}) {
 
-  console.log("history in draft history component: ", history)
-
   return (
     <div className="historyWrapper">
       <h2>Draft History</h2>
