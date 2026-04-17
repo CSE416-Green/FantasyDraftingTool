@@ -10,41 +10,13 @@ const fakeHistory = [
 ];
 
 
-export default function DraftHistory({leagueName, year, leagueId}) {
-  const [history, setHistory] = useState(fakeHistory);
+export default function DraftHistory({leagueName, year, leagueId, history}) {
 
-
-
-    const fetchHistory = async () => {
-      try {
-        const res = await axios.post('/draftHistory/league', { leagueId: leagueId});
-
-        const data = res.data.DraftedPlayers.map((p) => ({
-          name: p.PlayerName,
-          order: p.Pick,
-          team: p.TeamName,
-          cost: p.Cost,
-          broughtupby: p.BroughtUpBy,
-          position: p.Position
-        }));
-
-        setHistory(data);
-
-    } catch (err) {
-        console.error("Failed to fetch draft history:", err);
-      }
-    };
-
-  useEffect(() => {
-    fetchHistory();
-  }, []);
+  console.log("history in draft history component: ", history)
 
   return (
     <div className="historyWrapper">
       <h2>Draft History</h2>
-      <button onClick={fetchHistory} className="form-buttom">
-        Refresh History
-      </button>
       <table>
         <thead>
           <tr>
@@ -58,13 +30,13 @@ export default function DraftHistory({leagueName, year, leagueId}) {
         </thead>
         <tbody>
           {history.map((p) => (
-            <tr key={p.order}>
-              <td className="history-td">{p.order}</td>
-              <td className="history-td">{p.broughtupby}</td>
-              <td className="history-td">{p.name}</td>
-              <td className="history-td">{p.position}</td>
-              <td className="history-td">{p.team}</td>
-              <td className="history-td">${p.cost}</td>
+            <tr key={p.Pick}>
+              <td className="history-td">{p.Pick}</td>
+              <td className="history-td">{p.BroughtUpBy}</td>
+              <td className="history-td">{p.PlayerName}</td>
+              <td className="history-td">{p.Position}</td>
+              <td className="history-td">{p.TeamName}</td>
+              <td className="history-td">${p.Cost}</td>
             </tr>
           ))}
         </tbody>
