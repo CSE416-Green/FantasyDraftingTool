@@ -154,11 +154,18 @@ export default function DraftPlayerForm({
                 <label>Position:</label>
                 <select className="form-select" value={position} onChange={(e) => setPosition(e.target.value)}>
                     <option value="">Select a Position:</option>
-                    {selectedPlayer && playerPool
-                        .find(p => p.name === selectedPlayer)?.position
-                        .map((pos, index) => (
-                            <option key={index} value={pos}>{pos}</option>
-                        ))}
+                    {selectedPlayer && playerPool && (() => {
+                        const playerPositions = playerPool.find(p => p.name === selectedPlayer)?.position || [];
+
+                        const primaryPosition = playerPositions[0];
+                        const allPositions = positionDictionary[primaryPosition] || [];
+
+                        return allPositions.map((pos, index) => (
+                        <option key={index} value={pos}>
+                            {pos}
+                        </option>
+                        ));
+                    })()}
                 </select>
             </div>
 
@@ -233,4 +240,20 @@ function getAvailablePositions(rosterPlayers) {
     available = available.filter(pos => pos !== "P");
   }
   return available;
+}
+
+// dictionary for position
+const positionDictionary = {
+    "C": ["C", "DH", "U"],
+    "1B": ["1B", "CI", "U"],
+    "3B": ["3B", "CI", "U"],
+    "CI": ["1B", "3B", "CI", "U"],
+    "2B": ["2B", "MI", "U"],
+    "SS": ["SS", "MI", "U"],
+    "MI": ["2B", "SS", "MI", "U"],
+    "OF": ["OF", "U"],
+    "RF": ["OF", "U"],
+    "CF": ["OF", "U"],
+    "LF": ["OF", "U"],
+    "DH": ["U"]
 }
