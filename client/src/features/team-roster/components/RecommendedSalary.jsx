@@ -22,7 +22,7 @@ export default function RecommendedSalary({ player, maxNextCost }) {
         };
 
         const response = await axios.post(
-          // "http://localhost:3000/GetSalaryForPlayers/compute/",
+          // "http://localhost:8080/GetSalaryForPlayers/compute/",
           "https://fantasydraftingtool.onrender.com/GetSalaryForPlayers/compute/",
           requestBody,
         );

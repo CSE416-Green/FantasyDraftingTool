@@ -43,9 +43,9 @@ export default function TeamRoster({
     : [];
 
   return {
-    ...player,
     name: parsed.name,
     position: positions,
+    ID: player.ID,
   };
 });
 

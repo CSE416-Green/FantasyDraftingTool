@@ -6,7 +6,7 @@ const recommendedSalaryRouter = express.Router();
 
 recommendedSalaryRouter.post("/", async (req, res) => {
     try {
-        console.log("calling gateway to calculate salary for player:", req.body.players[0].Player);
+        // console.log("calling gateway to calculate salary for player:", req.body.players);
         
         const response = await fetch(
             "https://fantasybaseballgateway.onrender.com/api/GetSalaryForPlayers/compute",
