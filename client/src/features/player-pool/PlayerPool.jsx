@@ -92,6 +92,7 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
       const isDrafted = draftedNames.includes(parsedPlayer.name);
 
       return {
+        id: player.ID,
         name: parsedPlayer.name,
         position: parsedPlayer.position,
         team: parsedPlayer.team,
