@@ -3,7 +3,6 @@ import TeamRoster from '../../features/team-roster/TeamRoster'
 import PlayerPool, { fetchPlayerStats } from '../../features/player-pool/PlayerPool'
 import Note from '../../shared/components/Note'
 import LeagueConfiguration from '../../features/league-config/LeagueConfig'
-import UpdatePlayerEligibility from '../../features/update-player-eligibility/UpdatePlayerEligibility'
 import AddPlayerToPool from '../../features/add-player-to-pool/AddPlayerToPool'
 import DraftHistory from '../../features/draft-history/DraftHistory'
 import Drawer from '../../features/player-news/Drawer'
@@ -150,7 +149,6 @@ function MainPage({user,onLogout}) {
         <div className="settings-page">
           <h1 className="settings-title">Draft Settings</h1>
           <LeagueConfiguration />
-          <UpdatePlayerEligibility />
           <AddPlayerToPool />
         </div>
         }
