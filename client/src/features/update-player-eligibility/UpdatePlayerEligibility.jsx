@@ -39,8 +39,4 @@ function handleSubmit(e) {
         const formData = new FormData(e.target);
         const playerName = formData.get("playerName");
         const position = formData.get("playerPosition");
-
-        console.log("Update Player Eligibility:");
-        console.log("Player Name: ", playerName);
-        console.log("Position: ", position);
 }

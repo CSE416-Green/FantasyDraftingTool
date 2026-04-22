@@ -21,11 +21,13 @@ export default function LeagueConfiguration() {
         // const numTeams = formData.get("numTeams");
         // const teamBudget = formData.get("teamBudget");
         
-        console.log("Update League Configuration:");
-        console.log("numTeams: ", numTeams);
-        console.log("teamBudget: ", teamBudget);
-        axios.post("/settings/league", { numTeams: Number(numTeams), teamBudget: Number(teamBudget)  })
-        .then(res => console.log("Saved!", res.data))
+        axios.post("/settings/league", {
+            numTeams: Number(numTeams),
+            teamBudget: Number(teamBudget)
+        })
+        .then(() => { 
+                //Optional 
+        })
         .catch(err => console.error("Error:", err));
     
     }

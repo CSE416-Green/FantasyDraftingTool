@@ -12,7 +12,6 @@ const generateToken=(id)=>{
 }
 
 router.post('/register', async (req,res)=>{
-    console.log("in post server");
     const { firstName, lastName, username, email, password } = req.body;
     if (!firstName || !lastName || !username || !email || !password) {
         return res.status(400).json({ message: "Please fill all the fields" });
@@ -53,7 +52,6 @@ router.post('/login', async (req,res)=>{
         return res.status(401).json({ message: "Invalid email or password" });
     }
     const match = await bcrypt.compare(password, user.password);
-    console.log(match);
     if (!match) {
         return res.status(401).json({ message: "Invalid credentials" });
     }
