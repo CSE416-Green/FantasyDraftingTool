@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 // import { useQuery } from '@tanstack/react-query';
 import {
@@ -55,7 +55,7 @@ export async function fetchPlayerStats() {
   }
 }
 
-export default function PlayerPool({ playerStats, isLoading, error, leagueName, year, leagueId }) {
+export default function PlayerPool({ playerStats, isLoading, error, leagueName, year, leagueId, user }) {
   // const {
   //   data: playerStats = [],
   //   isLoading,
@@ -84,6 +84,43 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
       fetchDraftedPlayers();
     }
   }, [leagueId, year]);
+
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const [playerNote, setPlayerNote] = useState("");
+  const [noteStatus, setNoteStatus] = useState("");
+  const debounceTimer = useRef(null);
+
+  async function fetchPlayerNote(playerName) {
+    try {
+      const res = await axios.get(`/playerNote/${leagueId}/${user._id}/${encodeURIComponent(playerName)}`);
+      setPlayerNote(res.data.note || "");
+    } catch (err) {
+      console.error("Failed to fetch player note:", err);
+    }
+  }
+
+  function handleNoteChange(e) {
+    const value = e.target.value;
+    setPlayerNote(value);
+    setNoteStatus("Saving...");
+  
+    clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(async () => {
+      try {
+        await axios.post("/playerNote/save", {
+          playerName: selectedPlayer,
+          leagueId,
+          userId: user._id,
+          note: value,
+        });
+        setNoteStatus("Saved!");
+        setTimeout(() => setNoteStatus(""), 2000);
+      } catch (err) {
+        console.error("Failed to save note:", err);
+        setNoteStatus("Error saving");
+      }
+    }, 1000);
+  }
 
   //fetch manual players from DB
   const [manualPlayers, setManualPlayers] = useState([]);
@@ -266,7 +303,12 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
       showAlertBanner: Boolean(error),
     },
     muiTableBodyRowProps: ({ row }) => ({
+      onClick: () => {
+        setSelectedPlayer(row.original.name);
+        fetchPlayerNote(row.original.name);
+      },
       sx: {
+        cursor: 'pointer',
         '& td': {
           color: row.original.isDrafted ? '#D5D5D5' : '#000000',
         },
@@ -275,13 +317,60 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
   });
 
   return (
-  <div>
-    <button onClick={fetchDraftedPlayers} className="form-buttom">
-    Refresh Player Pool
-    </button>
-    <MaterialReactTable table={table} />
-  </div>
-  )
-
-  // return <MaterialReactTable table={table} />;
-}
+    <div>
+      <button onClick={fetchDraftedPlayers} className="form-buttom">
+        Refresh Player Pool
+      </button>
+      <MaterialReactTable table={table} />
+      {selectedPlayer && (
+      <div style={{
+        marginTop: "16px",
+        padding: "16px",
+        border: "1px solid #ccc",
+        borderRadius: "6px",
+        backgroundColor: "#ffffff",
+        position: "relative",
+      }}>
+        <button
+          onClick={() => setSelectedPlayer(null)}
+          style={{
+            position: "absolute",
+            top: "8px",
+            right: "8px",
+            background: "none",
+            border: "none",
+            fontSize: "18px",
+            cursor: "pointer",
+            color: "#666",
+            lineHeight: 1,
+          }}
+        >
+          ✕
+        </button>
+        <h3 style={{ margin: "0 0 8px 0", color: "#1d3a28" }}>
+          Notes for {selectedPlayer}
+        </h3>
+        <textarea
+          value={playerNote}
+          onChange={handleNoteChange}
+          placeholder="Type your notes about this player..."
+          rows={4}
+          style={{
+            width: "100%",
+            resize: "vertical",
+            boxSizing: "border-box",
+            padding: "10px",
+            backgroundColor: "#d9d9d9",
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            fontSize: "14px",
+            fontFamily: "inherit",
+            color: "#1d3a28",
+          }}
+        />
+        {noteStatus && <p style={{ fontSize: "12px", color: "#666", margin: "4px 0 0 0" }}>{noteStatus}</p>}
+      </div>
+          )}
+    </div>
+  //return <MaterialReactTable table={table} />;
+  )};

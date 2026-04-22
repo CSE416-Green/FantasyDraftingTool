@@ -36,6 +36,8 @@ const addedPlayerPoolRouter = require("./routes/addedPlayerPool");
 app.use("/addedPlayerPool", addedPlayerPoolRouter);
 const generalNoteRouter = require("./routes/notes/generalNote");
 app.use("/generalNote", generalNoteRouter);
+const playerNoteRouter = require("./routes/notes/playerNote");
+app.use("/playerNote", playerNoteRouter);
 const port = 3000
 
 app.get('/', async (req, res) => {

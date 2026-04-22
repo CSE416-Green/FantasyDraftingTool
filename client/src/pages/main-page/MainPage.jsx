@@ -128,6 +128,7 @@ function MainPage({user,onLogout}) {
                 leagueName={leagueName}
                 year={year}
                 leagueId={user.league}
+                user={user}
               />
           </div>
           <div className="notes"> 
@@ -149,7 +150,7 @@ function MainPage({user,onLogout}) {
         <div className="settings-page">
           <h1 className="settings-title">Draft Settings</h1>
           <LeagueConfiguration />
-          <AddPlayerToPool leagueId={user.league} />
+          <AddPlayerToPool leagueId={user.league} userId={user._id}/>
         </div>
         }
     </div>

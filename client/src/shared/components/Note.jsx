@@ -69,6 +69,7 @@ function Note({ user, leagueId }) {
           color: "#1d3a28",
         }}
       />
+     {status && <p style={{ fontSize: "12px", color: "#666", margin: "4px 0 0 0" }}>{status}</p>}
     </div>
   );
 }
