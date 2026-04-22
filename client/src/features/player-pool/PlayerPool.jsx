@@ -90,7 +90,7 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
   useEffect(() => {
     async function fetchManualPlayers() {
       try {
-        const res = await axios.get('/addedPlayerPool/manualPlayers');
+        const res = await axios.get(`/addedPlayerPool/manualPlayers/${leagueId}`);
         setManualPlayers(res.data);
       } catch (err) {
         console.error('Failed to fetch manual players:', err);

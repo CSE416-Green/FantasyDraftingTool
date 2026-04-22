@@ -149,7 +149,7 @@ function MainPage({user,onLogout}) {
         <div className="settings-page">
           <h1 className="settings-title">Draft Settings</h1>
           <LeagueConfiguration />
-          <AddPlayerToPool />
+          <AddPlayerToPool leagueId={user.league} />
         </div>
         }
     </div>

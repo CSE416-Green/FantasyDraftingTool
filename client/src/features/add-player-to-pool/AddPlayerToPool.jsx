@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export default function AddPlayerToPool() {
+export default function AddPlayerToPool({leagueId}) {
     async function handleSubmit(e) {
         e.preventDefault();
         const formData = new FormData(e.target);
@@ -12,7 +12,7 @@ export default function AddPlayerToPool() {
 
         const name = `${firstName} ${lastName}`.trim();
         try {
-            await axios.post("/addedPlayerPool/add", { name, position, team, note });
+            await axios.post("/addedPlayerPool/add", { name, position, team, note, leagueId});
             alert("player added to pool");
             e.target.reset();
         } catch (err) {
