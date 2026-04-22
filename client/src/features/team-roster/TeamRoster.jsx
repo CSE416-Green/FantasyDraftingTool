@@ -34,20 +34,41 @@ export default function TeamRoster({
   const [isDrafting, setIsDrafting] = useState(false);
   const [isEnteringPast, setIsEnteringPast] = useState(false);
   const [isTrading, setIsTrading] = useState(false);
+  const [manualPlayers, setManualPlayers] = useState([]);
 
-  const playerPool = playerStats.map((player) => {
-  const parsed = parsePlayerString(player.Player ?? "");
+  useEffect(() => {
+    async function fetchManualPlayers() {
+      try {
+        const res = await axios.get('/addedPlayerPool/manualPlayers');
+        setManualPlayers(res.data);
+      } catch (err) {
+        console.error('Failed to fetch manual players:', err);
+      }
+    }
+    fetchManualPlayers();
+  }, []);
+ 
+  const playerPool = [
+    ...playerStats.map((player) => {
+    const parsed = parsePlayerString(player.Player ?? "");
 
-  const positions = parsed.position
-    ? parsed.position.split(/[\/,]/).map(p => p.trim())
-    : [];
+    const positions = parsed.position
+      ? parsed.position.split(/[\/,]/).map(p => p.trim())
+      : [];
 
-  return {
-    name: parsed.name,
-    position: positions,
-    ID: player.ID,
-  };
-});
+    return {
+      name: parsed.name,
+      position: positions,
+      ID: player.ID,
+    };
+    }),
+    ...manualPlayers.map((player)=>({
+      name:player.name,
+      position:[player.position],
+      ID:player._id
+    }))
+  ];
+
 
   //  to reload teams
   const loadTeams = async () => {
