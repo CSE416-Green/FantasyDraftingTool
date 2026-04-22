@@ -32,6 +32,8 @@ const userAuthRouter=require("./routes/userAuth");
 app.use("/user", userAuthRouter);
 const recommendedSalaryRouter = require("./routes/recommededSalary");
 app.use("/GetSalaryForPlayers/compute", recommendedSalaryRouter);
+const addedPlayerPoolRouter = require("./routes/addedPlayerPool");
+app.use("/addedPlayerPool", addedPlayerPoolRouter);
 const port = 3000
 
 app.get('/', async (req, res) => {
