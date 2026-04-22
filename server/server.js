@@ -496,7 +496,14 @@ app.post("/joinLeague", async (req, res) => {
   }
 })
 
-app.listen(port, () => {
-  console.log(`fantasyDraftingTool server listening on port ${port}`)
-})
+// app.listen(port, () => {
+//   console.log(`fantasyDraftingTool server listening on port ${port}`)
+// })
 
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`fantasyDraftingTool server listening on port ${port}`)
+  })
+}
+
+module.exports = { app, port };
