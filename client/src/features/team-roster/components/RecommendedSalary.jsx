@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-export default function RecommendedSalary({ player, maxNextCost }) {
+export default function RecommendedSalary({ player, maxNextCost, remainingSpots }) {
   const [salary, setSalary] = useState(-1);
 
   useEffect(() => {
@@ -19,6 +19,7 @@ export default function RecommendedSalary({ player, maxNextCost }) {
           maxNextCost: maxNextCost,
           baseSalary: baseSalary,
           players: [player],
+          remainingSpots: remainingSpots
         };
 
         const response = await axios.post(

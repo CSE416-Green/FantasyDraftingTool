@@ -96,7 +96,7 @@ export default function TeamRoster({
 
   // find selected team
   const teamData = teams.find(t => t.teamName === team);
-  
+  const maxRosterPlayer = 23;
   const rosterPlayers = teamData?.rosterPlayers ?? [];
   const farmPlayers = teamData?.farmPlayers ?? [];
 
@@ -224,6 +224,7 @@ export default function TeamRoster({
                 leagueId={user.league}
                 setDraftHistory={setDraftHistory}
                 draftedNames={draftHistory.map(p => p.PlayerName)}
+                remainingSpots={maxRosterPlayer - rosterPlayers.length}
               />
             )}
             {isTrading && (
