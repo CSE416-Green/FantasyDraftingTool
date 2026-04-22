@@ -11,7 +11,6 @@ axios.defaults.baseURL = "http://localhost:3000";
 if (process.env.NODE_ENV == "production") {
   axios.defaults.baseURL = "https://fantasydraftingtool.onrender.com/";
 }
-console.log("Current environment:", process.env.NODE_ENV);
 
 const maxNumberofMembers = 23;
 

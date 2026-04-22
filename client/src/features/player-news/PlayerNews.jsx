@@ -6,7 +6,6 @@ export default function PlayerNews() {
     const { data, isLoading, error } = useQuery({
     queryKey: ['news'],
     queryFn: async () => {
-        console.log("Fetching player news...");
         const res = await fetch(
         'https://www.rotowire.com/rss/news.php?sport=MLB'
         );

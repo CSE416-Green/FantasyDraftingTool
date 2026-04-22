@@ -62,7 +62,6 @@ app.post("/allteams", async (req, res) => {
 // to update a team's roster or farm players
 app.post("/updateTeam", async (req, res) => {
   try {
-    // console.log("POST /updateTeam with body: ", req.body);
     const {
       teamId,
       playerName,
@@ -72,16 +71,15 @@ app.post("/updateTeam", async (req, res) => {
       view,
     } = req.body;
 
-    // console.log("update team: ", req.body);
 
     if (!teamId || !playerName || !view) {
-      console.log("Missing required fields in request body");
+      console.warn("Missing required fields in request body");
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     const team = await Team.findById(teamId);
     if (!team) {
-      console.log(`Team not found: `);
+      console.warn(`Team not found: `);
       return res.status(404).json({ error: "Team not found" });
     }
 
@@ -104,7 +102,7 @@ app.post("/updateTeam", async (req, res) => {
       team,
     });
   } catch (error) {
-    console.log("Error updating team:", error);
+    console.error("Error updating team:", error);
     res.status(500).json({ error: "Server error" });
   }
 });
@@ -121,7 +119,6 @@ app.post("/updateTeam", async (req, res) => {
 app.post("/draftPlayer", async (req, res) => {
   try {
     const { teamId, name, position, cost, status } = req.body;
-    // console.log("POST /draftPlayer with body: ", req.body);
     if (!teamId || !name || !position || !cost || !status) {
       return res.status(400).json({ error: "Missing required fields" });
     }
@@ -154,12 +151,10 @@ app.post("/draftPlayer", async (req, res) => {
 // User add players they drafted in the past to the roster
 app.post("/addPastPlayer", async (req, res) => {
   try {
-    // console.log("POST /addPastPlayer with body: ", req.body);
     const { teamId, name, position, cost, status, rosterOrFarm  } = req.body;
-    // console.log("add past player: ", req.body);
     const team = await Team.findById(teamId);
     if (!team) {
-      console.log(`Team not found: `);
+      console.warn(`Team not found: `);
       return res.status(404).json({ error: "Team not found" });
     }
 
@@ -289,8 +284,6 @@ app.post("/draftHistory", async (req, res) => {
 app.post("/draftHistory/addPlayer", async (req, res) => {
   try {
     const { leagueId, year, playerName, teamName, cost, broughtupby, position } = req.body;
-
-    // console.log("draft history add player ", req.body);
 
     const history = await DraftHistory.findOne({ League: leagueId });
 
@@ -467,7 +460,6 @@ app.post("/createLeague", async (req, res) => {
 // join an existing league
 app.post("/joinLeague", async (req, res) => {
   try {
-    // console.log("POST /joinLeague with body: ", req.body);
     const { inviteCode, userId, teamName } = req.body;
     const league = await League.findOne({ InviteCode: inviteCode });
     if (!league) {
