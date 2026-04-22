@@ -1,12 +1,12 @@
 
-
 .settings-page {
   max-width: 100%;
+  min-height: 100vh;
   margin: 0;
   padding: 0 20px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 35px;
   background-color: #e5e5e5;
 }
 
@@ -73,9 +73,24 @@
   background-color: #f0f0f0;
 }
 
+.form-field input,
+.form-field select,
+.form-field textarea,
+.form-input {
+  background-color: #ffffff !important;
+  color: #1d3a28;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 18px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 textarea.form-input {
   width: 100%;
   resize: vertical;
   box-sizing: border-box;
 }
+
 

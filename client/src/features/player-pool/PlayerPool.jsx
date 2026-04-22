@@ -66,6 +66,7 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
   // });
 
   const [draftedNames, setDraftedNames] = useState([]);
+  
 
   const fetchDraftedPlayers = async () => {
   try {
@@ -84,13 +85,25 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
     }
   }, [leagueId, year]);
 
+  //fetch manual players from DB
+  const [manualPlayers, setManualPlayers] = useState([]);
+  useEffect(() => {
+    async function fetchManualPlayers() {
+      try {
+        const res = await axios.get('/addedPlayerPool/manualPlayers');
+        setManualPlayers(res.data);
+      } catch (err) {
+        console.error('Failed to fetch manual players:', err);
+      }
+    }
+    fetchManualPlayers();
+  }, []);
+
 
   const data = useMemo(() => {
-    return playerStats
-      .map((player) => {
+    const apiPlayers=playerStats.map((player)=>{
       const parsedPlayer = parsePlayerString(player.Player ?? '');
       const isDrafted = draftedNames.includes(parsedPlayer.name);
-
       return {
         id: player.ID,
         name: parsedPlayer.name,
@@ -115,7 +128,34 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
         isDrafted,
       };
     });
-  }, [playerStats, draftedNames]);
+    const dbPlayers=manualPlayers.map((player)=>{
+      const isDrafted = draftedNames.includes(player.name);
+      return {
+        id: player._id,
+        name: player.name,
+        position: player.position,
+        team: player.team,
+        AB: player.AB ?? '',
+        R: player.R ?? '',
+        H: player.H ?? '',
+        '1B': player['1B'] ?? '',
+        '2B': player['2B'] ?? '',
+        '3B': player['3B'] ?? '',
+        HR: player.HR ?? '',
+        RBI: player.RBI ?? '',
+        BB: player.BB ?? '',
+        K: player.K ?? '',
+        SB: player.SB ?? '',
+        CS: player.CS ?? '',
+        AVG: player.AVG ?? '',
+        OBP: player.OBP ?? '',
+        SLG: player.SLG ?? '',
+        FPTS: player.FPTS ?? '',
+        isDrafted,
+      };
+    });
+    return [...apiPlayers, ...dbPlayers];
+  }, [playerStats, draftedNames, manualPlayers]);
 
   const columns = useMemo(
     () => [
