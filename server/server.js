@@ -34,6 +34,8 @@ const recommendedSalaryRouter = require("./routes/recommededSalary");
 app.use("/GetSalaryForPlayers/compute", recommendedSalaryRouter);
 const addedPlayerPoolRouter = require("./routes/addedPlayerPool");
 app.use("/addedPlayerPool", addedPlayerPoolRouter);
+const generalNoteRouter = require("./routes/notes/generalNote");
+app.use("/generalNote", generalNoteRouter);
 const port = 3000
 
 app.get('/', async (req, res) => {

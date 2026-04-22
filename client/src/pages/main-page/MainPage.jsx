@@ -131,7 +131,7 @@ function MainPage({user,onLogout}) {
               />
           </div>
           <div className="notes"> 
-              <Note />
+            <Note user={user} leagueId={user.league} />
 
           </div>
           <div className="draft-history">
