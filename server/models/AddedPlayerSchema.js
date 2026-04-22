@@ -6,6 +6,7 @@ const AddedPlayerSchema = new mongoose.Schema(
     name: String,
     team: String,
     note: String,
+    leagueId: String
   }, {timestamps:true}
 );
 

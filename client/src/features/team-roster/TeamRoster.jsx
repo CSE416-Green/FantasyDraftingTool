@@ -39,7 +39,7 @@ export default function TeamRoster({
   useEffect(() => {
     async function fetchManualPlayers() {
       try {
-        const res = await axios.get('/addedPlayerPool/manualPlayers');
+        const res = await axios.get(`/addedPlayerPool/manualPlayers/${user.league}`);
         setManualPlayers(res.data);
       } catch (err) {
         console.error('Failed to fetch manual players:', err);
