@@ -11,11 +11,6 @@ export default function AddPlayerToPool() {
         const note = formData.get("note");
 
         const name = `${firstName} ${lastName}`.trim();
-
-        console.log("Add Player to Pool:");
-        console.log("First Name: ", firstName);
-        console.log("Last Name: ", lastName);
-        console.log("Note: ", note);
         try {
             await axios.post("/addedPlayerPool/add", { name, position, team, note });
             alert("player added to pool");
@@ -41,19 +36,19 @@ export default function AddPlayerToPool() {
                         <input type="text" id="lastName" className="form-input" name="lastName"/>
                     </div>
                     <div className="form-field">
-                        <label>Position: </label>
-                        <select className="form-input" name="position" required>
-                            <option value="">-- Select Position --</option>
-                            <option value="C">C</option>
-                            <option value="1B">1B</option>
-                            <option value="2B">2B</option>
-                            <option value="3B">3B</option>
-                            <option value="SS">SS</option>
-                            <option value="OF">OF</option>
-                            <option value="SP">SP</option>
-                            <option value="RP">RP</option>
-                            <option value="DH">DH</option>
-                        </select>
+                    <label>Position: </label>
+                    <select className="form-input" name="position" required>
+                        <option value="">-- Select Position --</option>
+                        <option value="C">C</option>
+                        <option value="1B">1B</option>
+                        <option value="2B">2B</option>
+                        <option value="3B">3B</option>
+                        <option value="SS">SS</option>
+                        <option value="OF">OF</option>
+                        <option value="SP">SP</option>
+                        <option value="RP">RP</option>
+                        <option value="DH">DH</option>
+                    </select>
                     </div>
                     <div className="form-field">
                         <label>Team: </label>
