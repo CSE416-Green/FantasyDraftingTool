@@ -33,7 +33,8 @@ export default function DraftPlayerForm({
     teams, 
     leagueId,
     setDraftHistory,
-    draftedNames}) {
+    draftedNames,
+    remainingSpots}) {
     // for now the [playerPool] only has name and position
     const [selectedPlayer, setSelectedPlayer] = useState("");
     const [position, setPosition] = useState("");
@@ -146,6 +147,7 @@ export default function DraftPlayerForm({
                     <RecommendedSalary
                         player={fullPlayer}
                         maxNextCost={maxNextCost}
+                        remainingSpots={remainingSpots}
                     />
                 )}
             </div>
