@@ -41,7 +41,7 @@ export function parsePlayerString(playerString) {
 }
 
 export async function fetchPlayerStats() {
-  const res = await fetch('https://fantasydraftingtool.onrender.com/playerStats/2025');
+  const res = await fetch('https://fantasydraftingtool.onrender.com/playerStats/2026');
   if (!res.ok) {
     throw new Error(`Error Fetching Player Data ${res.status}`);
   }

@@ -118,8 +118,8 @@ app.post("/updateTeam", async (req, res) => {
         // };
 app.post("/draftPlayer", async (req, res) => {
   try {
-    const { teamId, name, position, cost, status } = req.body;
-    if (!teamId || !name || !position || !cost || !status) {
+    const { teamId, name, position, cost, status, playerID } = req.body;
+    if (!teamId || !name || !position || !cost || !status || !playerID ) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -134,6 +134,7 @@ app.post("/draftPlayer", async (req, res) => {
       position: position,
       cost: cost,
       status: status,
+      playerID: playerID
     };
 
     team.rosterPlayers.push(newPlayer);

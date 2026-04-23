@@ -41,6 +41,7 @@ export default function DraftPlayerForm({
     const [cost, setCost] = useState("");
     const [status, setStatus] = useState("");
     const [broughtupby, setBroughtupby] = useState("");
+    const [playerID, setPlayerID] = useState("");
 
     const fullPlayer = playerPool.find(p => p.name === selectedPlayer);
 
@@ -54,9 +55,9 @@ export default function DraftPlayerForm({
             position,
             cost,
             status,
-            broughtupby
+            broughtupby,
+            playerID
         };
-
         if (!selectedPlayer || !position || !cost || !status || !broughtupby) {
             alert("Please fill in all fields");
             return;
@@ -128,7 +129,14 @@ export default function DraftPlayerForm({
                 <input
                     list="players"
                     value={selectedPlayer}
-                    onChange={(e) => setSelectedPlayer(e.target.value)}
+                    onChange={(e) => {
+                        const name = e.target.value;
+                        setSelectedPlayer(name);
+
+                        const player = playerPool.find((p) => p.name === name);
+                        setPlayerID(player.ID);
+
+                    }}
                     className="form-select"
                     placeholder="Type to Search"
                 />
