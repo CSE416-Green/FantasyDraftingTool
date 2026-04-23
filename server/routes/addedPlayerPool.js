@@ -11,7 +11,9 @@ addedPlayerPool.post("/add", async (req, res) => {
     if (!name || !position || !leagueId) {
       return res.status(400).json({ error: "Name, position and leagueId are required" });
     }
-    const newPlayer = new AddedPlayer({ name, position, team, note, leagueId });
+    // since this is a player not in the system we give him a playerID -1 
+    const playerID = -1;
+    const newPlayer = new AddedPlayer({ name, position, team, note, leagueId, playerID });
     await newPlayer.save();
     
     //if note provided, save to PlayerNoteSchema

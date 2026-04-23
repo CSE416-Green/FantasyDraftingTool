@@ -267,5 +267,7 @@ const positionDictionary = {
     "LF": ["OF", "U"],
     "DH": ["U"],
     "TWP": ["P", "U"],
-    "P": ["P", "U"]
+    "P": ["P", "U"],
+    "SP": ["P", "U"],
+    "RP": ["P", "U"]
 }
