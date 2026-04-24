@@ -28,7 +28,8 @@ export default function TeamRoster({
   user,
   setDraftHistory,
   draftHistory,
-  teams
+  teams,
+  loadTeams
 }) {
   const [isEditingTeam, setIsEditingTeam] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);

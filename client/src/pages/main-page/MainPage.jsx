@@ -136,6 +136,7 @@ function MainPage({user,onLogout}) {
                     setDraftHistory={setDraftHistory}
                     draftHistory={draftHistory}
                     teams={teams}
+                    loadTeams={loadTeams}
               />
               <CompeteContainer
                     teams={teams}
