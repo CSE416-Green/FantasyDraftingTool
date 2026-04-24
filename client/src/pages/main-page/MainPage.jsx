@@ -6,6 +6,7 @@ import LeagueConfiguration from '../../features/league-config/LeagueConfig'
 import AddPlayerToPool from '../../features/add-player-to-pool/AddPlayerToPool'
 import DraftHistory from '../../features/draft-history/DraftHistory'
 import Drawer from '../../features/player-news/Drawer'
+import CompeteContainer from '../../features/compete/CompeteContainer'
 import '../../css/mainPage.css'
 import '../../css/settingsPage.css'
 import Header from '../../shared/components/Header'
@@ -23,6 +24,7 @@ function MainPage({user,onLogout}) {
   const [draftHistory, setDraftHistory] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(pages[0]);
+  const [teams, setTeams] = useState([]);
 
   const {
     data: playerStats = [],
@@ -93,6 +95,22 @@ function MainPage({user,onLogout}) {
     fetchHistory();
   }, []);
 
+    //  to reload teams
+  const loadTeams = async () => {
+    try {
+      const res = await axios.post("/allteams", { leagueId: user.league });
+      setTeams(res.data);
+    } catch (e) {
+      console.error("Failed to fetch teams: ", e);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.league) {
+      loadTeams();
+    }
+  }, [user?.league]);
+
   
 
   return (
@@ -117,6 +135,10 @@ function MainPage({user,onLogout}) {
                     user={user}
                     setDraftHistory={setDraftHistory}
                     draftHistory={draftHistory}
+                    teams={teams}
+              />
+              <CompeteContainer
+                    teams={teams}
               />
           </div>
           <div className="player-pool">

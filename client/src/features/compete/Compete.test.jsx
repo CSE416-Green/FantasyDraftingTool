@@ -1,6 +1,7 @@
-const { convertToTwoTeams } = require("./Compete.jsx");
+import { convertToTwoTeams } from "./convertToTwoTeams";
+
 describe("convertToTwoTeams", () => {
-  it("converts two team objects into the expected format", () => {
+  it("function convertToTwoTeams functionality", () => {
     const team1 = {
       _id: "abc123",
       teamName: "Team Alpha",

@@ -6,6 +6,7 @@ import EnterPastPlayerForm from "./components/EnterPastPlayerForm";
 import { parsePlayerString } from "../player-pool/PlayerPool";
 import TradePlayersForm from "./components/TradePlayersForm";
 import DraftHistory from "../draft-history/DraftHistory";
+import Compete from "../compete/Compete";
 axios.defaults.baseURL = "http://localhost:3000";
 
 if (process.env.NODE_ENV == "production") {
@@ -26,9 +27,9 @@ export default function TeamRoster({
   year,
   user,
   setDraftHistory,
-  draftHistory
+  draftHistory,
+  teams
 }) {
-  const [teams, setTeams] = useState([]);
   const [isEditingTeam, setIsEditingTeam] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);
   const [isEnteringPast, setIsEnteringPast] = useState(false);
@@ -69,21 +70,7 @@ export default function TeamRoster({
   ];
 
 
-  //  to reload teams
-  const loadTeams = async () => {
-    try {
-      const res = await axios.post("/allteams", { leagueId: user.league });
-      setTeams(res.data);
-    } catch (e) {
-      console.error("Failed to fetch teams: ", e);
-    }
-  };
 
-  useEffect(() => {
-    if (user?.league) {
-      loadTeams();
-    }
-  }, [user?.league]);
 
   useEffect(() => {
     if (teams.length > 0 && !team) {

@@ -38,6 +38,8 @@ const generalNoteRouter = require("./routes/notes/generalNote");
 app.use("/generalNote", generalNoteRouter);
 const playerNoteRouter = require("./routes/notes/playerNote");
 app.use("/playerNote", playerNoteRouter);
+const winOrLoseRouter = require("./routes/winOrLose.js")
+app.use("/compete", winOrLoseRouter);
 const port = 3000
 
 app.get('/', async (req, res) => {
