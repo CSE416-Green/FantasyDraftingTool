@@ -6,8 +6,8 @@ const winOrLoseRouter = express.Router();
 winOrLoseRouter.post("/teams", async (req, res) => {
     try {
         const response = await fetch(
-            // "https://fantasybaseballgateway.onrender.com/api/compete/teams",
-            "http://localhost:8080/compete/teams",
+            "https://fantasybaseballgateway.onrender.com/api/compete/teams",
+            // "http://localhost:8080/compete/teams",
             {
                 method: "POST",
                 headers: {
