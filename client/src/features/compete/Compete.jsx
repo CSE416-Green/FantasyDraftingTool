@@ -22,7 +22,7 @@ export default function Compete({ team1, team2, startDate, endDate }) {
     fetchGame();
     }, [team1, team2]);
 
-    if (!game) return (<div>Loading...</div>);
+    if (!game) return (<div>{team1.teamName} vs.{team2.teamName} </div>);
     let title = "";
     if (game.team1Score > game.team2Score) title = `${team1.teamName} wins`
     else if (game.team1Score < game.team2Score) title = `${team2.teamName} wins`

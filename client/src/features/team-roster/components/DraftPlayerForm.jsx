@@ -132,7 +132,6 @@ export default function DraftPlayerForm({
                     onChange={(e) => {
                         const name = e.target.value;
                         setSelectedPlayer(name);
-
                         const player = playerPool.find((p) => p.name === name);
                         setPlayerID(player.ID);
 
