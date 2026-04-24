@@ -6,6 +6,7 @@ const PlayerSchema = new mongoose.Schema(
     name: String,
     status: String,
     cost: Number,
+    playerID: Number,
   }
 );
 

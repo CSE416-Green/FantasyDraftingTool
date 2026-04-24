@@ -38,6 +38,8 @@ const generalNoteRouter = require("./routes/notes/generalNote");
 app.use("/generalNote", generalNoteRouter);
 const playerNoteRouter = require("./routes/notes/playerNote");
 app.use("/playerNote", playerNoteRouter);
+const winOrLoseRouter = require("./routes/winOrLose.js")
+app.use("/compete", winOrLoseRouter);
 const port = 3000
 
 app.get('/', async (req, res) => {
@@ -118,8 +120,8 @@ app.post("/updateTeam", async (req, res) => {
         // };
 app.post("/draftPlayer", async (req, res) => {
   try {
-    const { teamId, name, position, cost, status } = req.body;
-    if (!teamId || !name || !position || !cost || !status) {
+    const { teamId, name, position, cost, status, playerID } = req.body;
+    if (!teamId || !name || !position || !cost || !status || !playerID ) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -134,6 +136,7 @@ app.post("/draftPlayer", async (req, res) => {
       position: position,
       cost: cost,
       status: status,
+      playerID: playerID
     };
 
     team.rosterPlayers.push(newPlayer);

@@ -41,7 +41,7 @@ export function parsePlayerString(playerString) {
 }
 
 export async function fetchPlayerStats() {
-  const res = await fetch('https://fantasydraftingtool.onrender.com/playerStats/2025');
+  const res = await fetch('https://fantasydraftingtool.onrender.com/playerStats/2026');
   if (!res.ok) {
     throw new Error(`Error Fetching Player Data ${res.status}`);
   }
@@ -128,7 +128,8 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
     async function fetchManualPlayers() {
       try {
         const res = await axios.get(`/addedPlayerPool/manualPlayers/${leagueId}`);
-        setManualPlayers(res.data);
+        const data = res.data.map(({ _id, ...rest }) => rest);
+        setManualPlayers(data);
       } catch (err) {
         console.error('Failed to fetch manual players:', err);
       }
@@ -168,7 +169,7 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
     const dbPlayers=manualPlayers.map((player)=>{
       const isDrafted = draftedNames.includes(player.name);
       return {
-        id: player._id,
+        id: player.playerID,
         name: player.name,
         position: player.position,
         team: player.team,

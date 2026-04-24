@@ -10,6 +10,10 @@ export default function RecommendedSalary({ player, maxNextCost, remainingSpots 
         setSalary(-1);
         return;
       }
+      if (player.ID == -1) {
+        setSalary(-1);
+        return;
+      }
 
       try {
         const baseSalary = 1;
