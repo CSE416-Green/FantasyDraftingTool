@@ -33,7 +33,7 @@ curl -X POST "TBD" ^
 ```
 <br>
 The following fields are required: <br>
-path-to-draft-data: please see draftedPlayers.json for formatting <br>
+path-to-draft-data: please see draftPlayers.json for formatting <br>
 playerID can be found from player_id_map.json
 
 
