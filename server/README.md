@@ -21,6 +21,21 @@ JWT_SECRET="jwt-key"
 ```
 npm start
 ```
+# Endpionts
+## Draft the Players from the csv File
+**Endpoint:** `POST /TBD`
+**Request (Windows cmd):**
+
+```bash
+curl -X POST "TBD" ^
+  -H "Content-Type: application/json" ^
+  --data @"path-to-draft-data"
+```
+<br>
+The following fields are required: <br>
+path-to-draft-data: please see draftedPlayers.json for formatting <br>
+playerID can be found from player_id_map.json
+
 
 # Deployment 
 The app is deployed through render and can be accessed at https://fantasydraftingtool.onrender.com/
