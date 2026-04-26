@@ -1,0 +1,27 @@
+{
+  "leagueId": "abcdef",
+  "players": [
+    {
+      "pick": 1,
+      "teamId": "444",
+      "teamName": "Team D",
+      "name": "William Contreras",
+      "position": "C",
+      "cost": 25,
+      "status": "S2",
+      "broughtupby": "Team E",
+      "playerID": 661388
+    },
+    {
+      "pick": 2,
+      "teamId": "555",
+      "teamName": "Team E",
+      "name": "Daylen Lile",
+      "position": "OF",
+      "cost": 12,
+      "status": "S2",
+      "broughtupby": "Team A",
+      "playerID": 695734
+    },
+  ]
+}
