@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState, useMemo } from "react";
 import { convertToTwoTeams } from "./convertToTwoTeams";
-import '../../css/Compete.css';
+import '../../css/compete.css';
 
 
 export default function Compete({ team1, team2, startDate, endDate }) {

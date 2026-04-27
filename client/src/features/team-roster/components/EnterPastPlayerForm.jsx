@@ -45,7 +45,7 @@ export default function EnterPastPlayerForm({ team, onSubmit, onCancel, maxNextC
         }
 
         try {
-            await axios.post("/addPastPlayer", player);
+            await axios.post("/draftPlayer/addPastPlayer", player);
             if(onSubmit) {
                 onSubmit(player);
             }

@@ -1,5 +1,5 @@
 import Compete from './Compete'
-import '../../css/Compete.css';
+import '../../css/compete.css';
 
 export default function CompeteContainer ({ teams }) {
     if (!teams) return (<div>Empty teams</div>)
