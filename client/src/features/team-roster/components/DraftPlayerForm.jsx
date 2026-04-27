@@ -77,7 +77,7 @@ export default function DraftPlayerForm({
 
         // add the player to the [teamName] through server
         try{
-            await axios.post("/draftPlayer", draftedPlayer);
+            await axios.post("/draftPlayer/onePlayer", draftedPlayer);
             if(onDraft) {
                 onDraft(draftedPlayer);
             }

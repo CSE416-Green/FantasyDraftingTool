@@ -40,6 +40,10 @@ const playerNoteRouter = require("./routes/notes/playerNote");
 app.use("/playerNote", playerNoteRouter);
 const winOrLoseRouter = require("./routes/winOrLose.js")
 app.use("/compete", winOrLoseRouter);
+const draftPlayerRouter = require("./routes/draftPlayer")
+app.use("/draftPlayer", draftPlayerRouter);
+const draftHistoryRouter = require("./routes/draftHistory");
+app.use("/draftHistory", draftHistoryRouter);
 const port = 3000
 
 app.get('/', async (req, res) => {
@@ -110,82 +114,9 @@ app.post("/updateTeam", async (req, res) => {
 });
 
 
-// draft player to roster
-        // const draftedPlayer = {
-        //     teamName: teamName,
-        //     name: selectedPlayer,
-        //     position,
-        //     cost,
-        //     status,
-        // };
-app.post("/draftPlayer", async (req, res) => {
-  try {
-    const { teamId, name, position, cost, status, playerID } = req.body;
-    if (!teamId || !name || !position || !cost || !status || !playerID ) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-
-    const team = await Team.findById(teamId);
-    if (!team) {
-      return res.status(404).json({ error: "Team not found" });
-    }
-
-    // add the player to the team's roster
-    const newPlayer = {
-      name: name,
-      position: position,
-      cost: cost,
-      status: status,
-      playerID: playerID
-    };
-
-    team.rosterPlayers.push(newPlayer);
-    await team.save();
-    
-    res.json({ message: "Player drafted successfully!", team });
-
-  } catch (error) {
-    console.error("Error drafting player:", error);
-    res.status(500).json({ error: "Server error" });
-  }
-});
 
 
-// User add players they drafted in the past to the roster
-app.post("/addPastPlayer", async (req, res) => {
-  try {
-    const { teamId, name, position, cost, status, rosterOrFarm  } = req.body;
-    const team = await Team.findById(teamId);
-    if (!team) {
-      console.warn(`Team not found: `);
-      return res.status(404).json({ error: "Team not found" });
-    }
 
-    if (rosterOrFarm  === "roster") {
-      team.rosterPlayers.push({
-      name: name,
-      position: position,
-      cost: cost,
-      status: status
-      });
-    } else {
-      team.farmPlayers.push({
-        name: name,
-        position: position,
-        cost: cost,
-        status: status
-      });
-    }
-
-    await team.save();
-
-    res.json({ message: "Player drafted successfully!", team });
-
-  } catch (error) {
-    console.error("Error drafting player:", error);
-    res.status(500).json({ error: "Server error" });
-  }
-});
 
 app.post("/settings/league", async (req, res) => {
   try {
@@ -267,64 +198,6 @@ app.get("/stat/pitcher", async(req, res) => {
   }
 })
 
-// in mongodb, to create a draft history cluster (only used once when I first set up the database):
-app.post("/draftHistory", async (req, res) => {
-  try {
-    const { leagueName, year, draftedPlayers } = req.body;
-    const newHistory = new DraftHistory({
-      LeagueName: leagueName,
-      Year: year,
-      DraftedPlayers: draftedPlayers
-    });
-    await newHistory.save();
-    res.json({ message: "Draft history saved successfully!", history: newHistory });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// when a user drafts a player, add that player to the draft history for the league and year
-app.post("/draftHistory/addPlayer", async (req, res) => {
-  try {
-    const { leagueId, year, playerName, teamName, cost, broughtupby, position } = req.body;
-
-    const history = await DraftHistory.findOne({ League: leagueId });
-
-    if (!history) {
-      return res.status(404).json({ message: "No draft history found for that league and year" });
-    }
-    const pick = history.DraftedPlayers.length + 1;
-    history.DraftedPlayers.push({
-      PlayerName: playerName,
-      Pick: pick,
-      TeamName: teamName,
-      Cost: cost,
-      BroughtUpBy: broughtupby,
-      Position: position
-    });
-    await history.save();
-    res.json({ message: "Player added to draft history successfully!", history });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-})
-
-// to get the draft history for a league and year
-app.post("/draftHistory/league", async (req, res) => {
-
-  try {
-    const { year } = req.params;
-    const leagueId = req.body.leagueId;
-
-    const history = await DraftHistory.findOne({ League: leagueId });
-    if (!history) {
-      return res.status(404).json({ message: "No draft history found for that league and year" });
-    }
-    res.json(history);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-})
 
 //Start of new code
 app.post("/tradePlayers", async (req, res) => {
