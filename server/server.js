@@ -23,6 +23,8 @@ const HitterStat = require("./models/HitterStatSchema");
 const DraftHistory = require("./models/DraftHistorySchema");
 const League = require("./models/LeagueSchema");
 const User = require("./models/UserSchema");
+const WeeklyRecord = require("./models/WeeklyRecordSchema");
+const Scoreboard = require("./models/ScoreboardSchema");
 const app = express()
 app.use(cors());
 app.use(express.json());
