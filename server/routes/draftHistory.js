@@ -6,7 +6,7 @@ const DraftHistory = require("../models/DraftHistorySchema");
 // when a user drafts a player, add that player to the draft history for the league and year
 draftHistoryRouter.post("/addPlayer", async (req, res) => {
   try {
-    const { leagueId, year, playerName, teamName, cost, broughtupby, position } = req.body;
+    const { leagueId, year, playerName, teamName, cost, broughtupby, position, playerID } = req.body;
 
     const history = await DraftHistory.findOne({ League: leagueId });
 
@@ -20,7 +20,8 @@ draftHistoryRouter.post("/addPlayer", async (req, res) => {
       TeamName: teamName,
       Cost: cost,
       BroughtUpBy: broughtupby,
-      Position: position
+      Position: position,
+      PlayerID: playerID
     });
     await history.save();
     res.json({ message: "Player added to draft history successfully!", history });

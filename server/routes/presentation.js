@@ -16,6 +16,9 @@ async function predraft(data) {
         
         const teams = data.teams;
 
+        const leagueId = data.leagueId;
+        const history = await DraftHistory.findOne({ League: leagueId });
+
         const result = [];
 
         for (const teamData of teams) {
@@ -42,7 +45,17 @@ async function predraft(data) {
 
             team.rosterPlayers.push(...plist);
 
+            const oldplayers = players.map(player =>({
+                PlayerName: player.name,
+                Cost: player.cost,
+                Position: player.position,
+                PlayerID: player.playerID
+            }));
+
+            history.OldPlayers.push(...oldplayers)
+
             await team.save();
+            await history.save();
 
             result.push({ teamId, status: "success" });
         }
@@ -127,6 +140,7 @@ async function createLeague(createdUserIds) {
         const newDraftHistory = new DraftHistory({
         LeagueName: leagueName,
         Year: year,
+        OldPlayers: [],
         DraftedPlayers: [],
         League: newLeague._id
         });

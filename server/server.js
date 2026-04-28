@@ -308,6 +308,7 @@ app.post("/createLeague", async (req, res) => {
     const newDraftHistory = new DraftHistory({
       LeagueName: leagueName,
       Year: year,
+      OldPlayers: [],
       DraftedPlayers: [],
       League: newLeague._id
     });
