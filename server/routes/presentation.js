@@ -6,6 +6,55 @@ const DraftHistory = require("../models/DraftHistorySchema");
 const User = require("../models/UserSchema");
 const bcrypt=require("bcrypt");
 
+async function predraft(data) {
+    try {
+        // teamId, players(name, position, cost, status, playerID)
+
+        if (!data) {
+            return null;
+        }
+        
+        const teams = data.teams;
+
+        const result = [];
+
+        for (const teamData of teams) {
+            const { teamId, players } = teamData;
+
+            const team = await Team.findById(teamId);
+            if (!team) {
+                console.error(`Team not found: ${teamId}`);
+                continue;
+            }
+
+            if (!players || !Array.isArray(players)) {
+                console.error("Player array is invalid for team ",  teamId);
+                continue;
+            }
+
+            const plist = players.map(player => ({
+                name: player.name,
+                position: player.position,
+                cost: player.cost,
+                status: player.status,
+                playerID: player.playerID
+            }));
+
+            team.rosterPlayers.push(...plist);
+
+            await team.save();
+
+            result.push({ teamId, status: "success" });
+        }
+        
+        return result;
+
+    } catch (error) {
+        console.error("Error during setup:", error);
+        throw error;
+    }
+}
+
 async function createAccounts() {
     try {
 
@@ -123,6 +172,25 @@ async function createLeague(createdUserIds) {
     }
     
 }
+
+presentationRouter.post("/predraft", async (req, res) => {
+    try {
+        const result = await predraft(req.body);
+
+        if (!result) {
+            res.status(400).json({ error: "missing req body" });
+        }
+
+        res.status(201).json({
+            message: "Success: add past players to roster",
+            result
+        });
+
+    } catch (error) {
+        console.error("Error during loading pre-draft state:", error);
+        res.status(500).json({ error: error.message });
+    }
+})
 
 // create 9 accounts, one league, let 9 accounts join the league
 presentationRouter.post("/setup", async (req, res) => {
