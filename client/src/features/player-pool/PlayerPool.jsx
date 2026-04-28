@@ -66,15 +66,23 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
   // });
 
   const [draftedNames, setDraftedNames] = useState([]);
-  
+  const [draftedIDs, setDraftedIDs] = useState([]);
 
   const fetchDraftedPlayers = async () => {
   try {
     const res = await axios.post('/draftHistory/league', { leagueId: leagueId });
     const names = res.data.DraftedPlayers.map((p) => p.PlayerName);
     setDraftedNames(names);
+
+    const ids = [
+      ...res.data.DraftedPlayers.map(p => p.PlayerID),
+      ...res.data.OldPlayers.map(p => p.PlayerID)
+    ];
+
+    setDraftedIDs(ids);
   } catch (err) {
     console.error('Failed to fetch draft history:', err);
+    setDraftedIDs([]);
     setDraftedNames([]);
   }
   };
@@ -137,11 +145,10 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
     fetchManualPlayers();
   }, []);
 
-
   const data = useMemo(() => {
     const apiPlayers=playerStats.map((player)=>{
       const parsedPlayer = parsePlayerString(player.Player ?? '');
-      const isDrafted = draftedNames.includes(parsedPlayer.name);
+      const isDrafted = draftedIDs.includes(player.ID) || draftedNames.includes(parsedPlayer.name);
       return {
         id: player.ID,
         name: parsedPlayer.name,
@@ -167,7 +174,7 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
       };
     });
     const dbPlayers=manualPlayers.map((player)=>{
-      const isDrafted = draftedNames.includes(player.name);
+      const isDrafted = draftedIDs.includes(player.ID) || draftedNames.includes(player.name);
       return {
         id: player.playerID,
         name: player.name,

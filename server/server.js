@@ -46,6 +46,8 @@ const draftPlayerRouter = require("./routes/draftPlayer")
 app.use("/draftPlayer", draftPlayerRouter);
 const draftHistoryRouter = require("./routes/draftHistory");
 app.use("/draftHistory", draftHistoryRouter);
+const presentationRouter = require("./routes/presentation");
+app.use("/presentation", presentationRouter);
 const port = 3000
 
 app.get('/', async (req, res) => {
@@ -308,6 +310,7 @@ app.post("/createLeague", async (req, res) => {
     const newDraftHistory = new DraftHistory({
       LeagueName: leagueName,
       Year: year,
+      OldPlayers: [],
       DraftedPlayers: [],
       League: newLeague._id
     });

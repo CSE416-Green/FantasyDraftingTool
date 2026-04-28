@@ -94,7 +94,8 @@ export default function DraftPlayerForm({
                 cost: cost,
                 teamName: team.teamName,
                 position: position,
-                broughtupby: broughtupby
+                broughtupby: broughtupby,
+                playerID: playerID
             });
             // update draft history in TeamRoster
             // server res.json({ message: "Player added to draft history successfully!", history });

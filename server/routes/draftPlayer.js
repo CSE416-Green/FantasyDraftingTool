@@ -148,7 +148,8 @@ draftPlayerRouter.post("/group", async (req, res) => {
         TeamName: teamName,
         Cost: cost,
         BroughtUpBy: broughtupby,
-        Position: position
+        Position: position,
+        PlayerID: playerID
       });
 
       processed.push({
