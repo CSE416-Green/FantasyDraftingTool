@@ -6,7 +6,6 @@ import EnterPastPlayerForm from "./components/EnterPastPlayerForm";
 import { parsePlayerString } from "../player-pool/PlayerPool";
 import TradePlayersForm from "./components/TradePlayersForm";
 import DraftHistory from "../draft-history/DraftHistory";
-import Compete from "../compete/Compete";
 axios.defaults.baseURL = "http://localhost:3000";
 
 if (process.env.NODE_ENV == "production") {

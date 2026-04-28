@@ -25,6 +25,7 @@ function MainPage({user,onLogout}) {
 
   const [currentPage, setCurrentPage] = useState(pages[0]);
   const [teams, setTeams] = useState([]);
+  const [draftState, setDraftState] = useState(true);
 
   const {
     data: playerStats = [],
@@ -100,6 +101,16 @@ function MainPage({user,onLogout}) {
     try {
       const res = await axios.post("/allteams", { leagueId: user.league });
       setTeams(res.data);
+
+      // if all teams have 23 players, setDraftState(false);
+      const allFull = res.data.every(
+        (team) => team.rosterPlayers.length === 23
+      );
+
+      if (allFull) {
+        setDraftState(false);
+      }
+
     } catch (e) {
       console.error("Failed to fetch teams: ", e);
     }
@@ -140,6 +151,8 @@ function MainPage({user,onLogout}) {
               />
               <CompeteContainer
                     teams={teams}
+                    leagueId={user.league}
+                    draftState={draftState}
               />
           </div>
           <div className="player-pool">
