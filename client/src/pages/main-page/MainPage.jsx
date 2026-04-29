@@ -151,11 +151,11 @@ function MainPage({user,onLogout}) {
                     loadTeams={loadTeams}
                     draftState={draftState}
               />
-              {/* <CompeteContainer
+              <CompeteContainer
                     teams={teams}
                     leagueId={user.league}
                     draftState={draftState}
-              /> */}
+              />
           </div>
           {draftState && <>
             <div className="player-pool">

@@ -70,6 +70,8 @@ export default function CompeteContainer({ teams, leagueId, draftState }) {
     const completedWeeks =
         getCompletedWednesdayTuesdayWeeks(firstHistoryStartDate);
 
+    const startIsEnd = startDate.toDateString() === endDate.toDateString();
+
     return (
         <div className="compete-container">
         <h2 className="compete-title">
@@ -78,12 +80,17 @@ export default function CompeteContainer({ teams, leagueId, draftState }) {
 
         {!draftState && (
             <>
-                <Compete
-                teamsData={teams}
-                startDate={startDate}
-                endDate={endDate}
-                leagueId={leagueId}
-                />
+            
+                {startIsEnd ? (
+                  <h3>Check Back Later</h3>
+                ) : (
+                  <Compete
+                    teamsData={teams}
+                    startDate={startDate}
+                    endDate={endDate}
+                    leagueId={leagueId}
+                  />
+                )}
 
                 {completedWeeks.map((week) => (
                 <CompeteAddHistory
