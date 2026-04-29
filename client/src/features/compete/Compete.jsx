@@ -1,53 +1,111 @@
 import axios from "axios";
-import { useEffect, useState, useMemo } from "react";
-import { convertToTwoTeams } from "./convertToTwoTeams";
+import { useEffect, useRef, useState } from "react";
+import { convertToTeams } from "./convertToTeams";
 import '../../css/compete.css';
 
 
-export default function Compete({ team1, team2, startDate, endDate }) {
+export function Compete({ teamsData, startDate, endDate, leagueId }) {
     const [game, setGame] = useState(null);
+    const [openCategory, setOpenCategory] = useState(false);
 
     useEffect(() => {
-    if (!team1 || !team2) return;
-    async function fetchGame() {
-        const twoTeams = convertToTwoTeams(team1, team2);
-        const res = await axios.post("/compete/teams", {
-            teams: twoTeams,
-            startDate,
-            endDate
-        });
-        setGame(res.data);
-    }
+        if (!teamsData || teamsData.length === 0) return;
 
-    fetchGame();
-    }, [team1, team2]);
+        async function fetchGame() {
+        try {
+            if (!teamsData || !startDate || !endDate || !leagueId) {
+                return;
+            }
 
-    if (!game) return (<div>{team1.teamName} vs.{team2.teamName} </div>);
-    let title = "";
-    if (game.team1Score > game.team2Score) title = `${team1.teamName} wins`
-    else if (game.team1Score < game.team2Score) title = `${team2.teamName} wins`
-    else title = "Tie"
+            const teams = convertToTeams(teamsData);
 
-    const team1Wins = game.team1Score > game.team2Score;
-    const team2Wins = game.team2Score > game.team1Score;
+            const res = await axios.post(
+                "/compete/teams",
+            // "https://fantasydraftingtool.onrender.com/compete/teams", 
+            { leagueId, teams, startDate, endDate});
+
+            setGame(res.data);
+        } catch (err) {
+            console.error("Failed to fetch game:", err);
+        }
+        }
+
+        fetchGame();
+    }, [teamsData, startDate, endDate]);
+
+    if (!game) return (<div> Loading ... </div>);
+
 
     return (
     <div className="compete-card">
-            <div className="team">
-                <div className={`team ${team1Wins ? "winner" : ""}`}>
-                    <h3>{team1.teamName}</h3>
-                    <h2>{game.team1Score}</h2>
-                </div>
+
+        <button
+            className="detail-buttom"
+            onClick={() => setOpenCategory(!openCategory)}
+        >
+            {openCategory ? "Hide Details" : "Show Details"}
+        </button>
+
+        {game.standings?.map((team) => (
+            <div key={team.teamID} className="team-result">
+            
+            <div className="team-header">
+                <span className="team-name">{team.teamName}</span>
+                <span className="team-score">{team.score} pts</span>
             </div>
 
-            <div className="vs">VS</div>
-            <div className="team">
-                <div className={`team ${team2Wins ? "winner" : ""}`}>
-                    <h3>{team2.teamName}</h3>
-                    <h2>{game.team2Score}</h2>
-                </div>
-                
+            {openCategory && (
+                <ul className="category-list">
+                {Object.entries(team.categoryPoints).map(([category, points]) => (
+                    <li key={category}>
+                    {category}: {points}
+                    </li>
+                ))}
+                </ul>
+            )}
+
             </div>
+        ))}
     </div>
     );
+}
+
+export function CompeteAddHistory({ teamsData, startDate, endDate, leagueId }) {
+  const [game, setGame] = useState(null);
+  const hasRun = useRef(false); // do not trigger a re render when changed
+
+  useEffect(() => {
+    async function fetchGame() {
+      if (hasRun.current) return;
+      if (!teamsData || teamsData.length === 0) return;
+      if (!startDate || !endDate || !leagueId) return;
+
+      hasRun.current = true;
+
+      try {
+        const teams = convertToTeams(teamsData);
+
+        const res = await axios.post(
+            "/compete/teams/addHistory", 
+            // "https://fantasydraftingtool.onrender.com/compete/teams/addHistory", 
+            {
+          leagueId,
+          teams,
+          startDate,
+          endDate,
+        });
+
+        setGame(res.data);
+      } catch (err) {
+        console.error(
+          "Failed to add history:",
+          err.response?.data || err.message
+        );
+      }
+    }
+
+    fetchGame();
+  }, [teamsData, startDate, endDate, leagueId]);
+
+  return null;
 }

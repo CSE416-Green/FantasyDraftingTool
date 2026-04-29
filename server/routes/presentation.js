@@ -253,7 +253,43 @@ presentationRouter.delete("/reset", async (req, res) => {
     }
 })
 
-// load pre-drafted state
+presentationRouter.delete("/reset2", async (req, res) => {
+    try {
+        const { leagueId, userIds, teamIds } = req.body;
+
+        if (!leagueId || !userIds || !teamIds) {
+            return res.status(400).json({
+                error: "leagueId, userIds, and teamIds are required"
+            });
+        }
+
+        await Team.updateMany(
+            { _id: { $in: teamIds } },
+            {
+                $set: {
+                rosterPlayers: [],
+                farmPlayers: []
+                }
+            }
+        );
+        await DraftHistory.updateMany(
+            { League: { $in: teamIds } },
+            {
+                $set: {
+                OldPlayers: [],
+                rosterPlayers: []
+                }
+            }
+        );
+
+        res.json({
+            message: "Deleted draft history and team rosters/farm"
+        });
+    } catch (error) {
+        console.error("Error deleting setup:", error);
+        res.status(500).json({ error: error.message });
+    }
+})
 
 
 module.exports = presentationRouter;

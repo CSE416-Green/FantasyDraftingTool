@@ -19,7 +19,6 @@ const express = require('express')
 const cors = require("cors");
 const Team = require("./models/TeamSchema");
 const Settings = require('./models/settings');
-const HitterStat = require("./models/HitterStatSchema");
 const DraftHistory = require("./models/DraftHistorySchema");
 const League = require("./models/LeagueSchema");
 const User = require("./models/UserSchema");
@@ -177,30 +176,7 @@ app.post("/league/info", async (req, res) => {
   }
 })
 
-app.get("/stat/hitter/:year", async(req, res) => {
-  try {
-    // const { AVG, OBP, SLG, HR, RBI, SB } = req.body;
-    const year = Number(req.params.year);
-    const stats = await HitterStat.findOne({ Year: year });
 
-    if (!stats) {
-      return res.status(404).json({ message: "No stats found for that year" });
-    }
-
-    res.send(stats);
-  } catch(error) {
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-})
-
-app.get("/stat/pitcher", async(req, res) => {
-  try {
-    const { ERA, WHIP, K, W, SV, IP, BB } = req.body;
-
-  } catch(error) {
-    res.status(500).json({ error: err.message });
-  }
-})
 
 
 //Start of new code
