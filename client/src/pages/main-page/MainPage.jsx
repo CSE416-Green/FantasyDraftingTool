@@ -34,6 +34,7 @@ function MainPage({user,onLogout}) {
   } = useQuery({
     queryKey: ["player-stats"],
     queryFn: fetchPlayerStats,
+    enabled: draftState,
   });
 
   const handlePageChange = (page) => {
@@ -148,14 +149,16 @@ function MainPage({user,onLogout}) {
                     draftHistory={draftHistory}
                     teams={teams}
                     loadTeams={loadTeams}
+                    draftState={draftState}
               />
-              <CompeteContainer
+              {/* <CompeteContainer
                     teams={teams}
                     leagueId={user.league}
                     draftState={draftState}
-              />
+              /> */}
           </div>
-          <div className="player-pool">
+          {draftState && <>
+            <div className="player-pool">
               <h1>Player Pool</h1>
               <PlayerPool
                 playerStats={playerStats}
@@ -167,6 +170,8 @@ function MainPage({user,onLogout}) {
                 user={user}
               />
           </div>
+          </>}
+
           <div className="notes"> 
             <Note user={user} leagueId={user.league} />
 

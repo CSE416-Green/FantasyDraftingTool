@@ -94,12 +94,13 @@ export default function CompeteContainer({ teams, leagueId, draftState }) {
                     leagueId={leagueId}
                 />
                 ))}
+                <h2 className="compete-title">History</h2>
+
+                <WeeklyResult leagueId={leagueId} />
             </>
             )}
 
-        <h2 className="compete-title">History</h2>
-
-        <WeeklyResult leagueId={leagueId} />
+        
         </div>
     );
 }

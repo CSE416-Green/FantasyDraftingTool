@@ -28,7 +28,8 @@ export default function TeamRoster({
   setDraftHistory,
   draftHistory,
   teams,
-  loadTeams
+  loadTeams,
+  draftState
 }) {
   const [isEditingTeam, setIsEditingTeam] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);
@@ -162,9 +163,11 @@ export default function TeamRoster({
             <button className="form-buttom" type="button" onClick={() => clickEdit()}>
                 Edit
             </button>
+            {draftState &&
             <button className="form-buttom" type="button" onClick={() => clickDraft()}>
                 Draft
             </button>
+            }
             <button className="form-buttom" type="button" onClick={() => clickTrade()}>
                 Trade
             </button>

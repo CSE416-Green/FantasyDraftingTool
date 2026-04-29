@@ -13,7 +13,9 @@ export function Compete({ teamsData, startDate, endDate, leagueId }) {
 
         async function fetchGame() {
         try {
-            if (!teamsData || !startDate || !endDate) return;
+            if (!teamsData || !startDate || !endDate || !leagueId) {
+                return;
+            }
 
             const teams = convertToTeams(teamsData);
 
@@ -70,7 +72,7 @@ export function Compete({ teamsData, startDate, endDate, leagueId }) {
 
 export function CompeteAddHistory({ teamsData, startDate, endDate, leagueId }) {
   const [game, setGame] = useState(null);
-  const hasRun = useRef(false);
+  const hasRun = useRef(false); // do not trigger a re render when changed
 
   useEffect(() => {
     async function fetchGame() {
@@ -83,7 +85,10 @@ export function CompeteAddHistory({ teamsData, startDate, endDate, leagueId }) {
       try {
         const teams = convertToTeams(teamsData);
 
-        const res = await axios.post("/compete/teams/addHistory", {
+        const res = await axios.post(
+            "/compete/teams/addHistory", 
+            // "https://fantasydraftingtool.onrender.com/compete/teams/addHistory", 
+            {
           leagueId,
           teams,
           startDate,

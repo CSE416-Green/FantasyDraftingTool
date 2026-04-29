@@ -17,7 +17,11 @@ export default function WeeklyResult({ leagueId }) {
             { leagueId }
             );
 
-            setHistory(res.data.results || []);
+            const sorted = res.data.results.sort(
+                (a, b) => new Date(a.StartDate) - new Date(b.StartDate)
+            );
+
+            setHistory(sorted || []);
         } catch (err) {
             console.error("Failed to fetch history:", err.response?.data || err.message);
         }
@@ -25,6 +29,24 @@ export default function WeeklyResult({ leagueId }) {
 
         fetchHistory();
     }, [leagueId]);
+
+
+    const teamTotals = history.reduce((acc, week) => {
+        week.Scores?.forEach(team => {
+            if (!acc[team.TeamName]) {
+            acc[team.TeamName] = 0;
+            }
+            acc[team.TeamName] += team.Points;
+        });
+        return acc;
+    }, {});
+
+    const teamTotalsSorted = Object.entries(teamTotals)
+        .map(([TeamName, totalPoints]) => ({
+            TeamName,
+            totalPoints,
+        }))
+        .sort((a, b) => b.totalPoints - a.totalPoints);
 
     return (
     <div className="compete-card">
@@ -35,6 +57,16 @@ export default function WeeklyResult({ leagueId }) {
         {openCategory ? "Hide Details" : "Show Details"}
       </button>
 
+        <h2>League Standings</h2>
+        {teamTotalsSorted.map((team) => (
+        <div key={team.TeamName} className="team-result">
+            <div className="team-header">
+                <span className="team-name">{team.TeamName}</span>
+                <span className="team-score">{team.totalPoints} pts</span>
+            </div>
+        </div>
+        
+        ))}
       {history.map((week, index) => (
         <div key={week._id || index} className="weekly-result">
             <h3>
