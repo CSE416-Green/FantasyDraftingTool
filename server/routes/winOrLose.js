@@ -1,16 +1,7 @@
 const express = require("express");
 const winOrLoseRouter = express.Router();
 // app.use("/compete", winOrLoseRouter);
-const rateLimit = require("express-rate-limit");
 
-const winOrLoseLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 10,
-  message: {
-    error: "Too many requests. Please wait before trying again.",
-  },
-});
-winOrLoseRouter.use(winOrLoseLimiter);
 
 
 const LeaguePoint = require("../models/LeaguePointSchema");
@@ -20,8 +11,8 @@ winOrLoseRouter.post("/teams", async (req, res) => {
     try {
         const leagueId = req.body.leagueId;
         const response = await fetch(
-            // "https://fantasybaseballgateway.onrender.com/api/compete/teams",
-            "http://localhost:8080/compete/teams",
+            "https://fantasybaseballgateway.onrender.com/api/compete/teams",
+            // "http://localhost:8080/compete/teams",
             {
                 method: "POST",
                 headers: {
@@ -65,8 +56,8 @@ winOrLoseRouter.post("/teams/addHistory", async (req, res) => {
         }
 
         const response = await fetch(
-            // "https://fantasybaseballgateway.onrender.com/api/compete/teams",
-            "http://localhost:8080/compete/teams",
+            "https://fantasybaseballgateway.onrender.com/api/compete/teams",
+            // "http://localhost:8080/compete/teams",
             {
                 method: "POST",
                 headers: {
