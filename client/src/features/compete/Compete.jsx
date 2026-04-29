@@ -20,8 +20,8 @@ export function Compete({ teamsData, startDate, endDate, leagueId }) {
             const teams = convertToTeams(teamsData);
 
             const res = await axios.post(
-                "/compete/teams",
-            // "https://fantasydraftingtool.onrender.com/compete/teams", 
+                // "/compete/teams",
+            "https://fantasydraftingtool.onrender.com/compete/teams", 
             { leagueId, teams, startDate, endDate});
 
             setGame(res.data);
@@ -86,8 +86,8 @@ export function CompeteAddHistory({ teamsData, startDate, endDate, leagueId }) {
         const teams = convertToTeams(teamsData);
 
         const res = await axios.post(
-            "/compete/teams/addHistory", 
-            // "https://fantasydraftingtool.onrender.com/compete/teams/addHistory", 
+            // "/compete/teams/addHistory", 
+            "https://fantasydraftingtool.onrender.com/compete/teams/addHistory", 
             {
           leagueId,
           teams,
