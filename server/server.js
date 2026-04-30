@@ -7,12 +7,16 @@ if (process.env.ENVIRONMENT == "prod") {
   mongoDB = process.env.MONGODB_URL;
 }
 
-mongoose.connect(mongoDB)
-let db = mongoose.connection;
-db.on("error", console.error.bind(console, "MongoDB connection error:"));
-db.on("connected", function () {
-  console.log("Connected to database");
-});
+if (process.env.NODE_ENV !== 'test') {
+  mongoose.connect(mongoDB);
+  
+  let db = mongoose.connection;
+  db.on("error", console.error.bind(console, "MongoDB connection error:"));
+  db.on("connected", function () {
+    console.log("Connected to database");
+  });
+}
+
 
 // npm install express and cors
 const express = require('express')
