@@ -6,9 +6,9 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { grey } from '@mui/material/colors';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
-import PlayerNews from './PlayerNews'
+import PlayerNews from './PlayerNews';
+import Injuries from '../injuries/Injuries';
 
 const drawerBleeding = 56;
 
@@ -43,12 +43,12 @@ const Puller = styled('div')(({ theme }) => ({
 function SwipeableEdgeDrawer(props) {
   const { window } = props;
   const [open, setOpen] = React.useState(false);
+  const [activeTab, setActiveTab] = React.useState('news');
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
 
-  // This is used only for the example
   const container = window !== undefined ? () => window().document.body : undefined;
 
   return (
@@ -57,11 +57,12 @@ function SwipeableEdgeDrawer(props) {
       <Global
         styles={{
           '.MuiDrawer-root > .MuiPaper-root': {
-            height: `calc(50% - ${drawerBleeding}px)`,
+            height: `calc(55% - ${drawerBleeding}px)`,
             overflow: 'visible',
           },
         }}
       />
+
       <SwipeableDrawer
         allowSwipeInChildren={true}
         container={container}
@@ -84,19 +85,34 @@ function SwipeableEdgeDrawer(props) {
             left: 0,
           }}
         >
-        <Puller />
-        {open ?
-            <Box sx={{ textAlign: 'right', pt: 1 }}>
-                <Button onClick={toggleDrawer(false)}>Close Notifications</Button>
-            </Box> :   
-            <Box sx={{ textAlign: 'right', pt: 1 }}>
-                <Button onClick={toggleDrawer(true)}>Open Notifications</Button>
-            </Box>
-        }
-        <p></p>
+          <Puller />
+
+          <Box sx={{ textAlign: 'right', pt: 1 }}>
+            <Button onClick={toggleDrawer(!open)}>
+              {open ? 'Close Notifications' : 'Open Notifications'}
+            </Button>
+          </Box>
         </StyledBox>
-        <StyledBox sx={{ px: 2, pb: 2, height: '100%', overflow: 'auto' }}>
-          <PlayerNews/>
+
+        <StyledBox sx={{ px: 3, pb: 2, height: '100%', overflow: 'auto' }}>
+          <Box sx={{ display: 'flex', gap: 2, mb: 3, pt: 2 }}>
+            <Button
+              variant={activeTab === 'news' ? 'contained' : 'outlined'}
+              onClick={() => setActiveTab('news')}
+            >
+              News
+            </Button>
+
+            <Button
+              variant={activeTab === 'injuries' ? 'contained' : 'outlined'}
+              onClick={() => setActiveTab('injuries')}
+            >
+              Injuries
+            </Button>
+          </Box>
+
+          {activeTab === 'news' && <PlayerNews />}
+          {activeTab === 'injuries' && <Injuries />}
         </StyledBox>
       </SwipeableDrawer>
     </Root>
@@ -104,10 +120,6 @@ function SwipeableEdgeDrawer(props) {
 }
 
 SwipeableEdgeDrawer.propTypes = {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
   window: PropTypes.func,
 };
 
