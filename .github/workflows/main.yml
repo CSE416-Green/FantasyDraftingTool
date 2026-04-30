@@ -27,8 +27,8 @@ jobs:
         run: npm test
         working-directory: ./server
         env:
+          NODE_ENV: test
           MONGODB_URL: ${{ secrets.MONGODB_URL }}
-          ENVIRONMENT: prod
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           API_KEY: ${{ secrets.API_KEY }}
 

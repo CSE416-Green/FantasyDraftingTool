@@ -11,7 +11,7 @@ beforeAll(async () => {
   await mongoose.disconnect();
   mongoServer = await MongoMemoryServer.create();
   await mongoose.connect(mongoServer.getUri());
-});
+}, 30000);
 
 afterEach(async () => {
   await AddedPlayer.deleteMany({ leagueId: testLeagueId });
