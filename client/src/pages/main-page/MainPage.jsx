@@ -28,15 +28,15 @@ function MainPage({user,onLogout}) {
   const [teams, setTeams] = useState([]);
   const [draftState, setDraftState] = useState(true);
 
-  const {
-    data: playerStats = [],
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["player-stats"],
-    queryFn: fetchPlayerStats,
-    enabled: draftState,
-  });
+    const {
+      data: playerStats = [],
+      isLoading,
+      error,
+    } = useQuery({
+      queryKey: ["player-stats", year],
+      queryFn: () => fetchPlayerStats(year),
+      enabled: draftState && !!year,
+    });
 
   const handlePageChange = (page) => {
     setCurrentPage(page);

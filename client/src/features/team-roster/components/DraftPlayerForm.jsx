@@ -156,6 +156,7 @@ export default function DraftPlayerForm({
                         player={fullPlayer}
                         maxNextCost={maxNextCost}
                         remainingSpots={remainingSpots}
+                        year={year}
                     />
                 )}
             </div>
