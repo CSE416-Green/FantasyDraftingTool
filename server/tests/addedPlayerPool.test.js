@@ -2,8 +2,16 @@ const request = require("supertest");
 const { app } = require("../server");
 const mongoose = require("mongoose");
 const AddedPlayer = require("../models/AddedPlayerSchema");
+const { MongoMemoryServer } = require("mongodb-memory-server");
 
+let mongoServer;
 const testLeagueId = "testleague";
+
+beforeAll(async () => {
+  await mongoose.disconnect();
+  mongoServer = await MongoMemoryServer.create();
+  await mongoose.connect(mongoServer.getUri());
+});
 
 afterEach(async () => {
   await AddedPlayer.deleteMany({ leagueId: testLeagueId });
@@ -12,6 +20,7 @@ afterEach(async () => {
 
 afterAll(async () => {
   await mongoose.connection.close();
+  await mongoServer.stop();
 });
 
 describe("POST /addedPlayerPool/add", () => {
@@ -52,10 +61,8 @@ describe("GET /addedPlayerPool/manualPlayers/:leagueId", () => {
     await request(app)
       .post("/addedPlayerPool/add")
       .send({ name: "Test Player", position: "OF", team: "New York Yankees", leagueId: testLeagueId });
-
     const res = await request(app)
       .get(`/addedPlayerPool/manualPlayers/${testLeagueId}`);
-
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body.length).toBe(1);
@@ -73,14 +80,11 @@ describe("GET /addedPlayerPool/manualPlayers/:leagueId", () => {
     await request(app)
       .post("/addedPlayerPool/add")
       .send({ name: "Player A", position: "OF", leagueId: testLeagueId });
-
     await request(app)
       .post("/addedPlayerPool/add")
       .send({ name: "Player B", position: "SP", leagueId: "otherleague" });
-
     const res = await request(app)
       .get(`/addedPlayerPool/manualPlayers/${testLeagueId}`);
-
     expect(res.status).toBe(200);
     expect(res.body.length).toBe(1);
     expect(res.body[0].name).toBe("Player A");
