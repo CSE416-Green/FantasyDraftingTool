@@ -12,12 +12,12 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
   const availablePositions = getAvailablePositions(team.rosterPlayers);
 
   const players = view === "roster" ? team.rosterPlayers : team.farmPlayers;
-
+  
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [position, setPosition] = useState(players[0]?.position || "");
   const [status, setStatus] = useState(players[0]?.status || "");
   const [cost, setCost] = useState(players[0]?.cost || "");
-
+  const oldCost = cost;
   function handlePlayerChange(e) {
     const index = Number(e.target.value);
     const player = players[index];
@@ -47,7 +47,7 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
         return;
     }
 
-    if (cost <= 0 || cost > maxNextCost) {
+    if (cost > oldCost && (cost <= 0 || cost > maxNextCost)) {
       alert(`Cost must be between 1 and ${maxNextCost}`);
       return;
     }

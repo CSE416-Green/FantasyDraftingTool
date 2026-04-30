@@ -1,12 +1,16 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-export default function RecommendedSalary({ player, maxNextCost }) {
+export default function RecommendedSalary({ player, maxNextCost, remainingSpots, year }) {
   const [salary, setSalary] = useState(-1);
 
   useEffect(() => {
     async function calculateSalary() {
       if (!player) {
+        setSalary(-1);
+        return;
+      }
+      if (player.ID == -1) {
         setSalary(-1);
         return;
       }
@@ -19,6 +23,8 @@ export default function RecommendedSalary({ player, maxNextCost }) {
           maxNextCost: maxNextCost,
           baseSalary: baseSalary,
           players: [player],
+          remainingSpots: remainingSpots,
+          year: year
         };
 
         const response = await axios.post(

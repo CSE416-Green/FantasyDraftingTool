@@ -11,7 +11,6 @@ axios.defaults.baseURL = "http://localhost:3000";
 if (process.env.NODE_ENV == "production") {
   axios.defaults.baseURL = "https://fantasydraftingtool.onrender.com/";
 }
-console.log("Current environment:", process.env.NODE_ENV);
 
 const maxNumberofMembers = 23;
 
@@ -27,9 +26,11 @@ export default function TeamRoster({
   year,
   user,
   setDraftHistory,
-  draftHistory
+  draftHistory,
+  teams,
+  loadTeams,
+  draftState
 }) {
-  const [teams, setTeams] = useState([]);
   const [isEditingTeam, setIsEditingTeam] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);
   const [isEnteringPast, setIsEnteringPast] = useState(false);
@@ -65,26 +66,12 @@ export default function TeamRoster({
     ...manualPlayers.map((player)=>({
       name:player.name,
       position:[player.position],
-      ID:player._id
+      ID:player.playerID
     }))
   ];
 
 
-  //  to reload teams
-  const loadTeams = async () => {
-    try {
-      const res = await axios.post("/allteams", { leagueId: user.league });
-      setTeams(res.data);
-    } catch (e) {
-      console.error("Failed to fetch teams: ", e);
-    }
-  };
 
-  useEffect(() => {
-    if (user?.league) {
-      loadTeams();
-    }
-  }, [user?.league]);
 
   useEffect(() => {
     if (teams.length > 0 && !team) {
@@ -96,7 +83,7 @@ export default function TeamRoster({
 
   // find selected team
   const teamData = teams.find(t => t.teamName === team);
-  
+  const maxRosterPlayer = 23;
   const rosterPlayers = teamData?.rosterPlayers ?? [];
   const farmPlayers = teamData?.farmPlayers ?? [];
 
@@ -176,9 +163,11 @@ export default function TeamRoster({
             <button className="form-buttom" type="button" onClick={() => clickEdit()}>
                 Edit
             </button>
+            {draftState &&
             <button className="form-buttom" type="button" onClick={() => clickDraft()}>
                 Draft
             </button>
+            }
             <button className="form-buttom" type="button" onClick={() => clickTrade()}>
                 Trade
             </button>
@@ -224,6 +213,7 @@ export default function TeamRoster({
                 leagueId={user.league}
                 setDraftHistory={setDraftHistory}
                 draftedNames={draftHistory.map(p => p.PlayerName)}
+                remainingSpots={maxRosterPlayer - rosterPlayers.length}
               />
             )}
             {isTrading && (

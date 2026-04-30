@@ -6,6 +6,7 @@ import LeagueConfiguration from '../../features/league-config/LeagueConfig'
 import AddPlayerToPool from '../../features/add-player-to-pool/AddPlayerToPool'
 import DraftHistory from '../../features/draft-history/DraftHistory'
 import Drawer from '../../features/player-news/Drawer'
+import CompeteContainer from '../../features/compete/CompeteContainer'
 import '../../css/mainPage.css'
 import '../../css/settingsPage.css'
 import Header from '../../shared/components/Header'
@@ -23,15 +24,18 @@ function MainPage({user,onLogout}) {
   const [draftHistory, setDraftHistory] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(pages[0]);
+  const [teams, setTeams] = useState([]);
+  const [draftState, setDraftState] = useState(true);
 
-  const {
-    data: playerStats = [],
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["player-stats"],
-    queryFn: fetchPlayerStats,
-  });
+    const {
+      data: playerStats = [],
+      isLoading,
+      error,
+    } = useQuery({
+      queryKey: ["player-stats", year],
+      queryFn: () => fetchPlayerStats(year),
+      enabled: draftState && !!year,
+    });
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -93,6 +97,32 @@ function MainPage({user,onLogout}) {
     fetchHistory();
   }, []);
 
+    //  to reload teams
+  const loadTeams = async () => {
+    try {
+      const res = await axios.post("/allteams", { leagueId: user.league });
+      setTeams(res.data);
+
+      // if all teams have 23 players, setDraftState(false);
+      const allFull = res.data.every(
+        (team) => team.rosterPlayers.length === 23
+      );
+
+      if (allFull) {
+        setDraftState(false);
+      }
+
+    } catch (e) {
+      console.error("Failed to fetch teams: ", e);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.league) {
+      loadTeams();
+    }
+  }, [user?.league]);
+
   
 
   return (
@@ -117,9 +147,18 @@ function MainPage({user,onLogout}) {
                     user={user}
                     setDraftHistory={setDraftHistory}
                     draftHistory={draftHistory}
+                    teams={teams}
+                    loadTeams={loadTeams}
+                    draftState={draftState}
+              />
+              <CompeteContainer
+                    teams={teams}
+                    leagueId={user.league}
+                    draftState={draftState}
               />
           </div>
-          <div className="player-pool">
+          {draftState && <>
+            <div className="player-pool">
               <h1>Player Pool</h1>
               <PlayerPool
                 playerStats={playerStats}
@@ -128,10 +167,13 @@ function MainPage({user,onLogout}) {
                 leagueName={leagueName}
                 year={year}
                 leagueId={user.league}
+                user={user}
               />
           </div>
+          </>}
+
           <div className="notes"> 
-              <Note />
+            <Note user={user} leagueId={user.league} />
 
           </div>
           <div className="draft-history">
@@ -149,7 +191,7 @@ function MainPage({user,onLogout}) {
         <div className="settings-page">
           <h1 className="settings-title">Draft Settings</h1>
           <LeagueConfiguration />
-          <AddPlayerToPool leagueId={user.league} />
+          <AddPlayerToPool leagueId={user.league} userId={user._id}/>
         </div>
         }
     </div>

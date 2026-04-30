@@ -1,0 +1,67 @@
+/* styled by chatgpt */
+.compete-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+}
+
+.compete-title {
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.compete-card {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    width: 320px;
+    padding: 20px;
+    border-radius: 16px;
+    background: #305839;
+    margin: 5px 0;
+    gap: 10px;
+}
+
+.team-result {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.team-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.team-name {
+    font-weight: 600;
+}
+
+.team-score {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.detail-buttom {
+    width: fit-content;
+    border-radius: 8px;
+    border: none;
+    align-self: flex-start;
+    font-weight: 600;
+}
+
+.category-list {
+    margin: 8px 0 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 12px;
+    font-size: 14px;
+}
+
+.category-list li {
+    list-style-type: none;
+}

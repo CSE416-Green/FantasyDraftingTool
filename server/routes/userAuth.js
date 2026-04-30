@@ -12,7 +12,6 @@ const generateToken=(id)=>{
 }
 
 router.post('/register', async (req,res)=>{
-    console.log("in post server");
     const { firstName, lastName, username, email, password } = req.body;
     if (!firstName || !lastName || !username || !email || !password) {
         return res.status(400).json({ message: "Please fill all the fields" });
@@ -38,7 +37,13 @@ router.post('/register', async (req,res)=>{
     try {
         await newUser.save();  //save user 
         const token=generateToken(newUser._id);
-        res.status(201).json({ message: "User registered successfully", token });
+        res.status(201).json({ message: "User registered successfully", token, 
+            user: {
+                _id: newUser._id,
+                username: newUser.username,
+                email: newUser.email
+            }
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server error, try again later." });
@@ -53,7 +58,6 @@ router.post('/login', async (req,res)=>{
         return res.status(401).json({ message: "Invalid email or password" });
     }
     const match = await bcrypt.compare(password, user.password);
-    console.log(match);
     if (!match) {
         return res.status(401).json({ message: "Invalid credentials" });
     }

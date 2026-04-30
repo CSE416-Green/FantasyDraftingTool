@@ -19,10 +19,11 @@ const express = require('express')
 const cors = require("cors");
 const Team = require("./models/TeamSchema");
 const Settings = require('./models/settings');
-const HitterStat = require("./models/HitterStatSchema");
 const DraftHistory = require("./models/DraftHistorySchema");
 const League = require("./models/LeagueSchema");
 const User = require("./models/UserSchema");
+const WeeklyRecord = require("./models/WeeklyRecordSchema");
+const Scoreboard = require("./models/ScoreboardSchema");
 const app = express()
 app.use(cors());
 app.use(express.json());
@@ -34,6 +35,18 @@ const recommendedSalaryRouter = require("./routes/recommededSalary");
 app.use("/GetSalaryForPlayers/compute", recommendedSalaryRouter);
 const addedPlayerPoolRouter = require("./routes/addedPlayerPool");
 app.use("/addedPlayerPool", addedPlayerPoolRouter);
+const generalNoteRouter = require("./routes/notes/generalNote");
+app.use("/generalNote", generalNoteRouter);
+const playerNoteRouter = require("./routes/notes/playerNote");
+app.use("/playerNote", playerNoteRouter);
+const winOrLoseRouter = require("./routes/winOrLose.js")
+app.use("/compete", winOrLoseRouter);
+const draftPlayerRouter = require("./routes/draftPlayer")
+app.use("/draftPlayer", draftPlayerRouter);
+const draftHistoryRouter = require("./routes/draftHistory");
+app.use("/draftHistory", draftHistoryRouter);
+const presentationRouter = require("./routes/presentation");
+app.use("/presentation", presentationRouter);
 const port = 3000
 
 app.get('/', async (req, res) => {
@@ -58,7 +71,6 @@ app.post("/allteams", async (req, res) => {
 // to update a team's roster or farm players
 app.post("/updateTeam", async (req, res) => {
   try {
-    // console.log("POST /updateTeam with body: ", req.body);
     const {
       teamId,
       playerName,
@@ -68,16 +80,15 @@ app.post("/updateTeam", async (req, res) => {
       view,
     } = req.body;
 
-    // console.log("update team: ", req.body);
 
     if (!teamId || !playerName || !view) {
-      console.log("Missing required fields in request body");
+      console.warn("Missing required fields in request body");
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     const team = await Team.findById(teamId);
     if (!team) {
-      console.log(`Team not found: `);
+      console.warn(`Team not found: `);
       return res.status(404).json({ error: "Team not found" });
     }
 
@@ -100,90 +111,15 @@ app.post("/updateTeam", async (req, res) => {
       team,
     });
   } catch (error) {
-    console.log("Error updating team:", error);
+    console.error("Error updating team:", error);
     res.status(500).json({ error: "Server error" });
   }
 });
 
 
-// draft player to roster
-        // const draftedPlayer = {
-        //     teamName: teamName,
-        //     name: selectedPlayer,
-        //     position,
-        //     cost,
-        //     status,
-        // };
-app.post("/draftPlayer", async (req, res) => {
-  try {
-    const { teamId, name, position, cost, status } = req.body;
-    // console.log("POST /draftPlayer with body: ", req.body);
-    if (!teamId || !name || !position || !cost || !status) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-
-    const team = await Team.findById(teamId);
-    if (!team) {
-      return res.status(404).json({ error: "Team not found" });
-    }
-
-    // add the player to the team's roster
-    const newPlayer = {
-      name: name,
-      position: position,
-      cost: cost,
-      status: status,
-    };
-
-    team.rosterPlayers.push(newPlayer);
-    await team.save();
-    
-    res.json({ message: "Player drafted successfully!", team });
-
-  } catch (error) {
-    console.error("Error drafting player:", error);
-    res.status(500).json({ error: "Server error" });
-  }
-});
 
 
-// User add players they drafted in the past to the roster
-app.post("/addPastPlayer", async (req, res) => {
-  try {
-    // console.log("POST /addPastPlayer with body: ", req.body);
-    const { teamId, name, position, cost, status, rosterOrFarm  } = req.body;
-    // console.log("add past player: ", req.body);
-    const team = await Team.findById(teamId);
-    if (!team) {
-      console.log(`Team not found: `);
-      return res.status(404).json({ error: "Team not found" });
-    }
 
-    if (rosterOrFarm  === "roster") {
-      team.rosterPlayers.push({
-      name: name,
-      position: position,
-      cost: cost,
-      status: status
-      });
-    } else {
-      team.farmPlayers.push({
-        name: name,
-        position: position,
-        cost: cost,
-        status: status
-      });
-    }
-
-    await team.save();
-
-    res.json({ message: "Player drafted successfully!", team });
-
-  } catch (error) {
-    console.error("Error drafting player:", error);
-    res.status(500).json({ error: "Server error" });
-  }
-});
 
 app.post("/settings/league", async (req, res) => {
   try {
@@ -240,91 +176,8 @@ app.post("/league/info", async (req, res) => {
   }
 })
 
-app.get("/stat/hitter/:year", async(req, res) => {
-  try {
-    // const { AVG, OBP, SLG, HR, RBI, SB } = req.body;
-    const year = Number(req.params.year);
-    const stats = await HitterStat.findOne({ Year: year });
 
-    if (!stats) {
-      return res.status(404).json({ message: "No stats found for that year" });
-    }
 
-    res.send(stats);
-  } catch(error) {
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-})
-
-app.get("/stat/pitcher", async(req, res) => {
-  try {
-    const { ERA, WHIP, K, W, SV, IP, BB } = req.body;
-
-  } catch(error) {
-    res.status(500).json({ error: err.message });
-  }
-})
-
-// in mongodb, to create a draft history cluster (only used once when I first set up the database):
-app.post("/draftHistory", async (req, res) => {
-  try {
-    const { leagueName, year, draftedPlayers } = req.body;
-    const newHistory = new DraftHistory({
-      LeagueName: leagueName,
-      Year: year,
-      DraftedPlayers: draftedPlayers
-    });
-    await newHistory.save();
-    res.json({ message: "Draft history saved successfully!", history: newHistory });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// when a user drafts a player, add that player to the draft history for the league and year
-app.post("/draftHistory/addPlayer", async (req, res) => {
-  try {
-    const { leagueId, year, playerName, teamName, cost, broughtupby, position } = req.body;
-
-    // console.log("draft history add player ", req.body);
-
-    const history = await DraftHistory.findOne({ League: leagueId });
-
-    if (!history) {
-      return res.status(404).json({ message: "No draft history found for that league and year" });
-    }
-    const pick = history.DraftedPlayers.length + 1;
-    history.DraftedPlayers.push({
-      PlayerName: playerName,
-      Pick: pick,
-      TeamName: teamName,
-      Cost: cost,
-      BroughtUpBy: broughtupby,
-      Position: position
-    });
-    await history.save();
-    res.json({ message: "Player added to draft history successfully!", history });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-})
-
-// to get the draft history for a league and year
-app.post("/draftHistory/league", async (req, res) => {
-
-  try {
-    const { year } = req.params;
-    const leagueId = req.body.leagueId;
-
-    const history = await DraftHistory.findOne({ League: leagueId });
-    if (!history) {
-      return res.status(404).json({ message: "No draft history found for that league and year" });
-    }
-    res.json(history);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-})
 
 //Start of new code
 app.post("/tradePlayers", async (req, res) => {
@@ -433,6 +286,7 @@ app.post("/createLeague", async (req, res) => {
     const newDraftHistory = new DraftHistory({
       LeagueName: leagueName,
       Year: year,
+      OldPlayers: [],
       DraftedPlayers: [],
       League: newLeague._id
     });
@@ -463,7 +317,6 @@ app.post("/createLeague", async (req, res) => {
 // join an existing league
 app.post("/joinLeague", async (req, res) => {
   try {
-    // console.log("POST /joinLeague with body: ", req.body);
     const { inviteCode, userId, teamName } = req.body;
     const league = await League.findOne({ InviteCode: inviteCode });
     if (!league) {

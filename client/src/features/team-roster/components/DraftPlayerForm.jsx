@@ -33,13 +33,15 @@ export default function DraftPlayerForm({
     teams, 
     leagueId,
     setDraftHistory,
-    draftedNames}) {
+    draftedNames,
+    remainingSpots}) {
     // for now the [playerPool] only has name and position
     const [selectedPlayer, setSelectedPlayer] = useState("");
     const [position, setPosition] = useState("");
     const [cost, setCost] = useState("");
     const [status, setStatus] = useState("");
     const [broughtupby, setBroughtupby] = useState("");
+    const [playerID, setPlayerID] = useState("");
 
     const fullPlayer = playerPool.find(p => p.name === selectedPlayer);
 
@@ -53,9 +55,9 @@ export default function DraftPlayerForm({
             position,
             cost,
             status,
-            broughtupby
+            broughtupby,
+            playerID
         };
-
         if (!selectedPlayer || !position || !cost || !status || !broughtupby) {
             alert("Please fill in all fields");
             return;
@@ -75,7 +77,7 @@ export default function DraftPlayerForm({
 
         // add the player to the [teamName] through server
         try{
-            await axios.post("/draftPlayer", draftedPlayer);
+            await axios.post("/draftPlayer/onePlayer", draftedPlayer);
             if(onDraft) {
                 onDraft(draftedPlayer);
             }
@@ -92,7 +94,8 @@ export default function DraftPlayerForm({
                 cost: cost,
                 teamName: team.teamName,
                 position: position,
-                broughtupby: broughtupby
+                broughtupby: broughtupby,
+                playerID: playerID
             });
             // update draft history in TeamRoster
             // server res.json({ message: "Player added to draft history successfully!", history });
@@ -127,7 +130,13 @@ export default function DraftPlayerForm({
                 <input
                     list="players"
                     value={selectedPlayer}
-                    onChange={(e) => setSelectedPlayer(e.target.value)}
+                    onChange={(e) => {
+                        const name = e.target.value;
+                        setSelectedPlayer(name);
+                        const player = playerPool.find((p) => p.name === name);
+                        setPlayerID(player.ID);
+
+                    }}
                     className="form-select"
                     placeholder="Type to Search"
                 />
@@ -146,6 +155,8 @@ export default function DraftPlayerForm({
                     <RecommendedSalary
                         player={fullPlayer}
                         maxNextCost={maxNextCost}
+                        remainingSpots={remainingSpots}
+                        year={year}
                     />
                 )}
             </div>
@@ -256,5 +267,8 @@ const positionDictionary = {
     "CF": ["OF", "U"],
     "LF": ["OF", "U"],
     "DH": ["U"],
-    "TWP": ["P", "U"]
+    "TWP": ["P", "U"],
+    "P": ["P", "U"],
+    "SP": ["P", "U"],
+    "RP": ["P", "U"]
 }
