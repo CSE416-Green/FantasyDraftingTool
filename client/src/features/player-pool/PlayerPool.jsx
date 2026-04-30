@@ -40,8 +40,8 @@ export function parsePlayerString(playerString) {
   };
 }
 
-export async function fetchPlayerStats() {
-  const res = await fetch('https://fantasydraftingtool.onrender.com/playerStats/2026');
+export async function fetchPlayerStats(year) {
+  const res = await fetch(`https://fantasydraftingtool.onrender.com/playerStats/${year}`);
   if (!res.ok) {
     throw new Error(`Error Fetching Player Data ${res.status}`);
   }
