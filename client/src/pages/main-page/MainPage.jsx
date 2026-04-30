@@ -7,7 +7,6 @@ import AddPlayerToPool from '../../features/add-player-to-pool/AddPlayerToPool'
 import DraftHistory from '../../features/draft-history/DraftHistory'
 import Drawer from '../../features/player-news/Drawer'
 import CompeteContainer from '../../features/compete/CompeteContainer'
-import Injuries from '../../features/injuries/Injuries'
 import '../../css/mainPage.css'
 import '../../css/settingsPage.css'
 import Header from '../../shared/components/Header'
@@ -172,9 +171,6 @@ function MainPage({user,onLogout}) {
               />
           </div>
           </>}
-          <div className="injuries-history">
-            <Injuries />
-          </div>
           <div className="notes"> 
             <Note user={user} leagueId={user.league} />
 
