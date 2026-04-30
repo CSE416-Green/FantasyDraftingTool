@@ -172,7 +172,9 @@ function MainPage({user,onLogout}) {
               />
           </div>
           </>}
-
+          <div className="injuries-history">
+            <Injuries />
+          </div>
           <div className="notes"> 
             <Note user={user} leagueId={user.league} />
 
@@ -184,9 +186,6 @@ function MainPage({user,onLogout}) {
                 leagueId={user.league}
                 history={draftHistory}
               />
-          </div>
-          <div className="injuries-history">
-            <Injuries />
           </div>
           <div className="news-history">
             <Drawer/>
