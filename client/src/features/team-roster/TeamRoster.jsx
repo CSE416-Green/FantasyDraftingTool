@@ -66,7 +66,7 @@ export default function TeamRoster({
     ...manualPlayers.map((player)=>({
       name:player.name,
       position:[player.position],
-      ID:player.playerID
+      ID:player.playerID || null
     }))
   ];
 
