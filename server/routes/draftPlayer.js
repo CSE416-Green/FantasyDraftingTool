@@ -15,7 +15,7 @@ const DraftHistory = require("../models/DraftHistorySchema");
 draftPlayerRouter.post("/onePlayer", async (req, res) => {
   try {
     const { teamId, name, position, cost, status, playerID } = req.body;
-    if (!teamId || !name || !position || !cost || !status || !playerID ) {
+    if (!teamId || !name || !position || !cost || !status ) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -30,7 +30,7 @@ draftPlayerRouter.post("/onePlayer", async (req, res) => {
       position: position,
       cost: cost,
       status: status,
-      playerID: playerID
+      playerID: playerID || null
     };
 
     team.rosterPlayers.push(newPlayer);

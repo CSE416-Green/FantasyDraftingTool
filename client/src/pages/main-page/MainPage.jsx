@@ -5,6 +5,7 @@ import Note from '../../shared/components/Note'
 import LeagueConfiguration from '../../features/league-config/LeagueConfig'
 import AddPlayerToPool from '../../features/add-player-to-pool/AddPlayerToPool'
 import DraftHistory from '../../features/draft-history/DraftHistory'
+import TradeHistory from '../../features/draft-history/TradeHistory'
 import Drawer from '../../features/player-news/Drawer'
 import CompeteContainer from '../../features/compete/CompeteContainer'
 import '../../css/mainPage.css'
@@ -28,6 +29,20 @@ function MainPage({user,onLogout}) {
   const [draftState, setDraftState] = useState(true);
   const [draftedIDs, setDraftedIDs] = useState([]);
 
+const [tradeHistory, setTradeHistory] = useState([]);
+
+const fetchTrades = async () => {
+  try {
+    const res = await axios.get(`/draftHistory/trades/${user.league}`);
+    setTradeHistory(res.data.trades);
+  } catch (err) {
+    console.error("Failed to fetch trade history:", err);
+  }
+};
+
+useEffect(() => {
+  if (user?.league) fetchTrades();
+}, [user?.league]);
     const {
       data: playerStats = [],
       isLoading,
@@ -150,6 +165,7 @@ function MainPage({user,onLogout}) {
                     draftHistory={draftHistory}
                     teams={teams}
                     loadTeams={loadTeams}
+                    fetchTrades={fetchTrades}
                     draftState={draftState}
                     draftedIDs={draftedIDs}
               />
@@ -187,6 +203,7 @@ function MainPage({user,onLogout}) {
                 leagueId={user.league}
                 history={draftHistory}
               />
+              <TradeHistory leagueId={user.league} trades={tradeHistory} fetchTrades={fetchTrades} />
           </div>
           <div className="news-history">
             <Drawer/>
