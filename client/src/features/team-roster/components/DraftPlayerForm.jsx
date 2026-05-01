@@ -34,7 +34,9 @@ export default function DraftPlayerForm({
     leagueId,
     setDraftHistory,
     draftedNames,
-    remainingSpots}) {
+    remainingSpots,
+    draftedIDs
+    }) {
     // for now the [playerPool] only has name and position
     const [selectedPlayer, setSelectedPlayer] = useState("");
     const [position, setPosition] = useState("");
@@ -141,7 +143,7 @@ export default function DraftPlayerForm({
                     placeholder="Type to Search"
                 />
                 <datalist id="players">
-                    {playerPool.filter(p => !draftedNames.includes(p.name))
+                    {playerPool.filter(p => !draftedNames.includes(p.name) && !draftedIDs.includes(p.ID))
                         .map((player, index) => (
                         <option key={index} value={player.name}>
                         {player.position.join(" ")}

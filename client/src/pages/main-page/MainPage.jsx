@@ -26,6 +26,7 @@ function MainPage({user,onLogout}) {
   const [currentPage, setCurrentPage] = useState(pages[0]);
   const [teams, setTeams] = useState([]);
   const [draftState, setDraftState] = useState(true);
+  const [draftedIDs, setDraftedIDs] = useState([]);
 
     const {
       data: playerStats = [],
@@ -150,6 +151,7 @@ function MainPage({user,onLogout}) {
                     teams={teams}
                     loadTeams={loadTeams}
                     draftState={draftState}
+                    draftedIDs={draftedIDs}
               />
               <CompeteContainer
                     teams={teams}
@@ -168,6 +170,9 @@ function MainPage({user,onLogout}) {
                 year={year}
                 leagueId={user.league}
                 user={user}
+                teams={teams}
+                draftedIDs={draftedIDs}
+                setDraftedIDs={setDraftedIDs} 
               />
           </div>
           </>}

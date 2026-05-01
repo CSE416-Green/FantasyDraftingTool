@@ -48,27 +48,29 @@ draftPlayerRouter.post("/onePlayer", async (req, res) => {
 // User add players they drafted in the past to the roster
 draftPlayerRouter.post("/addPastPlayer", async (req, res) => {
   try {
-    const { teamId, name, position, cost, status, rosterOrFarm  } = req.body;
+    const { teamId, name, position, cost, status, rosterOrFarm, playerID  } = req.body;
+    if (!teamId || !name || !position || !cost || !status || !rosterOrFarm || !playerID ) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
     const team = await Team.findById(teamId);
     if (!team) {
       console.warn(`Team not found: `);
       return res.status(404).json({ error: "Team not found" });
     }
 
-    if (rosterOrFarm  === "roster") {
-      team.rosterPlayers.push({
+    const newPlayer = {
       name: name,
       position: position,
       cost: cost,
-      status: status
-      });
+      status: status,
+      playerID: playerID
+    };
+
+    if (rosterOrFarm  === "roster") {
+      team.rosterPlayers.push(newPlayer);
     } else {
-      team.farmPlayers.push({
-        name: name,
-        position: position,
-        cost: cost,
-        status: status
-      });
+      team.farmPlayers.push(newPlayer);
     }
 
     await team.save();
