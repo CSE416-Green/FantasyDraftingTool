@@ -33,7 +33,7 @@ export function Compete({ teamsData, startDate, endDate, leagueId }) {
         fetchGame();
     }, [teamsData, startDate, endDate]);
 
-    if (!game) return (<div> Loading ... </div>);
+    if (!game) return (<div className="compete-card"> <h2>Loading ...</h2> </div>);
 
 
     return (
