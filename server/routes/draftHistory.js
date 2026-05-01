@@ -47,4 +47,18 @@ draftHistoryRouter.post("/league", async (req, res) => {
   }
 })
 
+draftHistoryRouter.get("/trades/:leagueId", async (req, res) => {
+  try {
+    const { leagueId } = req.params;
+    const history = await DraftHistory.findOne({ League: leagueId });
+    if (!history) {
+      return res.status(404).json({ message: "No history found" });
+    }
+    res.json({ trades: history.Trades });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 module.exports = draftHistoryRouter;

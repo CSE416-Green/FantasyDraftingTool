@@ -29,6 +29,7 @@ export default function TeamRoster({
   draftHistory,
   teams,
   loadTeams,
+  fetchTrades,
   draftState
 }) {
   const [isEditingTeam, setIsEditingTeam] = useState(false);
@@ -223,6 +224,7 @@ export default function TeamRoster({
                 onCancel={() => setIsTrading(false)}
                 onTrade={async () => {
                   await loadTeams();
+                  await fetchTrades(); 
                   setIsTrading(false);
                 }}
               />
