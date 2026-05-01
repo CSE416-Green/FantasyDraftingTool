@@ -250,6 +250,21 @@ app.post("/tradePlayers", async (req, res) => {
     await fromTeam.save();
     await toTeam.save();
 
+    const league= await League.findOne({TeamsID:fromTeamId});
+    if(league){
+      const history = await DraftHistory.findOne({ League: league._id });
+      if (history) {
+        history.Trades.push({
+          fromTeamName: fromTeam.teamName,
+          toTeamName: toTeam.teamName,
+          fromPlayerName,
+          toPlayerName,
+          date: new Date()
+        });
+        await history.save();
+      }
+    }
+
     res.json({
       message: "Trade completed successfully!",
       fromTeam,
