@@ -56,12 +56,6 @@ export default function CompeteContainer({ teams, leagueId, draftState }) {
         return <div>Cannot Compete with current draft state.</div>;
     }
 
-    const formattedDate = (d) =>
-        d.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        });
-
     const { startDate, endDate } = getCurrentWeekRange();
 
     // Pick the first historical week you want to save
@@ -74,24 +68,8 @@ export default function CompeteContainer({ teams, leagueId, draftState }) {
 
     return (
         <div className="compete-container">
-        <h2 className="compete-title">
-            Week of {formattedDate(startDate)} - {formattedDate(endDate)}
-        </h2>
-
         {!draftState && (
             <>
-            
-                {startIsEnd ? (
-                  <h3>Check Back Later</h3>
-                ) : (
-                  <Compete
-                    teamsData={teams}
-                    startDate={startDate}
-                    endDate={endDate}
-                    leagueId={leagueId}
-                  />
-                )}
-
                 {completedWeeks.map((week) => (
                 <CompeteAddHistory
                     key={week.startDate.toISOString()}
@@ -101,9 +79,14 @@ export default function CompeteContainer({ teams, leagueId, draftState }) {
                     leagueId={leagueId}
                 />
                 ))}
-                <h2 className="compete-title">History</h2>
-
-                <WeeklyResult leagueId={leagueId} />
+                
+                <WeeklyResult 
+                  leagueId={leagueId}
+                  startIsEnd={startIsEnd}
+                  teamsData={teams}
+                  startDate={startDate}
+                  endDate={endDate}
+                />
             </>
             )}
 

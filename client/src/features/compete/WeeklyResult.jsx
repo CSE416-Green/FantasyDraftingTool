@@ -1,11 +1,18 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import '../../css/compete.css';
+import { Compete } from './Compete';
 
-export default function WeeklyResult({ leagueId }) {
+export default function WeeklyResult({ leagueId, startIsEnd, teamsData, startDate, endDate }) {
 
     const [history, setHistory] = useState([]);
     const [openCategory, setOpenCategory] = useState(false);
+
+    const formattedDate = (d) =>
+    d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    });
 
     useEffect(() => {
         async function fetchHistory() {
@@ -18,7 +25,7 @@ export default function WeeklyResult({ leagueId }) {
             );
 
             const sorted = res.data.results.sort(
-                (a, b) => new Date(a.StartDate) - new Date(b.StartDate)
+                (a, b) => new Date(b.StartDate) - new Date(a.StartDate)
             );
 
             setHistory(sorted || []);
@@ -49,15 +56,11 @@ export default function WeeklyResult({ leagueId }) {
         .sort((a, b) => b.totalPoints - a.totalPoints);
 
     return (
-    <div className="compete-card">
-      <button
-        className="detail-buttom"
-        onClick={() => setOpenCategory(!openCategory)}
-      >
-        {openCategory ? "Hide Details" : "Show Details"}
-      </button>
 
-        <h2>League Standings</h2>
+    <>        
+    <h2 className="compete-title">League Standings</h2>
+
+    <div className="compete-card">
         {teamTotalsSorted.map((team) => (
         <div key={team.TeamName} className="team-result">
             <div className="team-header">
@@ -65,8 +68,32 @@ export default function WeeklyResult({ leagueId }) {
                 <span className="team-score">{team.totalPoints} pts</span>
             </div>
         </div>
-        
         ))}
+    </div>
+
+    <h2 className="compete-title">
+        Week of {formattedDate(startDate)} - {formattedDate(endDate)}
+    </h2>
+    {startIsEnd ? (
+        <h3>Check Back Later</h3>
+    ) : (
+        <Compete
+        teamsData={teamsData}
+        startDate={startDate}
+        endDate={endDate}
+        leagueId={leagueId}
+        />
+    )}
+
+
+    <h2 className="compete-title">History</h2>
+    <div className="compete-card">
+      <button
+        className="detail-buttom"
+        onClick={() => setOpenCategory(!openCategory)}
+      >
+        {openCategory ? "Hide Details" : "Show Details"}
+      </button>
       {history.map((week, index) => (
         <div key={week._id || index} className="weekly-result">
             <h3>
@@ -105,5 +132,6 @@ export default function WeeklyResult({ leagueId }) {
         </div>
         ))}
     </div>
+    </>
   );
 }
