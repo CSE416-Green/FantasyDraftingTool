@@ -21,7 +21,7 @@ draftHistoryRouter.post("/addPlayer", async (req, res) => {
       Cost: cost,
       BroughtUpBy: broughtupby,
       Position: position,
-      PlayerID: playerID
+      PlayerID: playerID || null
     });
     await history.save();
     res.json({ message: "Player added to draft history successfully!", history });
