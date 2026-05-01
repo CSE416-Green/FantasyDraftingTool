@@ -152,6 +152,7 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
       return {
         id: player.ID,
         name: parsedPlayer.name,
+        age: player.AGE,
         position: parsedPlayer.position,
         team: parsedPlayer.team,
         AB: player.AB ?? '',
@@ -209,6 +210,12 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
         header: 'Player Name',
         size: 100
       },
+      {
+        accessorKey: 'age',
+        header: 'Age',
+        size: 60
+      }
+      ,
       {
         accessorKey: 'position',
         header: 'Position',
