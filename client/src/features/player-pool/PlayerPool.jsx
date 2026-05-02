@@ -55,7 +55,7 @@ export async function fetchPlayerStats(year) {
   }
 }
 
-export default function PlayerPool({ playerStats, isLoading, error, leagueName, year, leagueId, user }) {
+export default function PlayerPool({ playerStats, isLoading, error, leagueName, year, leagueId, user, teams, draftedIDs, setDraftedIDs }) {
   // const {
   //   data: playerStats = [],
   //   isLoading,
@@ -64,9 +64,7 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
   //   queryKey: ['player-stats'],
   //   queryFn: fetchPlayerStats,
   // });
-
   const [draftedNames, setDraftedNames] = useState([]);
-  const [draftedIDs, setDraftedIDs] = useState([]);
 
   const fetchDraftedPlayers = async () => {
   try {
@@ -74,10 +72,31 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
     const names = res.data.DraftedPlayers.map((p) => p.PlayerName);
     setDraftedNames(names);
 
-    const ids = [
+     const draftedIDs = [
       ...res.data.DraftedPlayers.map(p => p.PlayerID),
       ...res.data.OldPlayers.map(p => p.PlayerID)
     ];
+
+    const farmPlayerIDs = teams.flatMap(team =>
+      team.farmPlayers
+        .map(p => p.playerID)
+        .filter(id => id !== undefined)
+    );
+
+    const rosterPlayerIDs = teams.flatMap(team =>
+      team.rosterPlayers
+        .map(p => p.playerID)
+        .filter(id => id !== undefined)
+    );
+
+
+    const ids = [
+      ...new Set([
+      ...draftedIDs,
+      ...farmPlayerIDs,
+      ...rosterPlayerIDs
+    ])
+  ];
 
     setDraftedIDs(ids);
   } catch (err) {
@@ -88,10 +107,10 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
   };
 
   useEffect(() => {
-    if (leagueId && year) {
-      fetchDraftedPlayers();
-    }
-  }, [leagueId, year]);
+    if (leagueId && year && teams.length > 0) {
+        fetchDraftedPlayers();
+  }
+  }, [leagueId, year, teams]);
 
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [playerNote, setPlayerNote] = useState("");

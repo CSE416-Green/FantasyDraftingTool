@@ -29,7 +29,7 @@ function MainPage({user,onLogout}) {
   const [draftState, setDraftState] = useState(true);
 
 const [tradeHistory, setTradeHistory] = useState([]);
-
+const [draftedIDs, setDraftedIDs] = useState([]);
 const fetchTrades = async () => {
   try {
     const res = await axios.get(`/draftHistory/trades/${user.league}`);
@@ -166,6 +166,7 @@ useEffect(() => {
                     loadTeams={loadTeams}
                     fetchTrades={fetchTrades}
                     draftState={draftState}
+                    draftedIDs={draftedIDs}
               />
               <CompeteContainer
                     teams={teams}
@@ -184,6 +185,9 @@ useEffect(() => {
                 year={year}
                 leagueId={user.league}
                 user={user}
+                teams={teams}
+                draftedIDs={draftedIDs}
+                setDraftedIDs={setDraftedIDs}
               />
           </div>
           </>}
