@@ -1,13 +1,15 @@
 import axios from "axios";
 import { useState } from "react";
 
-export default function EnterPastPlayerForm({ team, onSubmit, onCancel, maxNextCost }) {
+export default function EnterPastPlayerForm({ team, onSubmit, onCancel, maxNextCost, playerPool, draftedNames }) {
 
     const [playerName, setPlayerName] = useState("");
     const [position, setPosition] = useState("");
     const [cost, setCost] = useState("");
     const [status, setStatus] = useState("");
     const [RosterOrFarm, setRosterOrFarm] = useState("");
+    const [selectedPlayer, setSelectedPlayer] = useState("");
+    const [playerID, setPlayerID] = useState("");
 
     const POSITIONS = [
     "C","1B","3B","CI","2B","SS","MI",
@@ -21,15 +23,16 @@ export default function EnterPastPlayerForm({ team, onSubmit, onCancel, maxNextC
         e.preventDefault();
         const player = {
             teamId: team._id,
-            name: playerName,
+            name: selectedPlayer,
             position,
             cost,
             status,
             rosterOrFarm: RosterOrFarm,
+            playerID
         };
 
 
-        if (!playerName || !position || !cost || !status || !RosterOrFarm) {
+        if (!selectedPlayer || !position || !cost || !status || !RosterOrFarm || !playerID) {
             alert("Please fill in all fields");
             return;
         }
@@ -58,8 +61,28 @@ export default function EnterPastPlayerForm({ team, onSubmit, onCancel, maxNextC
             <h2>Enter Past Player for {team.teamName}</h2>
 
             <div className="form-row">
-                <label>Player Name:</label>
-                <input className="form-input" type="text" value={playerName} onChange={(e) => setPlayerName(e.target.value)} placeholder="Player Name" />
+                <label>Select Player:</label>
+                <input
+                    list="players"
+                    value={selectedPlayer}
+                    onChange={(e) => {
+                        const name = e.target.value;
+                        setSelectedPlayer(name);
+                        const player = playerPool.find((p) => p.name === name);
+                        setPlayerID(player?.ID || "");
+
+                    }}
+                    className="form-select"
+                    placeholder="Type to Search"
+                />
+                <datalist id="players">
+                    {playerPool.filter(p => !draftedNames.includes(p.name))
+                        .map((player, index) => (
+                        <option key={index} value={player.name}>
+                        {player.position.join(" ")}
+                        </option>
+                    ))}
+                </datalist>    
             </div>
             <div className="form-row">
                 <label>Position:</label>

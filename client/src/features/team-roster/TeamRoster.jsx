@@ -30,7 +30,8 @@ export default function TeamRoster({
   teams,
   loadTeams,
   fetchTrades,
-  draftState
+  draftState,
+  draftedIDs
 }) {
   const [isEditingTeam, setIsEditingTeam] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);
@@ -184,6 +185,9 @@ export default function TeamRoster({
                 }
                 }
                 maxNextCost={maxNextCost}
+                playerPool={playerPool}
+                draftedNames={draftHistory.map(p => p.PlayerName)}
+                
               />
             )}
             {isEditingTeam && (
@@ -215,6 +219,7 @@ export default function TeamRoster({
                 setDraftHistory={setDraftHistory}
                 draftedNames={draftHistory.map(p => p.PlayerName)}
                 remainingSpots={maxRosterPlayer - rosterPlayers.length}
+                draftedIDs={draftedIDs}
               />
             )}
             {isTrading && (
