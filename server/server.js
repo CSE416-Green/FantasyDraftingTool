@@ -180,7 +180,24 @@ app.post("/league/info", async (req, res) => {
   }
 })
 
+app.post("/league/userLeagues", async (req, res) => {
+  try {
+    const { leagueIds } = req.body;
 
+    if (!leagueIds || !Array.isArray(leagueIds)) {
+      return res.status(400).json({ error: "leagueIds must be an array" });
+    }
+
+    const leagues = await League.find({
+      _id: { $in: leagueIds }
+    }).select("_id Name Year");
+
+    res.json(leagues);
+  } catch (err) {
+    console.error("Failed to fetch user leagues:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 
 //Start of new code
@@ -300,7 +317,11 @@ app.post("/createLeague", async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    user.league = newLeague._id;
+
+    if (!user.league) {
+      user.league = [];
+    }
+    user.league.push(newLeague._id);
 
     const newDraftHistory = new DraftHistory({
       LeagueName: leagueName,
@@ -337,6 +358,7 @@ app.post("/createLeague", async (req, res) => {
 app.post("/joinLeague", async (req, res) => {
   try {
     const { inviteCode, userId, teamName } = req.body;
+    
     const league = await League.findOne({ InviteCode: inviteCode });
     if (!league) {
       return res.status(404).json({ message: "League not found" });
@@ -346,13 +368,16 @@ app.post("/joinLeague", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    if (!user.league.includes(league._id)) {
+      user.league.push(league._id);
+    }
+
     const newTeam = new Team({
       teamName: teamName,
       rosterPlayers: [],
       farmPlayers: []
     });
 
-    user.league = league._id;
     await user.save();
 
     await newTeam.save();

@@ -147,6 +147,7 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
   useEffect(() => {
     async function fetchManualPlayers() {
       try {
+        if (!leagueId) return; 
         const res = await axios.get(`/addedPlayerPool/manualPlayers/${leagueId}`);
         const data = res.data.map(({ _id, ...rest }) => rest);
         setManualPlayers(data);
@@ -155,7 +156,7 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
       }
     }
     fetchManualPlayers();
-  }, []);
+  }, [leagueId]);
 
   const data = useMemo(() => {
   const isPitcher = (position) => position === "P" || position?.includes("P");
