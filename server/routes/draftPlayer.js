@@ -104,7 +104,7 @@ draftPlayerRouter.post("/group", async (req, res) => {
 
     for (const player of players) {
       const {
-        pick, teamId, teamName, name, position, cost, status, broughtupby, playerID
+        pick, teamId, teamName, name, position, cost, status, broughtupby, playerID, MLBTeam
       } = player;
 
       if (
@@ -149,7 +149,8 @@ draftPlayerRouter.post("/group", async (req, res) => {
         Cost: cost,
         BroughtUpBy: broughtupby,
         Position: position,
-        PlayerID: playerID
+        PlayerID: playerID,
+        MLBTeam: MLBTeam
       });
 
       processed.push({
