@@ -273,11 +273,11 @@ presentationRouter.delete("/reset2", async (req, res) => {
             }
         );
         await DraftHistory.updateMany(
-            { League: { $in: teamIds } },
+            { League: { $in: leagueId } },
             {
                 $set: {
                 OldPlayers: [],
-                rosterPlayers: []
+                DraftedPlayers: []
                 }
             }
         );
