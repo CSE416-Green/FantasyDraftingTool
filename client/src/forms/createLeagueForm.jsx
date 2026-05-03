@@ -16,6 +16,11 @@ export default function CreateLeagueForm({ user, setUser }) {
             return;
         }
 
+        if (year < 2000 || year > 2026) {
+            alert("Please enter a valid year between 2000 and 2026");
+            return;
+        }
+
         try {
             // server req const { leagueName, year, userId, teamName } = req.body;
             const res = await axios.post("/createLeague", {
@@ -53,7 +58,7 @@ export default function CreateLeagueForm({ user, setUser }) {
                     />
                 </div>
                 <div className="form-row">
-                    <label>Year:</label>
+                    <label>Year(between 2000 and 2026):</label>
                     <input
                         className="form-input"
                         type="number"

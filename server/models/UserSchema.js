@@ -26,7 +26,7 @@ const userSchema=new mongoose.Schema({
         required: true,
     },
     league:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: [mongoose.Schema.Types.ObjectId],
         ref: 'League',
         required: false
     },

@@ -48,12 +48,22 @@ function getCompletedWednesdayTuesdayWeeks(firstStartDate) {
   return weeks;
 }
 
-export default function CompeteContainer({ teams, leagueId, draftState }) {
-    if (!teams) return <div>Empty teams</div>;
+export default function CompeteContainer({ teams, leagueId, draftState, totalTeams }) {
+    if (!teams) return (<div className="compete-container">
+                          <div className="compete-card">
+                            <h2 className="compete-title">No Teams Data</h2>
+                            
+                          </div>
+                        </div>);
     // console.log("draftState ",draftState)
     const fullTeams = teams.filter((team) => team.rosterPlayers.length === 23);
-    if (fullTeams.length < 2) {
-        return <div>Cannot Compete with current draft state.</div>;
+    if (fullTeams.length < 2 || fullTeams.length < totalTeams) {
+        return  (<div className="compete-container">
+                  <div className="compete-card">
+                    <h2 className="compete-title">Cannot Compete Yet</h2>
+                    
+                  </div>
+                </div>);
     }
 
     const { startDate, endDate } = getCurrentWeekRange();

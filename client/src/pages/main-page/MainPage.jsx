@@ -8,6 +8,8 @@ import DraftHistory from '../../features/draft-history/DraftHistory'
 import TradeHistory from '../../features/draft-history/TradeHistory'
 import Drawer from '../../features/player-news/Drawer'
 import CompeteContainer from '../../features/compete/CompeteContainer'
+import JoinAnotherLeague from '../../features/league-config/JoinAnotherLeague'
+import CreateAnotherLeague from '../../features/league-config/CreateAnotherLeague'
 import '../../css/mainPage.css'
 import '../../css/settingsPage.css'
 import Header from '../../shared/components/Header'
@@ -28,11 +30,15 @@ function MainPage({user,onLogout}) {
   const [teams, setTeams] = useState([]);
   const [draftState, setDraftState] = useState(true);
 
-const [tradeHistory, setTradeHistory] = useState([]);
-const [draftedIDs, setDraftedIDs] = useState([]);
+  const [tradeHistory, setTradeHistory] = useState([]);
+  const [draftedIDs, setDraftedIDs] = useState([]);
+  const [selectedLeagueId, setSelectedLeagueId] = useState("");
+  const [leagueOptions, setLeagueOptions] = useState([]);
+  const [totalTeams, setTotalTeams] = useState(0);
+
 const fetchTrades = async () => {
   try {
-    const res = await axios.get(`/draftHistory/trades/${user.league}`);
+    const res = await axios.get(`/draftHistory/trades/${selectedLeagueId}`);
     setTradeHistory(res.data.trades);
   } catch (err) {
     console.error("Failed to fetch trade history:", err);
@@ -40,9 +46,10 @@ const fetchTrades = async () => {
 };
 
 useEffect(() => {
-  if (user?.league) fetchTrades();
-}, [user?.league]);
-    const {
+  if (selectedLeagueId) fetchTrades();
+}, [selectedLeagueId]);
+
+  const {
       data: playerStats = [],
       isLoading,
       error,
@@ -73,24 +80,28 @@ useEffect(() => {
 
     const loadLeagueInfo = async () => {
       try {
-        const res = await axios.post("/league/info", { leagueId: user.league });
+        const res = await axios.post("/league/info", {
+          leagueId: selectedLeagueId
+        });
         setLeagueName(res.data.Name);
         setLeagueInviteCode(res.data.InviteCode);
         setYear(res.data.Year);
+        setTotalTeams(res.data.TeamsID.length)
       } catch (err) {
-        console.error("Failed to fetch league information")
+        console.error("Failed to fetch league information");
       }
-    }
+    };
 
     useEffect(() => {
-      loadLeagueInfo();
-    }, []);
+      if (selectedLeagueId) loadLeagueInfo();
+    }, [selectedLeagueId]);
 
 
     const fetchHistory = async () => {
       try {
-        const leagueId = user.league;
-        const res = await axios.post('/draftHistory/league', { leagueId: leagueId});
+        const res = await axios.post("/draftHistory/league", {
+          leagueId: selectedLeagueId
+        });
 
         const data = res.data.DraftedPlayers.map((p) => ({
           PlayerName: p.PlayerName,
@@ -103,52 +114,92 @@ useEffect(() => {
         }));
 
         setDraftHistory(data);
-
-    } catch (err) {
+      } catch (err) {
         console.error("Failed to fetch draft history:", err);
       }
     };
 
-  useEffect(() => {
-    fetchHistory();
-  }, []);
+    useEffect(() => {
+      if (selectedLeagueId) fetchHistory();
+    }, [selectedLeagueId]);
 
     //  to reload teams
   const loadTeams = async () => {
     try {
-      const res = await axios.post("/allteams", { leagueId: user.league });
+      const res = await axios.post("/allteams", {
+        leagueId: selectedLeagueId
+      });
+
       setTeams(res.data);
 
-      // if all teams have 23 players, setDraftState(false);
+      if (res.data.length > 0) {
+        setTeam(res.data[0].teamName);
+      }
+
       const allFull = res.data.every(
         (team) => team.rosterPlayers.length === 23
       );
 
-      if (allFull) {
-        setDraftState(false);
-      }
-
+      setDraftState(!allFull);
     } catch (e) {
       console.error("Failed to fetch teams: ", e);
     }
   };
 
   useEffect(() => {
-    if (user?.league) {
-      loadTeams();
-    }
-  }, [user?.league]);
+    if (selectedLeagueId) loadTeams();
+  }, [selectedLeagueId]);
 
-  
+
+  const loadUserLeagues = async () => {
+    try {
+      if (!user?.league || user.league.length === 0) return;
+
+      const res = await axios.post("/league/userLeagues", {
+        leagueIds: user.league
+      });
+
+      setLeagueOptions(res.data);
+
+      if (res.data.length > 0) {
+        setSelectedLeagueId(res.data[0]._id);
+      }
+    } catch (err) {
+      console.error("Failed to load user leagues:", err);
+    }
+  };
+
+  useEffect(() => {
+    loadUserLeagues();
+  }, [user]);
 
   return (
     <div className="main-page">
         <Header pages={pages} onPageChange={handlePageChange} onLogout={onLogout} user={user}/>
         {currentPage === "Main Page" ? 
+        
         <div className="drafting-page">
+          <div className="select-league-row">
+            <label>Select League:</label>
+            <select 
+              className="league-select"
+              value={selectedLeagueId}
+              onChange={(e) => {
+                setSelectedLeagueId(e.target.value);
+                setTeam("");
+                setTeams([]);
+              }}
+            >
+              {leagueOptions.map((league) => (
+                <option key={league._id} value={league._id}>
+                  {league.Name} ({league.Year})
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className="team-roster">
-              <h1>Team Rosters of {leagueName} of {year} season</h1>
+              <h1>Team Rosters of {leagueName} ({year})</h1>
               <div>League Invitation Code: {leagueInviteCode}</div>
               <TeamRoster
                     budget={totalBudget}
@@ -171,8 +222,9 @@ useEffect(() => {
               />
               <CompeteContainer
                     teams={teams}
-                    leagueId={user.league}
+                    leagueId={selectedLeagueId}
                     draftState={draftState}
+                    totalTeams={totalTeams}
               />
           </div>
           {/* {draftState && <> */}
@@ -184,7 +236,7 @@ useEffect(() => {
                 error={error}
                 leagueName={leagueName}
                 year={year}
-                leagueId={user.league}
+                leagueId={selectedLeagueId}
                 user={user}
                 teams={teams}
                 draftedIDs={draftedIDs}
@@ -193,17 +245,17 @@ useEffect(() => {
           </div>
           {/* </>} */}
           <div className="notes"> 
-            <Note user={user} leagueId={user.league} />
+            <Note user={user} leagueId={selectedLeagueId} />
 
           </div>
           <div className="draft-history">
               <DraftHistory 
                 leagueName={leagueName}
                 year={year}
-                leagueId={user.league}
+                leagueId={selectedLeagueId}
                 history={draftHistory}
               />
-              <TradeHistory leagueId={user.league} trades={tradeHistory} fetchTrades={fetchTrades} />
+              <TradeHistory leagueId={selectedLeagueId} trades={tradeHistory} fetchTrades={fetchTrades} />
           </div>
           <div className="news-history">
             <Drawer/>
@@ -211,8 +263,14 @@ useEffect(() => {
         </div> :         
         <div className="settings-page">
           <h1 className="settings-title">Draft Settings</h1>
-          <LeagueConfiguration />
-          <AddPlayerToPool leagueId={user.league} userId={user._id}/>
+          {/* <LeagueConfiguration /> */}
+          <AddPlayerToPool leagueId={selectedLeagueId} userId={user._id}/>
+
+          <h1 className="settings-title">Join Another League</h1>
+          <JoinAnotherLeague userId={user._id}/>
+
+          <h1 className="settings-title">Create Another League</h1>
+          <CreateAnotherLeague userId={user._id}/>
         </div>
         }
     </div>
