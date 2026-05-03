@@ -63,6 +63,7 @@ export default function TeamRoster({
       name: parsed.name,
       position: positions,
       ID: player.ID,
+      MLBTeam: parsed.team
     };
     }),
     ...manualPlayers.map((player)=>({
@@ -187,7 +188,7 @@ export default function TeamRoster({
                 maxNextCost={maxNextCost}
                 playerPool={playerPool}
                 draftedNames={draftHistory.map(p => p.PlayerName)}
-                
+                draftedIDs={draftedIDs}
               />
             )}
             {isEditingTeam && (
