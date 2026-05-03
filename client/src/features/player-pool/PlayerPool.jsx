@@ -179,7 +179,6 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
       BB: player.BB ?? '',
       K: player.K ?? '',
       SB: player.SB ?? '',
-      CS: player.CS ?? '',
       AVG: player.AVG ?? '',
       OBP: player.OBP ?? '',
       SLG: player.SLG ?? '',
@@ -190,7 +189,6 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
       ERA: player.ERA ?? '',
       WHIP: player.WHIP ?? '',
 
-      FPTS: player.FPTS ?? '',
       isDrafted,
       playerType: isPitcher(parsedPlayer.position) ? "pitchers" : "hitters",
     };
@@ -214,7 +212,6 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
       BB: player.BB ?? '',
       K: player.K ?? '',
       SB: player.SB ?? '',
-      CS: player.CS ?? '',
       AVG: player.AVG ?? '',
       OBP: player.OBP ?? '',
       SLG: player.SLG ?? '',
@@ -225,7 +222,6 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
       ERA: player.ERA ?? '',
       WHIP: player.WHIP ?? '',
 
-      FPTS: player.FPTS ?? '',
       isDrafted,
       playerType: isPitcher(player.position) ? "pitchers" : "hitters",
     };
@@ -269,11 +265,9 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
     { accessorKey: 'BB', header: 'BB', size: 60 },
     { accessorKey: 'K', header: 'K', size: 60 },
     { accessorKey: 'SB', header: 'SB', size: 60 },
-    { accessorKey: 'CS', header: 'CS', size: 60 },
     { accessorKey: 'AVG', header: 'AVG', size: 60 },
     { accessorKey: 'OBP', header: 'OBP', size: 60 },
     { accessorKey: 'SLG', header: 'SLG', size: 60 },
-    { accessorKey: 'FPTS', header: 'FPTS', size: 60 },
   ];
 
   const pitcherColumns = [
@@ -284,7 +278,6 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
     { accessorKey: 'BB', header: 'BB', size: 60 },
     { accessorKey: 'ERA', header: 'ERA', size: 60 },
     { accessorKey: 'WHIP', header: 'WHIP', size: 60 },
-    { accessorKey: 'FPTS', header: 'FPTS', size: 60 },
   ];
 
   return [
@@ -317,9 +310,9 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
   return (
     <div>
       <div className="player-pool-controls">
-        <button onClick={fetchDraftedPlayers} className="form-buttom">
+        {/* <button onClick={fetchDraftedPlayers} className="form-buttom">
           Refresh Player Pool
-        </button>
+        </button> */}
 
         <label style={{ fontWeight: "bold" }}>
           Player Type:

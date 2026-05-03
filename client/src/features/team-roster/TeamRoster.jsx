@@ -125,7 +125,7 @@ export default function TeamRoster({
 
   return (
     <div className="roster-wrap">
-
+      <AllTeamBudgets teams={teams} budget={budget} />
         <div className="roster-setview">
             <select
             className="roster-select"
@@ -315,5 +315,46 @@ function RosterTable({ rosterPlayers, view }) {
   );
 }
 
+function AllTeamBudgets({ teams = [], budget = 260 }) {
+  const [showAllBudgets, setShowAllBudgets] = useState(false);
 
+  return (
+    <div>
+      <div className="roster-budget-header">
+        <h3>All Team Budgets</h3>
+        <button
+          className="form-buttom"
+          onClick={() => setShowAllBudgets(!showAllBudgets)}
+        >
+          {showAllBudgets ? "Close" : "Show"}
+        </button>
+      </div>
+      {showAllBudgets && 
+        <div className="roster-budget-grid">
+        {teams.map((team) => {
+          const rosterPlayers = team.rosterPlayers || [];
+          const farmPlayers = team.farmPlayers || [];
+          const rosterSpent = getBudget(team.rosterPlayers);
+          const farmSpent = getBudget(team.farmPlayers);
+          const totalSpent = rosterSpent; // or rosterSpent + farmSpent if farm counts
+          const left = budget - totalSpent;
+
+          return (
+            <div key={team._id || team.teamName} className="roster--budget-card">
+              <strong>{team.teamName}</strong>
+              <div>Roster Players: {rosterPlayers.length}</div>
+              <div>Farm Players: {farmPlayers.length}</div>
+              <div>Roster Salary: ${rosterSpent}</div>
+              <div>Farm Salary: ${farmSpent}</div>
+              <div>Budget Left: ${left}</div>
+            </div>
+          );
+        })}
+      </div>
+      }
+
+      
+    </div>
+  );
+}
 

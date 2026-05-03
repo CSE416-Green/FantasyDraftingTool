@@ -69,6 +69,25 @@
   font-size: large;
 }
 
+.roster-budget-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.roster-budget-card {
+  background: #1e1e1e;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.roster-budget-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
 /* ------------------------Roster css end------------------------ */
 
@@ -122,7 +141,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    margin-right: 50%;
+    width: 60%;
 }
 
 .form-row label {
