@@ -21,6 +21,13 @@
   margin-bottom: 50px;
 }
 
+.player-pool-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
 .news-history {
  display: none;
 }

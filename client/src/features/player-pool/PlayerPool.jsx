@@ -1,10 +1,11 @@
 import { useMemo, useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-// import { useQuery } from '@tanstack/react-query';
 import {
   MaterialReactTable,
   useMaterialReactTable,
 } from 'material-react-table';
+
+import '../../css/mainPage.css'
 
 export function parsePlayerString(playerString) {
   if (!playerString || typeof playerString !== 'string') {
@@ -56,14 +57,6 @@ export async function fetchPlayerStats(year) {
 }
 
 export default function PlayerPool({ playerStats, isLoading, error, leagueName, year, leagueId, user, teams, draftedIDs, setDraftedIDs }) {
-  // const {
-  //   data: playerStats = [],
-  //   isLoading,
-  //   error,
-  // } = useQuery({
-  //   queryKey: ['player-stats'],
-  //   queryFn: fetchPlayerStats,
-  // });
   const [draftedNames, setDraftedNames] = useState([]);
 
   const fetchDraftedPlayers = async () => {
@@ -116,7 +109,7 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
   const [playerNote, setPlayerNote] = useState("");
   const [noteStatus, setNoteStatus] = useState("");
   const debounceTimer = useRef(null);
-
+  const [playerType, setPlayerType] = useState("hitters");
   async function fetchPlayerNote(playerName) {
     try {
       const res = await axios.get(`/playerNote/${leagueId}/${user._id}/${encodeURIComponent(playerName)}`);
@@ -165,169 +158,140 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
   }, []);
 
   const data = useMemo(() => {
-    const apiPlayers=playerStats.map((player)=>{
-      const parsedPlayer = parsePlayerString(player.Player ?? '');
-      const isDrafted = draftedIDs.includes(player.ID) || draftedNames.includes(parsedPlayer.name);
-      return {
-        id: player.ID,
-        name: parsedPlayer.name,
-        age: player.AGE,
-        position: parsedPlayer.position,
-        team: parsedPlayer.team,
-        AB: player.AB ?? '',
-        R: player.R ?? '',
-        H: player.H ?? '',
-        '1B': player['1B'] ?? '',
-        '2B': player['2B'] ?? '',
-        '3B': player['3B'] ?? '',
-        HR: player.HR ?? '',
-        RBI: player.RBI ?? '',
-        BB: player.BB ?? '',
-        K: player.K ?? '',
-        SB: player.SB ?? '',
-        CS: player.CS ?? '',
-        AVG: player.AVG ?? '',
-        OBP: player.OBP ?? '',
-        SLG: player.SLG ?? '',
-        FPTS: player.FPTS ?? '',
-        isDrafted,
-      };
-    });
-    const dbPlayers=manualPlayers.map((player)=>{
-      const isDrafted = draftedIDs.includes(player.ID) || draftedNames.includes(player.name);
-      return {
-        id: player.playerID,
-        name: player.name,
-        position: player.position,
-        team: player.team,
-        AB: player.AB ?? '',
-        R: player.R ?? '',
-        H: player.H ?? '',
-        '1B': player['1B'] ?? '',
-        '2B': player['2B'] ?? '',
-        '3B': player['3B'] ?? '',
-        HR: player.HR ?? '',
-        RBI: player.RBI ?? '',
-        BB: player.BB ?? '',
-        K: player.K ?? '',
-        SB: player.SB ?? '',
-        CS: player.CS ?? '',
-        AVG: player.AVG ?? '',
-        OBP: player.OBP ?? '',
-        SLG: player.SLG ?? '',
-        FPTS: player.FPTS ?? '',
-        isDrafted,
-      };
-    });
-    return [...apiPlayers, ...dbPlayers];
-  }, [playerStats, draftedNames, manualPlayers]);
+  const isPitcher = (position) => position === "P" || position?.includes("P");
 
-  const columns = useMemo(
-    () => [
-      {
-        accessorKey: 'name',
-        header: 'Player Name',
-        size: 100
-      },
-      {
-        accessorKey: 'age',
-        header: 'Age',
-        size: 60
-      }
-      ,
-      {
-        accessorKey: 'position',
-        header: 'Position',
-        size: 60
-      },
-      {
-        accessorKey: 'team',
-        header: 'Team Name',
-        size: 80
-      },
-      {
-        accessorKey: 'AB',
-        header: 'AB',
-        size: 60
-      },
-      {
-        accessorKey: 'R',
-        header: 'R',
-        size: 60
-      },
-      {
-        accessorKey: 'H',
-        header: 'H',
-        size: 60
-      },
-      {
-        accessorKey: '1B',
-        header: '1B',
-        size: 60
-      },
-      {
-        accessorKey: '2B',
-        header: '2B',
-        size: 60
-      },
-      {
-        accessorKey: '3B',
-        header: '3B',
-        size: 60
-      },
-      {
-        accessorKey: 'HR',
-        header: 'HR',
-        size: 60
-      },
-      {
-        accessorKey: 'RBI',
-        header: 'RBI',
-        size: 60
-      },
-      {
-        accessorKey: 'BB',
-        header: 'BB',
-        size: 60
-      },
-      {
-        accessorKey: 'K',
-        header: 'K',
-        size: 60
-      },
-      {
-        accessorKey: 'SB',
-        header: 'SB',
-        size: 60
-      },
-      {
-        accessorKey: 'CS',
-        header: 'CS',
-        size: 60
-      },
-      {
-        accessorKey: 'AVG',
-        header: 'AVG',
-        size: 60
-      },
-      {
-        accessorKey: 'OBP',
-        header: 'OBP',
-        size: 60
-      },
-      {
-        accessorKey: 'SLG',
-        header: 'SLG',
-        size: 60
-      },
-      {
-        accessorKey: 'FPTS',
-        header: 'FPTS',
-        size: 60
-      },
-    ],
-    [],
+  const apiPlayers = playerStats.map((player) => {
+    const parsedPlayer = parsePlayerString(player.Player ?? '');
+    const isDrafted = draftedIDs.includes(player.ID) || draftedNames.includes(parsedPlayer.name);
+
+    return {
+      id: player.ID,
+      name: parsedPlayer.name,
+      age: player.AGE,
+      position: parsedPlayer.position,
+      team: parsedPlayer.team,
+
+      AB: player.AB ?? '',
+      R: player.R ?? '',
+      H: player.H ?? '',
+      HR: player.HR ?? '',
+      RBI: player.RBI ?? '',
+      BB: player.BB ?? '',
+      K: player.K ?? '',
+      SB: player.SB ?? '',
+      CS: player.CS ?? '',
+      AVG: player.AVG ?? '',
+      OBP: player.OBP ?? '',
+      SLG: player.SLG ?? '',
+
+      IP: player.IP ?? '',
+      W: player.W ?? '',
+      SV: player.SV ?? '',
+      ERA: player.ERA ?? '',
+      WHIP: player.WHIP ?? '',
+
+      FPTS: player.FPTS ?? '',
+      isDrafted,
+      playerType: isPitcher(parsedPlayer.position) ? "pitchers" : "hitters",
+    };
+  });
+
+  const dbPlayers = manualPlayers.map((player) => {
+    const isDrafted = draftedIDs.includes(player.playerID) || draftedNames.includes(player.name);
+
+    return {
+      id: player.playerID,
+      name: player.name,
+      age: player.age ?? '',
+      position: player.position,
+      team: player.team,
+
+      AB: player.AB ?? '',
+      R: player.R ?? '',
+      H: player.H ?? '',
+      HR: player.HR ?? '',
+      RBI: player.RBI ?? '',
+      BB: player.BB ?? '',
+      K: player.K ?? '',
+      SB: player.SB ?? '',
+      CS: player.CS ?? '',
+      AVG: player.AVG ?? '',
+      OBP: player.OBP ?? '',
+      SLG: player.SLG ?? '',
+
+      IP: player.IP ?? '',
+      W: player.W ?? '',
+      SV: player.SV ?? '',
+      ERA: player.ERA ?? '',
+      WHIP: player.WHIP ?? '',
+
+      FPTS: player.FPTS ?? '',
+      isDrafted,
+      playerType: isPitcher(player.position) ? "pitchers" : "hitters",
+    };
+  });
+
+  return [...apiPlayers, ...dbPlayers].filter(
+    (player) => player.playerType === playerType
   );
+}, [playerStats, draftedNames, manualPlayers, draftedIDs, playerType]);
+
+ const columns = useMemo(() => {
+  const baseColumns = [
+    {
+      accessorKey: 'name',
+      header: 'Player Name',
+      size: 100,
+    },
+    {
+      accessorKey: 'age',
+      header: 'Age',
+      size: 60,
+    },
+    {
+      accessorKey: 'position',
+      header: 'Position',
+      size: 60,
+    },
+    {
+      accessorKey: 'team',
+      header: 'Team',
+      size: 80,
+    },
+  ];
+
+  const hitterColumns = [
+    { accessorKey: 'AB', header: 'AB', size: 60 },
+    { accessorKey: 'R', header: 'R', size: 60 },
+    { accessorKey: 'H', header: 'H', size: 60 },
+    { accessorKey: 'HR', header: 'HR', size: 60 },
+    { accessorKey: 'RBI', header: 'RBI', size: 60 },
+    { accessorKey: 'BB', header: 'BB', size: 60 },
+    { accessorKey: 'K', header: 'K', size: 60 },
+    { accessorKey: 'SB', header: 'SB', size: 60 },
+    { accessorKey: 'CS', header: 'CS', size: 60 },
+    { accessorKey: 'AVG', header: 'AVG', size: 60 },
+    { accessorKey: 'OBP', header: 'OBP', size: 60 },
+    { accessorKey: 'SLG', header: 'SLG', size: 60 },
+    { accessorKey: 'FPTS', header: 'FPTS', size: 60 },
+  ];
+
+  const pitcherColumns = [
+    { accessorKey: 'IP', header: 'IP', size: 60 },
+    { accessorKey: 'W', header: 'W', size: 60 },
+    { accessorKey: 'SV', header: 'SV', size: 60 },
+    { accessorKey: 'K', header: 'K', size: 60 },
+    { accessorKey: 'BB', header: 'BB', size: 60 },
+    { accessorKey: 'ERA', header: 'ERA', size: 60 },
+    { accessorKey: 'WHIP', header: 'WHIP', size: 60 },
+    { accessorKey: 'FPTS', header: 'FPTS', size: 60 },
+  ];
+
+  return [
+    ...baseColumns,
+    ...(playerType === "hitters" ? hitterColumns : pitcherColumns),
+  ];
+  }, [playerType]);
 
   const table = useMaterialReactTable({
     columns,
@@ -352,9 +316,30 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
 
   return (
     <div>
-      <button onClick={fetchDraftedPlayers} className="form-buttom">
-        Refresh Player Pool
-      </button>
+      <div className="player-pool-controls">
+        <button onClick={fetchDraftedPlayers} className="form-buttom">
+          Refresh Player Pool
+        </button>
+
+        <label style={{ fontWeight: "bold" }}>
+          Player Type:
+        </label>
+
+        <select
+          value={playerType}
+          className="form-select"
+          onChange={(e) => setPlayerType(e.target.value)}
+          style={{
+            padding: "6px 10px",
+            borderRadius: "4px",
+            border: "1px solid #ccc",
+          }}
+        >
+          <option value="hitters">Hitters</option>
+          <option value="pitchers">Pitchers</option>
+        </select>
+      </div>
+      
       <MaterialReactTable table={table} />
       {selectedPlayer && (
       <div style={{
@@ -406,5 +391,4 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
       </div>
           )}
     </div>
-  //return <MaterialReactTable table={table} />;
   )};
