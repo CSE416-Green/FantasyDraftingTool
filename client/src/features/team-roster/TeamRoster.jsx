@@ -187,7 +187,7 @@ export default function TeamRoster({
                 maxNextCost={maxNextCost}
                 playerPool={playerPool}
                 draftedNames={draftHistory.map(p => p.PlayerName)}
-                
+                draftedIDs={draftedIDs}
               />
             )}
             {isEditingTeam && (

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 
-export default function EnterPastPlayerForm({ team, onSubmit, onCancel, maxNextCost, playerPool, draftedNames }) {
+export default function EnterPastPlayerForm({ team, onSubmit, onCancel, maxNextCost, playerPool, draftedNames, draftedIDs }) {
 
     const [playerName, setPlayerName] = useState("");
     const [position, setPosition] = useState("");
@@ -76,7 +76,7 @@ export default function EnterPastPlayerForm({ team, onSubmit, onCancel, maxNextC
                     placeholder="Type to Search"
                 />
                 <datalist id="players">
-                    {playerPool.filter(p => !draftedNames.includes(p.name))
+                    {playerPool.filter(p => !draftedNames.includes(p.name) && !draftedIDs.includes(p.ID))
                         .map((player, index) => (
                         <option key={index} value={player.name}>
                         {player.position.join(" ")}
