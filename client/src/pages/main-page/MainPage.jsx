@@ -98,7 +98,8 @@ useEffect(() => {
           TeamName: p.TeamName,
           Cost: p.Cost,
           BroughtUpBy: p.BroughtUpBy,
-          Position: p.Position
+          Position: p.Position,
+          MLBTeam: p.MLBTeam
         }));
 
         setDraftHistory(data);

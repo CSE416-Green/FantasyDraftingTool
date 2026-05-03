@@ -43,6 +43,7 @@ export default function DraftPlayerForm({
     const [status, setStatus] = useState("");
     const [broughtupby, setBroughtupby] = useState("");
     const [playerID, setPlayerID] = useState("");
+    const [MLBTeam, setMLBTeam] = useState("");
 
     const fullPlayer = playerPool.find(p => p.name === selectedPlayer);
 
@@ -96,7 +97,8 @@ export default function DraftPlayerForm({
                 teamName: team.teamName,
                 position: position,
                 broughtupby: broughtupby,
-                playerID: playerID
+                playerID: playerID,
+                MLBTeam: MLBTeam
             });
             // update draft history in TeamRoster
             // server res.json({ message: "Player added to draft history successfully!", history });
@@ -136,7 +138,7 @@ export default function DraftPlayerForm({
                         setSelectedPlayer(name);
                         const player = playerPool.find((p) => p.name === name);
                         setPlayerID(player.ID);
-
+                        setMLBTeam(player.MLBTeam);
                     }}
                     className="form-select"
                     placeholder="Type to Search"

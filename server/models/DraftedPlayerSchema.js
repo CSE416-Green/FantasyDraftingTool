@@ -7,7 +7,8 @@ const DraftedPlayerSchema = new mongoose.Schema({
     Cost: {type:Number, required: true},
     BroughtUpBy: {type:String, required: false},
     Position: {type:String, required: true},
-    PlayerID: {type:Number}
+    PlayerID: {type:Number},
+    MLBTeam: {type:String},
 });
 
 module.exports = DraftedPlayerSchema;
