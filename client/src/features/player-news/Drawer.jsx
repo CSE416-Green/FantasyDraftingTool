@@ -87,7 +87,7 @@ function SwipeableEdgeDrawer(props) {
         >
           <Puller />
 
-          <Box sx={{ textAlign: 'right', pt: 1 }}>
+          <Box sx={{ textAlign: 'right', pt: 1, height: '100px' }}>
             <Button onClick={toggleDrawer(!open)}>
               {open ? 'Close Notifications' : 'Open Notifications'}
             </Button>

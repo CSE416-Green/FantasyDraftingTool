@@ -175,7 +175,7 @@ useEffect(() => {
                     draftState={draftState}
               />
           </div>
-          {draftState && <>
+          {/* {draftState && <> */}
             <div className="player-pool">
               <h1>Player Pool</h1>
               <PlayerPool
@@ -191,7 +191,7 @@ useEffect(() => {
                 setDraftedIDs={setDraftedIDs}
               />
           </div>
-          </>}
+          {/* </>} */}
           <div className="notes"> 
             <Note user={user} leagueId={user.league} />
 
