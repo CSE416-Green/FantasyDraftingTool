@@ -368,8 +368,12 @@ app.post("/joinLeague", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (user.league.includes(league._id)) {
+    // check if user's league array exists, and see if they are already in the league
+    if (user.league && user.league.includes(league._id)) {
       return res.status(400).json({ message: "User already in this league" });
+    }
+    if (!user.league) {
+      user.league = [];
     }
     user.league.push(league._id);
     
