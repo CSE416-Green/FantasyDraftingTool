@@ -121,10 +121,6 @@ app.post("/updateTeam", async (req, res) => {
 });
 
 
-
-
-
-
 app.post("/settings/league", async (req, res) => {
   try {
     const { numTeams, teamBudget } = req.body;
@@ -258,6 +254,43 @@ app.post("/tradePlayers", async (req, res) => {
       ? toList[toPlayerIndex].toObject()
       : { ...toList[toPlayerIndex] };
 
+    const fromPlayerCost = Number(fromPlayer.cost || 0);
+    const toPlayerCost = Number(toPlayer.cost || 0);
+
+    const getTotalTeamCost = (team) => {
+      const rosterCost = team.rosterPlayers.reduce(
+        (sum, player) => sum + Number(player.cost || 0),
+        0
+      );
+
+      const farmCost = team.farmPlayers.reduce(
+        (sum, player) => sum + Number(player.cost || 0),
+        0
+      );
+
+      return rosterCost + farmCost;
+    };
+
+    const teamBudget = Number((await Settings.findOne())?.teamBudget || 260);
+
+    const fromTeamBudgetLeft = teamBudget - getTotalTeamCost(fromTeam);
+    const toTeamBudgetLeft = teamBudget - getTotalTeamCost(toTeam);
+
+    const fromTeamAvailableBudget = fromTeamBudgetLeft + fromPlayerCost;
+    const toTeamAvailableBudget = toTeamBudgetLeft + toPlayerCost;
+
+    if (fromTeamAvailableBudget < toPlayerCost) {
+      return res.status(400).json({
+        error: `${fromTeam.teamName} does not have enough budget for this trade.`,
+      });
+    }
+
+    if (toTeamAvailableBudget < fromPlayerCost) {
+      return res.status(400).json({
+        error: `${toTeam.teamName} does not have enough budget for this trade.`,
+      });
+    }
+    
     fromList.splice(fromPlayerIndex, 1);
     toList.splice(toPlayerIndex, 1);
 
