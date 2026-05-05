@@ -4,7 +4,18 @@ const bcrypt=require("bcrypt");
 const User=require("../models/UserSchema");
 const jwt=require("jsonwebtoken");
 const { protect }= require("../middleware/userAuth")
+const rateLimit = require("express-rate-limit"); // rate limit for otp 
 
+
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// rate limiter
+const otpLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, 
+    max: 5, //max 5 attempts per IP per 15 minutes
+    message: { message: "Too many requests, please try again later." }
+});
 
 //generate JWT token
 const generateToken=(id)=>{
@@ -85,5 +96,78 @@ router.get("/me", protect,async(req,res)=>{
     res.status(200).json(req.user);
 });
 
+// Password retrieval 
+router.post("/forgot-password", otpLimiter, async (req, res) => {
+    const { email } = req.body;
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(200).json({ message: "If the email address is valid you will receive a One Time Password via email." });
+      }
+  
+      const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6 digit OTP
+      const otpExpiry = Date.now() + 1000 * 60 * 5; 
+  
+      user.resetToken = otp;
+      user.resetTokenExpiry = otpExpiry;
+      await user.save();
+  
+      await resend.emails.send({
+        from: "Fantasy Draft Kit <onboarding@resend.dev>",
+        to: user.email,
+        subject: "Fantasy Draft Kit - One Time Password",
+        html: `
+          <h2>Password Reset OTP</h2>
+          <p>Your One Time Password is:</p>
+          <h1 style="font-size: 32px;">${otp}</h1>
+          <p>This OTP expires in 5 minutes.</p>
+          <p>If you did not request this, ignore this email.</p>
+        `
+      });
+  
+      res.status(200).json({ message: "If the email address is valid you will receive a One Time Password via email." });
+    } catch (err) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+  
+  router.post("/verify-otp", async (req, res) => {
+    const { email, otp } = req.body;
+    try {
+      const user = await User.findOne({
+        email,
+        resetToken: otp,
+        resetTokenExpiry: { $gt: Date.now() },
+      });
+      if (!user) {
+        return res.status(400).json({ message: "Invalid or expired OTP" });
+      }
+      res.status(200).json({ message: "OTP verified" });
+    } catch (err) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+  
+  router.post("/reset-password", async (req, res) => {
+    const { email, otp, password } = req.body;
+    try {
+      const user = await User.findOne({
+        email,
+        resetToken: otp,
+        resetTokenExpiry: { $gt: Date.now() },
+      });
+  
+      if (!user) {
+        return res.status(400).json({ message: "Invalid or expired OTP" });
+      }
+      user.password = await bcrypt.hash(password, 10);
+      user.resetToken = undefined;
+      user.resetTokenExpiry = undefined;
+      await user.save();
+      res.status(200).json({ message: "Password reset successful" });
+    } catch (err) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });
 
 module.exports=router;

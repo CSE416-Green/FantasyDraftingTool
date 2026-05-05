@@ -1,8 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
 import "../../css/login.css";
+import ForgotPassword from "./ForgotPassword";
 export default function Login({ onLogin }) {
     const [isRegistering, setIsRegistering] = useState(false);
+    const [displayForgotPassword, setDisplayForgotPassword] = useState(false);
     const [form, setForm] = useState({
         firstName: "",
         lastName: "",
@@ -36,6 +38,9 @@ export default function Login({ onLogin }) {
         setError(err.response?.data?.message || "Something went wrong");
         }
     }
+    if (displayForgotPassword) {
+        return <ForgotPassword onBackToLogin={() => setDisplayForgotPassword(false)} />;
+      }
 
     return (
         <div className="login-page">
@@ -62,7 +67,7 @@ export default function Login({ onLogin }) {
                 )}
                 <div className="login-field">
                 <label>Email:</label>
-                <input className="login-input" type="email" name="email" value={form.email} onChange={handleChange} />
+                <input className="login-input" type="email" name="email" value={form.email} onChange={handleChange} onInvalid={(e) => e.target.setCustomValidity("Please Enter a Valid Email")} onInput={(e) => e.target.setCustomValidity("")}/>
                 </div>
                 <div className="login-field">
                 <label>Password:</label>
@@ -80,6 +85,11 @@ export default function Login({ onLogin }) {
                     {isRegistering ? "Login" : "Register"}
                 </span>
                 </div>
+                {!isRegistering && (
+                <div className="login-toggle">
+                    <span onClick={() => setDisplayForgotPassword(true)}> Forgot Password?</span>
+                </div>
+                )}
             </form>
             </div>
         </div>

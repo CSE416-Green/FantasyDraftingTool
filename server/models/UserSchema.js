@@ -30,6 +30,8 @@ const userSchema=new mongoose.Schema({
         ref: 'League',
         required: false
     },
+    resetToken: { type: String },
+    resetTokenExpiry: { type: Date },   
 },{timestamps:true});
 
 module.exports=mongoose.model("User", userSchema);
