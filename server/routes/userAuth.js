@@ -43,7 +43,7 @@ router.post('/register', async (req,res)=>{
         username,
         email,
         password: hashedPassword,
-        league: null,
+        league: [],
     });
     try {
         await newUser.save();  //save user 
