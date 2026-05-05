@@ -43,6 +43,7 @@ export function parsePlayerString(playerString) {
 
 export async function fetchPlayerStats(year) {
   const res = await fetch(`https://fantasydraftingtool.onrender.com/playerStats/${year}`);
+  // const res = await fetch(`http://localhost:8080/stats/${year}`);
   if (!res.ok) {
     throw new Error(`Error Fetching Player Data ${res.status}`);
   }
@@ -172,24 +173,26 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
       position: parsedPlayer.position,
       team: parsedPlayer.team,
 
-      AB: player.AB ?? '',
-      R: player.R ?? '',
-      H: player.H ?? '',
-      HR: player.HR ?? '',
-      RBI: player.RBI ?? '',
-      BB: player.BB ?? '',
-      K: player.K ?? '',
-      SB: player.SB ?? '',
-      AVG: player.AVG ?? '',
-      OBP: player.OBP ?? '',
-      SLG: player.SLG ?? '',
+      AB: Number(player.AB) ?? '',
+      R: Number(player.R) ?? '',
+      H: Number(player.H) ?? '',
+      Doubles: Number(player.Doubles) ?? '',
+      Triples: Number(player.Triples) ?? '',
+      HR: Number(player.HR) ?? '',
+      RBI: Number(player.RBI) ?? '',
+      BB: Number(player.BB) ?? '',
+      K: Number(player.K) ?? '',
+      SB: Number(player.SB) ?? '',
+      AVG: Number(player.AVG) ?? '',
+      OBP: Number(player.OBP) ?? '',
+      SLG: Number(player.SLG) ?? '',
 
-      IP: player.IP ?? '',
-      W: player.W ?? '',
-      SV: player.SV ?? '',
-      ERA: player.ERA ?? '',
-      WHIP: player.WHIP ?? '',
-
+      IP: Number(player.IP) ?? '',
+      W: Number(player.W) ?? '',
+      SV: Number(player.SV) ?? '',
+      ERA: Number(player.ERA) ?? '',
+      WHIP: Number(player.WHIP) ?? '',
+      FPTS: Number(player.FPTS) || 0,
       isDrafted,
       playerType: isPitcher(parsedPlayer.position) ? "pitchers" : "hitters",
     };
@@ -205,24 +208,26 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
       position: player.position,
       team: player.team,
 
-      AB: player.AB ?? '',
-      R: player.R ?? '',
-      H: player.H ?? '',
-      HR: player.HR ?? '',
-      RBI: player.RBI ?? '',
-      BB: player.BB ?? '',
-      K: player.K ?? '',
-      SB: player.SB ?? '',
-      AVG: player.AVG ?? '',
-      OBP: player.OBP ?? '',
-      SLG: player.SLG ?? '',
+      AB: Number(player.AB) ?? '',
+      R: Number(player.R) ?? '',
+      H: Number(player.H) ?? '',
+      Doubles: Number(player.Doubles) ?? '',
+      Triples: Number(player.Triples) ?? '',      
+      HR: Number(player.HR) ?? '',
+      RBI: Number(player.RBI) ?? '',
+      BB: Number(player.BB) ?? '',
+      K: Number(player.K) ?? '',
+      SB: Number(player.SB) ?? '',
+      AVG: Number(player.AVG) ?? '',
+      OBP: Number(player.OBP) ?? '',
+      SLG: Number(player.SLG) ?? '',
 
-      IP: player.IP ?? '',
-      W: player.W ?? '',
-      SV: player.SV ?? '',
-      ERA: player.ERA ?? '',
-      WHIP: player.WHIP ?? '',
-
+      IP: Number(player.IP) ?? '',
+      W: Number(player.W) ?? '',
+      SV: Number(player.SV) ?? '',
+      ERA: Number(player.ERA) ?? '',
+      WHIP: Number(player.WHIP) ?? '',
+      FPTS: Number(player.FPTS) || 0,
       isDrafted,
       playerType: isPitcher(player.position) ? "pitchers" : "hitters",
     };
@@ -255,12 +260,19 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
       header: 'Team',
       size: 80,
     },
+    {
+      accessorKey: 'FPTS',
+      header: 'FPTS',
+      size: 60,
+    },
   ];
 
   const hitterColumns = [
     { accessorKey: 'AB', header: 'AB', size: 60 },
     { accessorKey: 'R', header: 'R', size: 60 },
     { accessorKey: 'H', header: 'H', size: 60 },
+    { accessorKey: 'Doubles', header: 'Doubles', size: 60 },
+    { accessorKey: 'Triples', header: 'Triples', size: 60 },
     { accessorKey: 'HR', header: 'HR', size: 60 },
     { accessorKey: 'RBI', header: 'RBI', size: 60 },
     { accessorKey: 'BB', header: 'BB', size: 60 },
@@ -293,6 +305,14 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
     state: {
       isLoading,
       showAlertBanner: Boolean(error),
+    },
+    initialState: {
+      sorting: [
+        {
+          id: 'FPTS',   // must match accessorKey
+          desc: true,   // true = descending (highest first)
+        },
+      ],
     },
     muiTableBodyRowProps: ({ row }) => ({
       onClick: () => {
