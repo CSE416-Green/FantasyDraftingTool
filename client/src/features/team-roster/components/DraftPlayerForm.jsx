@@ -110,7 +110,7 @@ export default function DraftPlayerForm({
 
     return (
         <form onSubmit={handleSubmit}>
-            <h2>Draft Player for <u>{team.teamName}</u></h2>
+            <h2>Draft Player for <u>{team ? team.teamName : "Team"}</u></h2>
 
             <div className="form-row">
                 <label>Brought up by:</label>

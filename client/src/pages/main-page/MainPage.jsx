@@ -219,6 +219,7 @@ useEffect(() => {
                     fetchTrades={fetchTrades}
                     draftState={draftState}
                     draftedIDs={draftedIDs}
+                    leagueId={selectedLeagueId}
               />
               <CompeteContainer
                     teams={teams}

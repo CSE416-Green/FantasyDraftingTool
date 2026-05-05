@@ -31,7 +31,8 @@ export default function TeamRoster({
   loadTeams,
   fetchTrades,
   draftState,
-  draftedIDs
+  draftedIDs,
+  leagueId
 }) {
   const [isEditingTeam, setIsEditingTeam] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);
@@ -42,7 +43,7 @@ export default function TeamRoster({
   useEffect(() => {
     async function fetchManualPlayers() {
       try {
-        const res = await axios.get(`/addedPlayerPool/manualPlayers/${user.league}`);
+        const res = await axios.get(`/addedPlayerPool/manualPlayers/${leagueId}`);
         setManualPlayers(res.data);
       } catch (err) {
         console.error('Failed to fetch manual players:', err);
@@ -216,7 +217,7 @@ export default function TeamRoster({
                 leagueName={leagueName}
                 year={year}
                 teams={teams}
-                leagueId={user.league}
+                leagueId={leagueId}
                 setDraftHistory={setDraftHistory}
                 draftedNames={draftHistory.map(p => p.PlayerName)}
                 remainingSpots={maxRosterPlayer - rosterPlayers.length}
