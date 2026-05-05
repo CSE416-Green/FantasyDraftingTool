@@ -169,7 +169,7 @@ async function createLeague(createdUserIds) {
             const user = await User.findById(userId);
             user.league.push(newLeague._id);
 
-            
+            await user.save();
         }
         await newLeague.save();
         // console.log("League created, _id", newLeague._id.toString());
