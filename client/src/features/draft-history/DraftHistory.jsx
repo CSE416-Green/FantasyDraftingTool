@@ -14,7 +14,7 @@ export default function DraftHistory({leagueName, year, leagueId, history}) {
 
   return (
     <div className="historyWrapper">
-      <h2>Draft History</h2>
+      <h2>Draft History for {leagueName}</h2>
       <table>
         <thead>
           <tr>
