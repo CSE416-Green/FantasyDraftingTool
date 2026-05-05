@@ -96,7 +96,7 @@ async function createAccounts() {
                     username,
                     email,
                     password: hashedPassword,
-                    league: null
+                    league: []
                 });
 
                 await user.save();
@@ -166,11 +166,10 @@ async function createLeague(createdUserIds) {
             createdTeamIds.push(team._id);
             newLeague.TeamsID.push(team._id);
 
-            await User.findByIdAndUpdate(userId, {
-                $set: { league: newLeague._id }
-            });
+            const user = await User.findById(userId);
+            user.league.push(newLeague._id);
 
-            
+            await user.save();
         }
         await newLeague.save();
         // console.log("League created, _id", newLeague._id.toString());
