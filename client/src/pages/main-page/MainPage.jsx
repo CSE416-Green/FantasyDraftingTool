@@ -35,6 +35,7 @@ function MainPage({user,onLogout}) {
   const [selectedLeagueId, setSelectedLeagueId] = useState("");
   const [leagueOptions, setLeagueOptions] = useState([]);
   const [totalTeams, setTotalTeams] = useState(0);
+  const [draftLeague, setDraftLeague] = useState("MLB");
 
 const fetchTrades = async () => {
   try {
@@ -220,6 +221,8 @@ useEffect(() => {
                     draftState={draftState}
                     draftedIDs={draftedIDs}
                     leagueId={selectedLeagueId}
+                    draftLeague={draftLeague}
+                    setDraftLeague={setDraftLeague}
               />
               <CompeteContainer
                     teams={teams}
@@ -242,6 +245,7 @@ useEffect(() => {
                 teams={teams}
                 draftedIDs={draftedIDs}
                 setDraftedIDs={setDraftedIDs}
+                draftLeague={draftLeague}
               />
           </div>
           {/* </>} */}
