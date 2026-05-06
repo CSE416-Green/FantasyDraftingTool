@@ -196,7 +196,6 @@ app.post("/league/userLeagues", async (req, res) => {
 });
 
 
-//Start of new code
 app.post("/tradePlayers", async (req, res) => {
   try {
     const {
@@ -257,35 +256,27 @@ app.post("/tradePlayers", async (req, res) => {
     const fromPlayerCost = Number(fromPlayer.cost || 0);
     const toPlayerCost = Number(toPlayer.cost || 0);
 
-    const getTotalTeamCost = (team) => {
-      const rosterCost = team.rosterPlayers.reduce(
+    const getRosterCost = (team) =>
+      team.rosterPlayers.reduce(
         (sum, player) => sum + Number(player.cost || 0),
         0
       );
-
-      const farmCost = team.farmPlayers.reduce(
-        (sum, player) => sum + Number(player.cost || 0),
-        0
-      );
-
-      return rosterCost + farmCost;
-    };
 
     const teamBudget = Number((await Settings.findOne())?.teamBudget || 260);
 
-    const fromTeamBudgetLeft = teamBudget - getTotalTeamCost(fromTeam);
-    const toTeamBudgetLeft = teamBudget - getTotalTeamCost(toTeam);
+    const fromRosterCost = getRosterCost(fromTeam);
+    const toRosterCost = getRosterCost(toTeam);
 
-    const fromTeamAvailableBudget = fromTeamBudgetLeft + fromPlayerCost;
-    const toTeamAvailableBudget = toTeamBudgetLeft + toPlayerCost;
+    const newFromCost = fromRosterCost - (fromView === "roster" ? fromPlayerCost : 0) + (toView === "roster" ? toPlayerCost : 0);
+    const newToCost = toRosterCost - (toView === "roster" ? toPlayerCost : 0) + (fromView === "roster" ? fromPlayerCost : 0);
 
-    if (fromTeamAvailableBudget < toPlayerCost) {
+    if (newFromCost > teamBudget) {
       return res.status(400).json({
         error: `${fromTeam.teamName} does not have enough budget for this trade.`,
       });
     }
 
-    if (toTeamAvailableBudget < fromPlayerCost) {
+    if (newToCost > teamBudget) {
       return res.status(400).json({
         error: `${toTeam.teamName} does not have enough budget for this trade.`,
       });
@@ -325,8 +316,6 @@ app.post("/tradePlayers", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
-//End of new code
-
 
 // create a new league 
 app.post("/createLeague", async (req, res) => {
