@@ -77,8 +77,8 @@ export function parsePlayerString(playerString) {
 }
 
 export async function fetchPlayerStats(year) {
-  // const res = await fetch(`https://fantasydraftingtool.onrender.com/playerStats/${year}`);
-  const res = await fetch(`http://localhost:8080/stats/${year}`);
+  const res = await fetch(`https://fantasydraftingtool.onrender.com/playerStats/${year}`);
+  // const res = await fetch(`http://localhost:8080/stats/${year}`);
 
   if (!res.ok) {
     throw new Error(`Error Fetching Player Data ${res.status}`);
