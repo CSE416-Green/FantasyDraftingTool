@@ -51,7 +51,7 @@ useEffect(() => {
 }, [selectedLeagueId]);
 
   const {
-      data: playerStats = [],
+      data: playerStatsByYear = {},
       isLoading,
       error,
     } = useQuery({
@@ -209,7 +209,7 @@ useEffect(() => {
                     onRosterPlayers={() => setView("roster")} 
                     onFarmPlayers={() => setView("farm")}
                     onTaxiPlayers={() => setView("taxi")}
-                    playerStats={playerStats}
+                    playerStats={playerStatsByYear?.thisYear || []}
                     leagueName={leagueName}
                     year={year}
                     user={user}
@@ -235,7 +235,7 @@ useEffect(() => {
             <div className="player-pool">
               <h1>Player Pool</h1>
               <PlayerPool
-                playerStats={playerStats}
+                playerStatsByYear={playerStatsByYear}
                 isLoading={isLoading}
                 error={error}
                 leagueName={leagueName}
