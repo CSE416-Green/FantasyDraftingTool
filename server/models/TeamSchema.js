@@ -7,7 +7,8 @@ const TeamSchema = new mongoose.Schema({
     required: true
   },
   rosterPlayers: [PlayerSchema],
-  farmPlayers: [PlayerSchema]
+  farmPlayers: [PlayerSchema],
+  taxiPlayers: [PlayerSchema],
 });
 
 module.exports = mongoose.model("Team", TeamSchema);

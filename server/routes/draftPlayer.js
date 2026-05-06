@@ -173,4 +173,74 @@ draftPlayerRouter.post("/group", async (req, res) => {
   }
 });
 
+draftPlayerRouter.post("/addToTaxi", async (req, res) => {
+  try {
+    const { teamId, name, playerID, position  } = req.body;
+    if (!teamId || !name || !playerID || !position) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+    const team = await Team.findById(teamId);
+    if (!team) {
+      console.warn(`Team not found: `);
+      return res.status(404).json({ error: "Team not found" });
+    }
+
+    // check if that position exists in the taxi already
+    const existingPlayer = team.taxiPlayers.find(p => p.position === position);
+    if (existingPlayer) {
+      return res.status(400).json({ error: `Your team already has a player at position ${position} in the taxi squad.` });
+    }
+
+    const newPlayer = {
+      name: name,
+      playerID: playerID,
+      position: position
+    };
+    
+    team.taxiPlayers.push(newPlayer);
+
+    await team.save();
+
+    res.json({ message: "Taxi player drafted successfully!", team });
+
+  } catch (error) {
+    console.error("Error drafting taxi player:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
+draftPlayerRouter.post("/updateTaxiOrder", async (req, res) => {
+  try {
+    const { teamId, taxiPlayers } = req.body;
+
+    // check valid positions
+    const positions = taxiPlayers.map(p => p.position);
+    const uniquePositions = new Set(positions);
+    if (uniquePositions.size !== taxiPlayers.length) {
+      return res.status(400).json({ error: "Duplicate positions!" });
+    }
+
+    // check for <=0
+    for (const p of positions) {
+      if (p <= 0) {
+        return res.status(400).json({ error: "Only positive positions are allowed!" });
+      }
+    }
+
+    const team = await Team.findById(teamId);
+
+    if (!team) {
+      return res.status(404).json({ error: "Team not found" });
+    }
+
+    team.taxiPlayers = taxiPlayers;
+
+    await team.save();
+
+    res.json(team);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 module.exports = draftPlayerRouter;

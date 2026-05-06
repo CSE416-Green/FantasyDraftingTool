@@ -158,7 +158,8 @@ async function createLeague(createdUserIds) {
             const team = new Team({
                 teamName: `Team ${letter}`,
                 rosterPlayers: [],
-                farmPlayers: []
+                farmPlayers: [],
+                taxiPlayers: [],
             });
 
             await team.save();
