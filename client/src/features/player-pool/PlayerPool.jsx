@@ -77,22 +77,23 @@ export function parsePlayerString(playerString) {
 }
 
 export async function fetchPlayerStats(year) {
-  const res = await fetch(`https://fantasydraftingtool.onrender.com/playerStats/${year}`);
-  // const res = await fetch(`http://localhost:8080/stats/${year}`);
+  // const res = await fetch(`https://fantasydraftingtool.onrender.com/playerStats/${year}`);
+  const res = await fetch(`http://localhost:8080/stats/${year}`);
+
   if (!res.ok) {
     throw new Error(`Error Fetching Player Data ${res.status}`);
   }
 
-  try {
-    const playerStatsJson = await res.json();
-    const playerData = [...playerStatsJson];
-    return playerData;
-  } catch (error) {
-    console.error('Error parsing player stats JSON:', error);
-  }
+  const json = await res.json();
+
+  return {
+    thisYear: json.players.thisYear,
+    lastYear: json.players.lastYear,
+    twoYearsAgo: json.players.twoYearsAgo,
+  };
 }
 
-export default function PlayerPool({ playerStats, isLoading, error, leagueName, year, leagueId, user, teams, draftedIDs, setDraftedIDs, draftLeague = "MLB" }) {
+export default function PlayerPool({ playerStatsByYear, isLoading, error, leagueName, year, leagueId, user, teams, draftedIDs, setDraftedIDs, draftLeague = "MLB" }) {
   const [draftedNames, setDraftedNames] = useState([]);
 
   const fetchDraftedPlayers = async () => {
@@ -152,6 +153,8 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
   const [noteStatus, setNoteStatus] = useState("");
   const debounceTimer = useRef(null);
   const [playerType, setPlayerType] = useState("hitters");
+  const [selectedStatsYear, setSelectedStatsYear] = useState("thisYear");
+  const playerStats = playerStatsByYear?.[selectedStatsYear] || [];
   async function fetchPlayerNote(playerName) {
     try {
       const res = await axios.get(`/playerNote/${leagueId}/${user._id}/${encodeURIComponent(playerName)}`);
@@ -383,7 +386,7 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
           Refresh Player Pool
         </button> */}
 
-        <label style={{ fontWeight: "bold" }}>
+        <label>
           Player Type:
         </label>
 
@@ -391,27 +394,28 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
           value={playerType}
           className="form-select"
           onChange={(e) => setPlayerType(e.target.value)}
-          style={{
-            padding: "6px 10px",
-            borderRadius: "4px",
-            border: "1px solid #ccc",
-          }}
         >
           <option value="hitters">Hitters</option>
           <option value="pitchers">Pitchers</option>
+        </select>
+        <label>
+          Stats Year:
+        </label>
+
+        <select
+          value={selectedStatsYear}
+          className="form-select"
+          onChange={(e) => setSelectedStatsYear(e.target.value)}
+        >
+          <option value="thisYear">{year}</option>
+          <option value="lastYear">{year - 1}</option>
+          <option value="twoYearsAgo">{year - 2}</option>
         </select>
       </div>
       
       <MaterialReactTable table={table} />
       {selectedPlayer && (
-      <div style={{
-        marginTop: "16px",
-        padding: "16px",
-        border: "1px solid #ccc",
-        borderRadius: "6px",
-        backgroundColor: "#ffffff",
-        position: "relative",
-      }}>
+      <div>
         <button
           onClick={() => setSelectedPlayer(null)}
           style={{
