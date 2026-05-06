@@ -7,6 +7,41 @@ import {
 
 import '../../css/mainPage.css'
 
+const AL_TEAMS = [
+  "Baltimore Orioles",
+  "Boston Red Sox",
+  "New York Yankees",
+  "Tampa Bay Rays",
+  "Toronto Blue Jays",
+  "Chicago White Sox",
+  "Cleveland Guardians",
+  "Detroit Tigers",
+  "Kansas City Royals",
+  "Minnesota Twins",
+  "Houston Astros",
+  "Los Angeles Angels",
+  "Athletics",
+  "Seattle Mariners",
+  "Texas Rangers"
+];
+const NL_TEAMS = [
+  "Atlanta Braves",
+  "Miami Marlins",
+  "New York Mets",
+  "Philadelphia Phillies",
+  "Washington Nationals",
+  "Chicago Cubs",
+  "Cincinnati Reds",
+  "Milwaukee Brewers",
+  "Pittsburgh Pirates",
+  "St. Louis Cardinals",
+  "Arizona Diamondbacks",
+  "Colorado Rockies",
+  "Los Angeles Dodgers",
+  "San Diego Padres",
+  "San Francisco Giants"
+];
+
 export function parsePlayerString(playerString) {
   if (!playerString || typeof playerString !== 'string') {
     return {
@@ -57,7 +92,7 @@ export async function fetchPlayerStats(year) {
   }
 }
 
-export default function PlayerPool({ playerStats, isLoading, error, leagueName, year, leagueId, user, teams, draftedIDs, setDraftedIDs }) {
+export default function PlayerPool({ playerStats, isLoading, error, leagueName, year, leagueId, user, teams, draftedIDs, setDraftedIDs, draftLeague = "MLB" }) {
   const [draftedNames, setDraftedNames] = useState([]);
 
   const fetchDraftedPlayers = async () => {
@@ -239,10 +274,17 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
     };
   });
 
-  return [...apiPlayers, ...dbPlayers].filter(
-    (player) => player.playerType === playerType
-  );
-}, [playerStats, draftedNames, manualPlayers, draftedIDs, playerType]);
+  return [...apiPlayers, ...dbPlayers].filter((player) => {
+    const matchesPlayerType = player.playerType === playerType;
+
+    const matchesDraftLeague =
+      draftLeague === "MLB" ||
+      (draftLeague === "AL" && AL_TEAMS.includes(player.team)) ||
+      (draftLeague === "NL" && NL_TEAMS.includes(player.team));
+
+    return matchesPlayerType && matchesDraftLeague;
+  });
+  }, [playerStats, draftedNames, manualPlayers, draftedIDs, playerType, draftLeague]);
 
  const columns = useMemo(() => {
   const baseColumns = [

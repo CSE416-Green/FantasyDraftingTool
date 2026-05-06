@@ -16,6 +16,41 @@ if (process.env.NODE_ENV == "production") {
 
 const maxNumberofMembers = 23;
 
+const AL_TEAMS = [
+  "Baltimore Orioles",
+  "Boston Red Sox",
+  "New York Yankees",
+  "Tampa Bay Rays",
+  "Toronto Blue Jays",
+  "Chicago White Sox",
+  "Cleveland Guardians",
+  "Detroit Tigers",
+  "Kansas City Royals",
+  "Minnesota Twins",
+  "Houston Astros",
+  "Los Angeles Angels",
+  "Athletics",
+  "Seattle Mariners",
+  "Texas Rangers"
+];
+const NL_TEAMS = [
+  "Atlanta Braves",
+  "Miami Marlins",
+  "New York Mets",
+  "Philadelphia Phillies",
+  "Washington Nationals",
+  "Chicago Cubs",
+  "Cincinnati Reds",
+  "Milwaukee Brewers",
+  "Pittsburgh Pirates",
+  "St. Louis Cardinals",
+  "Arizona Diamondbacks",
+  "Colorado Rockies",
+  "Los Angeles Dodgers",
+  "San Diego Padres",
+  "San Francisco Giants"
+];
+
 export default function TeamRoster({
   budget = budget,
   team = "",
@@ -35,7 +70,9 @@ export default function TeamRoster({
   fetchTrades,
   draftState,
   draftedIDs,
-  leagueId
+  leagueId,
+  draftLeague,
+  setDraftLeague
 }) {
   const [isEditingTeam, setIsEditingTeam] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);
@@ -77,12 +114,17 @@ useEffect(() => {
     ...manualPlayers.map((player)=>({
       name:player.name,
       position:[player.position],
-      ID:player.playerID || null
+      ID: player.playerID || null,
+      MLBTeam: player.team
     }))
   ];
 
-
-
+  const filteredPlayerPool = playerPool.filter((player) => {
+    if (draftLeague === "MLB") return true;
+    if (draftLeague === "AL") return AL_TEAMS.includes(player.MLBTeam);
+    if (draftLeague === "NL") return NL_TEAMS.includes(player.MLBTeam);
+    return true;
+  });
 
   useEffect(() => {
     if (teams.length > 0 && !team) {
@@ -232,7 +274,24 @@ useEffect(() => {
               />
             )}
             {isDrafting && (
-              <DraftPlayerForm
+              <>
+                <div style={{ marginBottom: "12px" }}>
+                  <label style={{ fontWeight: "bold", marginRight: "8px" }}>
+                    Draft Type:
+                  </label>
+
+                  <select
+                    className="form-select"
+                    value={draftLeague}
+                    onChange={(e) => setDraftLeague(e.target.value)}
+                  >
+                    <option value="MLB">MLB</option>
+                    <option value="AL">AL</option>
+                    <option value="NL">NL</option>
+                  </select>
+                </div>
+
+                <DraftPlayerForm
                 team={teamData}
                 onCancel={() => setIsDrafting(false)}
                 onDraft={async() => {
@@ -240,7 +299,7 @@ useEffect(() => {
                   setIsDrafting(false);
                 }}
                 maxNextCost={maxNextCost}
-                playerPool={playerPool}
+                playerPool={filteredPlayerPool}
                 leagueName={leagueName}
                 year={year}
                 teams={teams}
@@ -250,6 +309,7 @@ useEffect(() => {
                 remainingSpots={maxRosterPlayer - rosterPlayers.length}
                 draftedIDs={draftedIDs}
               />
+              </>
             )}
             {isTrading && (
               <TradePlayersForm
@@ -464,4 +524,3 @@ function AllTeamBudgets({ teams = [], budget = 260 }) {
     </div>
   );
 }
-
