@@ -118,12 +118,18 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
         .filter(id => id !== undefined)
     );
 
+    const taxiPlayerIDs = teams.flatMap(team => 
+      team.taxiPlayers
+        .map(p => p.playerID)
+        .filter(id => id !== undefined)
+    );
 
     const ids = [
       ...new Set([
       ...draftedIDs,
       ...farmPlayerIDs,
-      ...rosterPlayerIDs
+      ...rosterPlayerIDs,
+      ...taxiPlayerIDs
     ])
   ];
 

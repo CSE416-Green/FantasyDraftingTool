@@ -5,7 +5,9 @@ import DraftPlayerForm from "./components/DraftPlayerForm";
 import EnterPastPlayerForm from "./components/EnterPastPlayerForm";
 import { parsePlayerString } from "../player-pool/PlayerPool";
 import TradePlayersForm from "./components/TradePlayersForm";
+import AddTaxiForm from "./components/AddTaxiForm";
 import DraftHistory from "../draft-history/DraftHistory";
+import EditTaxiOrder from "./components/EditTaxiOrder";
 axios.defaults.baseURL = "http://localhost:3000";
 
 if (process.env.NODE_ENV == "production") {
@@ -56,6 +58,7 @@ export default function TeamRoster({
   onTeamChange,
   onRosterPlayers,
   onFarmPlayers,
+  onTaxiPlayers,
   playerStats,
   leagueName,
   year,
@@ -75,21 +78,23 @@ export default function TeamRoster({
   const [isDrafting, setIsDrafting] = useState(false);
   const [isEnteringPast, setIsEnteringPast] = useState(false);
   const [isTrading, setIsTrading] = useState(false);
+  const [isTaxi, setIsTaxi] = useState(false);
   const [manualPlayers, setManualPlayers] = useState([]);
 
-  useEffect(() => {
-    async function fetchManualPlayers() {
-      try {
-        if (!leagueId) return;
-        const res = await axios.get(`/addedPlayerPool/manualPlayers/${leagueId}`);
-        setManualPlayers(res.data);
-      } catch (err) {
-        console.error('Failed to fetch manual players:', err);
-      }
-    }
+useEffect(() => {
+  if (!leagueId) return;
 
-    fetchManualPlayers();
-  }, [leagueId]);
+  async function fetchManualPlayers() {
+    try {
+      const res = await axios.get(`/addedPlayerPool/manualPlayers/${leagueId}`);
+      setManualPlayers(res.data);
+    } catch (err) {
+      console.error("Failed to fetch manual players:", err);
+    }
+  }
+
+  fetchManualPlayers();
+}, [leagueId]);
  
   const playerPool = [
     ...playerStats.map((player) => {
@@ -134,6 +139,7 @@ export default function TeamRoster({
   const maxRosterPlayer = 23;
   const rosterPlayers = teamData?.rosterPlayers ?? [];
   const farmPlayers = teamData?.farmPlayers ?? [];
+  const taxiPlayers = teamData?.taxiPlayers ?? [];
 
   // const rosterPlayers = rosters[key] ?? rosters[0];
   const spent = getBudget(rosterPlayers);
@@ -145,6 +151,7 @@ export default function TeamRoster({
     setIsDrafting(false);
     setIsEditingTeam(false);
     setIsTrading(false);
+    setIsTaxi(false);
   }
 
   function clickDraft() {
@@ -152,6 +159,7 @@ export default function TeamRoster({
     setIsDrafting(!isDrafting);
     setIsEditingTeam(false);
     setIsTrading(false);
+    setIsTaxi(false);
   }
 
   function clickEdit() {
@@ -159,6 +167,7 @@ export default function TeamRoster({
     setIsEditingTeam(!isEditingTeam);
     setIsDrafting(false);
     setIsTrading(false);
+    setIsTaxi(false);
   }
 
   function clickTrade() {
@@ -166,6 +175,15 @@ export default function TeamRoster({
     setIsEditingTeam(false);
     setIsDrafting(false);
     setIsTrading(!isTrading);
+    setIsTaxi(false);
+  }
+
+  function clickTaxi() {
+    setIsEnteringPast(false);
+    setIsEditingTeam(false);
+    setIsDrafting(false);
+    setIsTrading(false);
+    setIsTaxi(!isTaxi);
   }
 
   return (
@@ -190,7 +208,9 @@ export default function TeamRoster({
             <button className="form-buttom" type="button" onClick={onFarmPlayers}>
                 Farm Players
             </button>
-            
+            <button className="form-buttom" type="button" onClick={onTaxiPlayers}>
+                Taxi Players
+            </button>
             
         </div>
 
@@ -219,6 +239,11 @@ export default function TeamRoster({
             <button className="form-buttom" type="button" onClick={() => clickTrade()}>
                 Trade
             </button>
+            {/* {!draftState && */}
+            <button className="form-buttom" type="button" onClick={() => clickTaxi()}>
+                Taxi Draft
+            </button>
+            {/* } */}
           </div>
 
             {isEnteringPast && (
@@ -298,12 +323,44 @@ export default function TeamRoster({
                 }}
               />
             )}  
+            {isTaxi && (
+              <AddTaxiForm
+                team={teamData}
+                onCancel={() => setIsTaxi(false)}
+                onSubmit={async() => {
+                  await loadTeams();
+                  setIsTaxi(false);
+                }}
+                playerPool={playerPool}
+                draftedNames={draftHistory.map(p => p.PlayerName)}
+                draftedIDs={draftedIDs}
+              ></AddTaxiForm>
+            )}
         </div>
 
-        {view === "roster" ? (
+        {view === "roster" && (
+          <h2>Roster Players for {teamData?.teamName}</h2>
+        )}
+        {view === "farm" && (
+          <h2>Farm Players for {teamData?.teamName}</h2>
+        )}
+        {view === "taxi" && (
+          <h2>Taxi Players for {teamData?.teamName}</h2>
+        )}
+        {view === "roster" && (
           <RosterTable rosterPlayers={rosterPlayers} view={view} />
-        ) : (
+        )}
+
+        {view === "farm" && (
           <RosterTable rosterPlayers={farmPlayers} view={view} />
+        )}
+
+        {view === "taxi" && (
+          <TaxiTable 
+            taxiPlayers={taxiPlayers}
+            team={teamData}
+            loadTeams={loadTeams}
+          />
         )}
 
 
@@ -340,7 +397,54 @@ function ConvertToFormattedRoster(rosterPlayers) {
 
 }
 
+function TaxiTable({ taxiPlayers, team, loadTeams }) {
+  const [isEditingTaxiOrder, setIsEditingTaxiOrder] = useState(false);
 
+  const sorted = [...taxiPlayers].sort(
+    (a, b) => Number(a.position) - Number(b.position)
+  );
+
+  return (
+    <div>
+      {isEditingTaxiOrder && (
+        <EditTaxiOrder
+          team={team}
+          onCancel={() => setIsEditingTaxiOrder(false)}
+          onSubmit={async () => {
+            await loadTeams();
+            setIsEditingTaxiOrder(false);
+          }}
+        />
+      )}
+
+      <table className="roster-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {sorted.map((player) => (
+            <tr key={player._id || `${player.position}-${player.name}`}>
+              <td>{player.position}</td>
+              <td>{player.name}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <button
+        className="form-buttom"
+        type="button"
+        onClick={() => setIsEditingTaxiOrder(true)}
+      >
+        Edit Taxi Order
+      </button>
+
+    </div>
+  );
+}
 
 function RosterTable({ rosterPlayers, view }) {
 

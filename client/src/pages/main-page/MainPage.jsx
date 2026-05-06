@@ -19,7 +19,7 @@ const pages = ['Main Page', 'Setting'];
 
 function MainPage({user,onLogout}) {
   const [team, setTeam] = useState("")
-  const [view, setView] = useState("roster") // roster or farm
+  const [view, setView] = useState("roster") // roster or farm or taxi
   const [totalBudget, setTotalBudget] = useState(0);
   const [leagueName, setLeagueName] = useState("default league");
   const [leagueInviteCode, setLeagueInviteCode] = useState("N/A");
@@ -173,7 +173,6 @@ useEffect(() => {
   useEffect(() => {
     loadUserLeagues();
   }, [user]);
-
   return (
     <div className="main-page">
         <Header pages={pages} onPageChange={handlePageChange} onLogout={onLogout} user={user}/>
@@ -209,6 +208,7 @@ useEffect(() => {
                     onTeamChange={setTeam}
                     onRosterPlayers={() => setView("roster")} 
                     onFarmPlayers={() => setView("farm")}
+                    onTaxiPlayers={() => setView("taxi")}
                     playerStats={playerStats}
                     leagueName={leagueName}
                     year={year}

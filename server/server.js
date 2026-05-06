@@ -356,7 +356,8 @@ app.post("/createLeague", async (req, res) => {
     const newTeam = new Team({
       teamName: teamName,
       rosterPlayers: [],
-      farmPlayers: []
+      farmPlayers: [],
+      taxiPlayers: [],
     });
 
     await newLeague.save();
@@ -403,7 +404,8 @@ app.post("/joinLeague", async (req, res) => {
     const newTeam = new Team({
       teamName: teamName,
       rosterPlayers: [],
-      farmPlayers: []
+      farmPlayers: [],
+      taxiPlayers: [],
     });
 
     await user.save();
