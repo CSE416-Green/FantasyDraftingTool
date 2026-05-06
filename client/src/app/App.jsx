@@ -15,10 +15,11 @@ function App() {
     const stored = localStorage.getItem("user");
     return stored ? JSON.parse(stored) : null;
   });
+  const hasLeague = user?.league?.length > 0;
   return (
     <QueryClientProvider client={queryClient}>
       {user? ( 
-        !user.league ? 
+        hasLeague ? 
           (<LeagueFormContainer user={user} setUser={setUser}/>) : (<MainPage user={user} onLogout={() => setUser(null)}/>) ):
         (<Login onLogin={(userData)=>setUser(userData)}/>)}
      
