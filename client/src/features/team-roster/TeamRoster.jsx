@@ -14,8 +14,40 @@ if (process.env.NODE_ENV == "production") {
 
 const maxNumberofMembers = 23;
 
-const AL_TEAMS = ["BAL", "BOS", "NYY", "TB", "TOR", "CWS", "CLE", "DET", "KC", "MIN", "HOU", "LAA", "OAK", "SEA", "TEX"];
-const NL_TEAMS = ["ATL", "MIA", "NYM", "PHI", "WSH", "CHC", "CIN", "MIL", "PIT", "STL", "ARI", "COL", "LAD", "SD", "SF"];
+const AL_TEAMS = [
+  "Baltimore Orioles",
+  "Boston Red Sox",
+  "New York Yankees",
+  "Tampa Bay Rays",
+  "Toronto Blue Jays",
+  "Chicago White Sox",
+  "Cleveland Guardians",
+  "Detroit Tigers",
+  "Kansas City Royals",
+  "Minnesota Twins",
+  "Houston Astros",
+  "Los Angeles Angels",
+  "Athletics",
+  "Seattle Mariners",
+  "Texas Rangers"
+];
+const NL_TEAMS = [
+  "Atlanta Braves",
+  "Miami Marlins",
+  "New York Mets",
+  "Philadelphia Phillies",
+  "Washington Nationals",
+  "Chicago Cubs",
+  "Cincinnati Reds",
+  "Milwaukee Brewers",
+  "Pittsburgh Pirates",
+  "St. Louis Cardinals",
+  "Arizona Diamondbacks",
+  "Colorado Rockies",
+  "Los Angeles Dodgers",
+  "San Diego Padres",
+  "San Francisco Giants"
+];
 
 export default function TeamRoster({
   budget = budget,
