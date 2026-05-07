@@ -360,6 +360,11 @@ app.post("/createLeague", async (req, res) => {
       taxiPlayers: [],
     });
 
+    if (!user.team) {
+      user.team = [];
+    }
+    user.team.push(newTeam._id);
+
     await newLeague.save();
     await user.save();
     await newDraftHistory.save();
@@ -407,6 +412,11 @@ app.post("/joinLeague", async (req, res) => {
       farmPlayers: [],
       taxiPlayers: [],
     });
+
+    if (!user.team) {
+      user.team = [];
+    }
+    user.team.push(newTeam._id);
 
     await user.save();
 

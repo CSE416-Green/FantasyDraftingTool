@@ -96,7 +96,8 @@ async function createAccounts() {
                     username,
                     email,
                     password: hashedPassword,
-                    league: []
+                    league: [],
+                    team: [],
                 });
 
                 await user.save();
@@ -169,7 +170,7 @@ async function createLeague(createdUserIds) {
 
             const user = await User.findById(userId);
             user.league.push(newLeague._id);
-
+            user.team.push(team._id);
             await user.save();
         }
         await newLeague.save();
