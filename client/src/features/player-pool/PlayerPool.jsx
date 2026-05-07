@@ -408,8 +408,8 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
           onChange={(e) => setSelectedStatsYear(e.target.value)}
         >
           <option value="thisYear">{year}</option>
-          <option value="lastYear">{year - 1}</option>
-          <option value="twoYearsAgo">{year - 2}</option>
+          <option value="lastYear">{year ? Number(year) - 1 : ""}</option>
+          <option value="twoYearsAgo">{year ? Number(year) - 2 : ""}</option>
         </select>
       </div>
       
