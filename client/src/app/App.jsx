@@ -16,7 +16,6 @@ function App() {
     return stored ? JSON.parse(stored) : null;
   });
   const hasLeague = user?.league?.length > 0;
-  console.log("hasLeague", hasLeague)
   return (
     <QueryClientProvider client={queryClient}>
       {user? ( 
