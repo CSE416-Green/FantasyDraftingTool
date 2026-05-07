@@ -30,6 +30,11 @@ const userSchema=new mongoose.Schema({
         ref: 'League',
         required: false
     },
+    team:{ // new
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Team',
+        required: false,
+    },
     resetToken: { type: String },
     resetTokenExpiry: { type: Date },   
 },{timestamps:true});
