@@ -30,7 +30,8 @@ playerStatsRouter.get("/:year", async (req, res) => {
 
 playerStatsRouter.post("/players", async (req, res) => {
   try {
-    const { playerIDs } = req.body;
+    const { playerIDs, year } = req.body;
+
     if (!playerIDs || !Array.isArray(playerIDs) || playerIDs.length === 0) {
       return res.status(400).json({ error: "playerIDs must be a non-empty array" });
     }
@@ -42,11 +43,15 @@ playerStatsRouter.post("/players", async (req, res) => {
                 "Content-Type": "application/json",
                 "Authorization": `apikey ${process.env.API_KEY}`,
             },
-            body: JSON.stringify({ playerIDs })
+            body: JSON.stringify({ playerIDs, year })
         }
     );
     if (!response.ok) {
-        throw new Error(`Failed to fetch player stats for IDs ${playerIDs.join(", ")}: ${response.statusText}`);
+          const errorText = await response.text();
+
+          throw new Error(
+            `Failed to fetch player stats: ${response.status} ${response.statusText} - ${errorText}`
+          );
     }
     const playerStats = await response.json();
     res.json(playerStats);
