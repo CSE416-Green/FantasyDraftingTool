@@ -140,7 +140,6 @@ useEffect(() => {
   const rosterPlayers = teamData?.rosterPlayers ?? [];
   const farmPlayers = teamData?.farmPlayers ?? [];
   const taxiPlayers = teamData?.taxiPlayers ?? [];
-  const userOwnsTeam = !user?.team?.length || user.team.map(String).includes(String(teamData?._id));
 
   // const rosterPlayers = rosters[key] ?? rosters[0];
   const spent = getBudget(rosterPlayers);
@@ -226,28 +225,28 @@ useEffect(() => {
 
         <div>
           <div className="form-button-group">
-            <button className="form-buttom" type="button" onClick={() => clickEnterPast()} disabled={!userOwnsTeam}>
+            <button className="form-buttom" type="button" onClick={() => clickEnterPast()}>
                 Enter Past Players
             </button>
-            <button className="form-buttom" type="button" onClick={() => clickEdit()} disabled={!userOwnsTeam}>
+            <button className="form-buttom" type="button" onClick={() => clickEdit()}>
                 Edit
             </button>
             {draftState &&
-            <button className="form-buttom" type="button" onClick={() => clickDraft()} disabled={!userOwnsTeam}>
+            <button className="form-buttom" type="button" onClick={() => clickDraft()}>
                 Draft
             </button>
             }
-            <button className="form-buttom" type="button" onClick={() => clickTrade()} disabled={!userOwnsTeam}>
+            <button className="form-buttom" type="button" onClick={() => clickTrade()}>
                 Trade
             </button>
-            {/* {!draftState && */}
-            <button className="form-buttom" type="button" onClick={() => clickTaxi()} disabled={!userOwnsTeam}>
+            { !draftState && 
+            <button className="form-buttom" type="button" onClick={() => clickTaxi()}>
                 Taxi Draft
             </button>
-            {/* } */}
+            } 
           </div>
 
-            {userOwnsTeam && isEnteringPast && (
+            {isEnteringPast && (
               <EnterPastPlayerForm
                 team={teamData}
                 onCancel={() => setIsEnteringPast(false)}
@@ -262,7 +261,7 @@ useEffect(() => {
                 draftedIDs={draftedIDs}
               />
             )}
-            {userOwnsTeam && isEditingTeam && (
+            {isEditingTeam && (
               <EditRosterForm
                 team={teamData}
                 view={view}
@@ -274,7 +273,7 @@ useEffect(() => {
                 maxNextCost={maxNextCost}
               />
             )}
-            {userOwnsTeam && isDrafting && (
+            {isDrafting && (
               <>
                 <div style={{ marginBottom: "12px" }}>
                   <label style={{ fontWeight: "bold", marginRight: "8px" }}>
@@ -312,7 +311,7 @@ useEffect(() => {
               />
               </>
             )}
-            {userOwnsTeam && isTrading && (
+            {isTrading && (
               <TradePlayersForm
                 teams={teams}
                 currentTeamId={teamData?._id || ""}
@@ -324,7 +323,7 @@ useEffect(() => {
                 }}
               />
             )}  
-            {userOwnsTeam && isTaxi && (
+            {isTaxi && (
               <AddTaxiForm
                 team={teamData}
                 onCancel={() => setIsTaxi(false)}
