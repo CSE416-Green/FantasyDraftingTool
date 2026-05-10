@@ -271,12 +271,12 @@ useEffect(() => {
                     draftLeague={draftLeague}
                     setDraftLeague={setDraftLeague}
               />
-              {/* <CompeteContainer
+              <CompeteContainer
                     teams={teams}
                     leagueId={selectedLeagueId}
                     draftState={draftState}
                     totalTeams={totalTeams}
-              /> */}
+              />
           </div>
           {/* {draftState && <> */}
             <div className="player-pool">
