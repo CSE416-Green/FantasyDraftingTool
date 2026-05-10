@@ -14,7 +14,7 @@ export async function fetchUnmatchedPlayers(unmatchedIDs, year) {
   }
 
   const fetchYear = Number(year) - 1;
-  const chunks = chunkArray(unmatchedIDs, 10);
+  const chunks = chunkArray(unmatchedIDs, 20);
 
   const allResults = [];
 

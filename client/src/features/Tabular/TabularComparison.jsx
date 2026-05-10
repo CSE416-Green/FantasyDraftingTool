@@ -13,14 +13,7 @@ function isPitcher(position) {
 
 function safeNumber(value) {
   const num = Number(value);
-  return Number.isFinite(num) ? num : 0;
-}
-
-function parseInnings(ip) {
-  const str = String(ip ?? "0");
-  const [whole, frac] = str.split(".");
-  const outs = frac === "1" ? 1 : frac === "2" ? 2 : 0;
-  return Number(whole || 0) + outs / 3;
+  return Number.isFinite(num) ? Math.trunc(num) : 0;
 }
 
 
@@ -123,7 +116,7 @@ export default function TabularComparison({
         K: safeNumber(player.K ?? player.strikeOuts),
         SB: safeNumber(player.SB ?? player.stolenBases),
 
-        IP: parseInnings(player.IP ?? player.inningsPitched),
+        IP: safeNumber(player.IP ?? player.inningsPitched),
         W: safeNumber(player.W ?? player.wins),
         SV: safeNumber(player.SV ?? player.saves),
         ERA: safeNumber(player.ERA ?? player.era),
@@ -218,7 +211,7 @@ export default function TabularComparison({
           { accessorKey: "PitcherK", header: "K", size: 70, muiTableBodyCellProps: pitcherCellStyle },
           { accessorKey: "W", header: "W", size: 70, muiTableBodyCellProps: pitcherCellStyle },
           { accessorKey: "SV", header: "SV", size: 70, muiTableBodyCellProps: pitcherCellStyle },
-          { accessorKey: "ER", header: "ER", size: 70, muiTableBodyCellProps: pitcherCellStyle },
+          { accessorKey: "ER", header: "ER", size: 70, muiTableBodyCellProps: pitcherCellStyle, Cell: ({ cell }) => Number(cell.getValue()).toFixed(1), },
           { accessorKey: "HAllowed", header: "H", size: 70, muiTableBodyCellProps: pitcherCellStyle },
           { accessorKey: "PitcherBB", header: "BB", size: 70, muiTableBodyCellProps: pitcherCellStyle },
         ],
@@ -244,7 +237,6 @@ export default function TabularComparison({
   return (
     <div className="tabular-comparison">
       <h2>{leagueName} Weighted Team Comparison</h2>
-      <p>Stats Year: {year}</p>
 
       <MaterialReactTable table={table} />
     </div>

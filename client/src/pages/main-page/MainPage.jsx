@@ -185,21 +185,26 @@ useEffect(() => {
 
     const apiIDs = new Set(playerStats.map((p) => Number(p.ID)));
 
-    return teams
-      .flatMap((team) => team?.rosterPlayers ?? [])
-      .map((p) => Number(p.playerID ?? p.ID))
-      .filter(Boolean)
-      .filter((id) => !apiIDs.has(id));
+    return [
+    ...new Set(
+      teams
+        .flatMap((team) => team?.rosterPlayers ?? [])
+        .map((p) => Number(p.playerID ?? p.ID))
+        .filter(Boolean)
+        .filter((id) => !apiIDs.has(id))
+    ),
+  ];
   }, [teams, playerStatsByYear]);
+
+  
+  const unmatchedKey = useMemo(() => {
+    return unmatchedIDs.join(",");
+  }, [unmatchedIDs]);
 
   useEffect(() => {
     async function loadExtraPlayers() {
       try {
-        const results = await fetchUnmatchedPlayers(
-          unmatchedIDs,
-          year
-        );
-
+        const results = await fetchUnmatchedPlayers(unmatchedIDs, year);
         setExtraPlayerStats(results);
       } catch (err) {
         console.error(err);
@@ -207,10 +212,13 @@ useEffect(() => {
       }
     }
 
-    if (unmatchedIDs.length > 0) {
-        loadExtraPlayers();
-      }
-  }, [unmatchedIDs, year]);
+    if (!year || unmatchedIDs.length === 0) {
+      setExtraPlayerStats([]);
+      return;
+    }
+
+    loadExtraPlayers();
+  }, [unmatchedKey, year]);
 
   return (
     <div className="main-page">
