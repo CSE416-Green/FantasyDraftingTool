@@ -236,7 +236,7 @@ export default function TabularComparison({
 
   return (
     <div className="tabular-comparison">
-      <h2>{leagueName} Weighted Team Comparison</h2>
+      <h2>{leagueName} Weighted Team Comparison Predictions</h2>
 
       <MaterialReactTable table={table} />
     </div>
