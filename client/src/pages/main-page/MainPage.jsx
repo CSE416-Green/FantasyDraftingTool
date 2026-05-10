@@ -17,7 +17,7 @@ import '../../css/settingsPage.css'
 import Header from '../../shared/components/Header'
 import axios from "axios";
 import { useQuery } from '@tanstack/react-query';
-const pages = ['Main Page', 'Setting', "Tabular"];
+const pages = ['Main Page', 'Setting', "Estimations", "Scores"];
 
 function MainPage({user,onLogout}) {
   const [team, setTeam] = useState("")
@@ -271,12 +271,6 @@ useEffect(() => {
                     draftLeague={draftLeague}
                     setDraftLeague={setDraftLeague}
               />
-              <CompeteContainer
-                    teams={teams}
-                    leagueId={selectedLeagueId}
-                    draftState={draftState}
-                    totalTeams={totalTeams}
-              />
           </div>
           {/* {draftState && <> */}
             <div className="player-pool">
@@ -327,7 +321,7 @@ useEffect(() => {
         </div>
         }
 
-        {currentPage === "Tabular" &&
+        {currentPage === "Estimations" &&
           <TabularComparison
             playerStatsByYear={playerStatsByYear}
             year={year}
@@ -335,6 +329,14 @@ useEffect(() => {
             leagueName={leagueName}
             extraPlayerStats={extraPlayerStats}
           />}
+        {currentPage === "Scores" &&
+          <CompeteContainer
+                teams={teams}
+                leagueId={selectedLeagueId}
+                draftState={draftState}
+                totalTeams={totalTeams}
+          />
+        }
     </div>
   );
 }
