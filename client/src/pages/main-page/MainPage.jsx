@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import TeamRoster from '../../features/team-roster/TeamRoster'
 import PlayerPool, { fetchPlayerStats } from '../../features/player-pool/PlayerPool'
 import Note from '../../shared/components/Note'
@@ -10,12 +10,14 @@ import Drawer from '../../features/player-news/Drawer'
 import CompeteContainer from '../../features/compete/CompeteContainer'
 import JoinAnotherLeague from '../../features/league-config/JoinAnotherLeague'
 import CreateAnotherLeague from '../../features/league-config/CreateAnotherLeague'
+import TabularComparison from '../../features/Tabular/TabularComparison'
+import { fetchUnmatchedPlayers } from "../../features/Tabular/fetchUnmatchedPlayers";
 import '../../css/mainPage.css'
 import '../../css/settingsPage.css'
 import Header from '../../shared/components/Header'
 import axios from "axios";
 import { useQuery } from '@tanstack/react-query';
-const pages = ['Main Page', 'Setting'];
+const pages = ['Main Page', 'Setting', "Tabular"];
 
 function MainPage({user,onLogout}) {
   const [team, setTeam] = useState("")
@@ -35,7 +37,8 @@ function MainPage({user,onLogout}) {
   const [selectedLeagueId, setSelectedLeagueId] = useState("");
   const [leagueOptions, setLeagueOptions] = useState([]);
   const [totalTeams, setTotalTeams] = useState(0);
-  const [draftLeague, setDraftLeague] = useState("MLB");
+  const [draftLeague, setDraftLeague] = useState("MLB");  
+  const [extraPlayerStats, setExtraPlayerStats] = useState([]);
 
 const fetchTrades = async () => {
   try {
@@ -173,10 +176,54 @@ useEffect(() => {
   useEffect(() => {
     loadUserLeagues();
   }, [user]);
+
+
+  const unmatchedIDs = useMemo(() => {
+    if (!teams || !playerStatsByYear) return [];
+
+    const playerStats = playerStatsByYear?.lastYear || [];
+
+    const apiIDs = new Set(playerStats.map((p) => Number(p.ID)));
+
+    return [
+    ...new Set(
+      teams
+        .flatMap((team) => team?.rosterPlayers ?? [])
+        .map((p) => Number(p.playerID ?? p.ID))
+        .filter(Boolean)
+        .filter((id) => !apiIDs.has(id))
+    ),
+  ];
+  }, [teams, playerStatsByYear]);
+
+  
+  const unmatchedKey = useMemo(() => {
+    return unmatchedIDs.join(",");
+  }, [unmatchedIDs]);
+
+  useEffect(() => {
+    async function loadExtraPlayers() {
+      try {
+        const results = await fetchUnmatchedPlayers(unmatchedIDs, year);
+        setExtraPlayerStats(results);
+      } catch (err) {
+        console.error(err);
+        setExtraPlayerStats([]);
+      }
+    }
+
+    if (!year || unmatchedIDs.length === 0) {
+      setExtraPlayerStats([]);
+      return;
+    }
+
+    loadExtraPlayers();
+  }, [unmatchedKey, year]);
+
   return (
     <div className="main-page">
         <Header pages={pages} onPageChange={handlePageChange} onLogout={onLogout} user={user}/>
-        {currentPage === "Main Page" ? 
+        {currentPage === "Main Page" && 
         
         <div className="drafting-page">
           <div className="select-league-row">
@@ -224,12 +271,12 @@ useEffect(() => {
                     draftLeague={draftLeague}
                     setDraftLeague={setDraftLeague}
               />
-              <CompeteContainer
+              {/* <CompeteContainer
                     teams={teams}
                     leagueId={selectedLeagueId}
                     draftState={draftState}
                     totalTeams={totalTeams}
-              />
+              /> */}
           </div>
           {/* {draftState && <> */}
             <div className="player-pool">
@@ -265,7 +312,8 @@ useEffect(() => {
           <div className="news-history">
             <Drawer/>
           </div>
-        </div> :         
+        </div> }
+        {currentPage === "Setting" &&        
         <div className="settings-page">
           <h1 className="settings-title">Draft Settings</h1>
           {/* <LeagueConfiguration /> */}
@@ -278,6 +326,15 @@ useEffect(() => {
           <CreateAnotherLeague userId={user._id}/>
         </div>
         }
+
+        {currentPage === "Tabular" &&
+          <TabularComparison
+            playerStatsByYear={playerStatsByYear}
+            year={year}
+            teams={teams}
+            leagueName={leagueName}
+            extraPlayerStats={extraPlayerStats}
+          />}
     </div>
   );
 }
