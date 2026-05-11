@@ -11,27 +11,55 @@ export function Compete({ teamsData, startDate, endDate, leagueId }) {
     useEffect(() => {
         if (!teamsData || teamsData.length === 0) return;
 
+        setGame(null);
+
         async function fetchGame() {
         try {
-            if (!teamsData || !startDate || !endDate || !leagueId) {
-                return;
+        if (!teamsData || !startDate || !endDate || !leagueId) return;
+
+        function formattedDate(date) {
+            return new Date(date).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            });
+        }
+
+        const cacheKey = `compete-${leagueId}-${formattedDate(startDate)}-${formattedDate(endDate)}`;
+        const cached = sessionStorage.getItem(cacheKey);
+
+        if (cached) {
+            const parsed = JSON.parse(cached);
+            const TWELVE_HOURS = 12 * 60 * 60 * 1000;
+
+            if (Date.now() - parsed.timestamp < TWELVE_HOURS) {
+            setGame(parsed.data);
+            return;
             }
+        }
 
-            const teams = convertToTeams(teamsData);
+        const teams = convertToTeams(teamsData);
 
-            const res = await axios.post(
-                // "/compete/teams",
-            "https://fantasydraftingtool.onrender.com/compete/teams", 
-            { leagueId, teams, startDate, endDate});
+        const res = await axios.post(
+            "https://fantasydraftingtool.onrender.com/compete/teams",
+            { leagueId, teams, startDate, endDate }
+        );
 
-            setGame(res.data);
+        setGame(res.data);
+
+        sessionStorage.setItem(
+            cacheKey,
+            JSON.stringify({
+            timestamp: Date.now(),
+            data: res.data,
+            })
+        );
         } catch (err) {
-            console.error("Failed to fetch game:", err);
+        console.error("Failed to fetch game:", err);
         }
-        }
+    }
 
-        fetchGame();
-    }, [teamsData, startDate, endDate]);
+    fetchGame();
+    }, [teamsData, startDate, endDate, leagueId]);
 
     if (!game) return (<div className="compete-card"> <h2>Loading ...</h2> </div>);
 

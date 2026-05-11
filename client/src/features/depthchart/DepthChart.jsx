@@ -17,27 +17,57 @@ function DepthChart() {
 
     useEffect(() => {
         async function fetchDepthCharts() {
-        try {
+            try {
+            const today = new Date().toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+            });
+
+            const cacheKey = `depthcharts-${today}`;
+
+            const cached = sessionStorage.getItem(cacheKey);
+
+            if (cached) {
+                const parsed = JSON.parse(cached);
+
+                const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+
+                if (Date.now() - parsed.timestamp < TWENTY_FOUR_HOURS) {
+                setDepthCharts(parsed.data);
+                setLoading(false);
+                return;
+                }
+            }
+
             // const response = await fetch("/depthChart/fetch");
             const response = await fetch("http://localhost:3000/depthChart/fetch");
 
             if (!response.ok) {
-            throw new Error("Failed to fetch depth charts");
+                throw new Error("Failed to fetch depth charts");
             }
 
             const data = await response.json();
             setDepthCharts(data);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
+
+            sessionStorage.setItem(
+                cacheKey,
+                JSON.stringify({
+                timestamp: Date.now(),
+                data,
+                })
+            );
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
         }
 
         fetchDepthCharts();
-    }, []);
+        }, []);
 
-    if (loading) return <p className="depthChart-loading">Loading depth charts...</p>;
+        if (loading) return <p className="depthChart-loading">Loading depth charts...</p>;
     if (error) return <p style={{ color: "red" }}>{error}</p>;
 
     return (

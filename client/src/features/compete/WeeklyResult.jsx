@@ -15,26 +15,37 @@ export default function WeeklyResult({ leagueId, startIsEnd, teamsData, startDat
     });
 
     useEffect(() => {
-        async function fetchHistory() {
+    async function fetchHistory() {
         try {
-            if (!leagueId) return;
+        if (!leagueId) return;
 
-            const res = await axios.post(
-            "/compete/getHistory",
-            { leagueId }
-            );
+        const cacheKey = `history-${leagueId}`;
 
-            const sorted = res.data.results.sort(
-                (a, b) => new Date(b.StartDate) - new Date(a.StartDate)
-            );
+        const cachedHistory = sessionStorage.getItem(cacheKey);
 
-            setHistory(sorted || []);
+        if (cachedHistory) {
+            setHistory(JSON.parse(cachedHistory));
+            return;
+        }
+
+        const res = await axios.post("/compete/getHistory", { leagueId });
+
+        const sorted = res.data.results.sort(
+            (a, b) => new Date(b.StartDate) - new Date(a.StartDate)
+        );
+
+        sessionStorage.setItem(cacheKey, JSON.stringify(sorted));
+
+        setHistory(sorted || []);
         } catch (err) {
-            console.error("Failed to fetch history:", err.response?.data || err.message);
+        console.error(
+            "Failed to fetch history:",
+            err.response?.data || err.message
+        );
         }
-        }
+    }
 
-        fetchHistory();
+    fetchHistory();
     }, [leagueId]);
 
 

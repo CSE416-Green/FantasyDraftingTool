@@ -61,7 +61,7 @@ useEffect(() => {
     } = useQuery({
       queryKey: ["player-stats", year],
       queryFn: () => fetchPlayerStats(year),
-      enabled: draftState && !!year,
+      enabled: !!year
     });
 
   const handlePageChange = (page) => {
