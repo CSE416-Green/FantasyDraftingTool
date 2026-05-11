@@ -75,9 +75,21 @@ export function parsePlayerString(playerString) {
     team: rightSide,
   };
 }
-
 export async function fetchPlayerStats(year) {
-  const res = await fetch(`https://fantasydraftingtool.onrender.com/playerStats/${year}`);
+  const cacheKey = `player-stats-${year}`;
+
+  const cached = sessionStorage.getItem(cacheKey);
+
+  if (cached) {
+    const parsed = JSON.parse(cached);
+
+    const ONE_HOURS = 60 * 60 * 1000;
+
+    if (Date.now() - parsed.timestamp < ONE_HOURS) {
+      return parsed.data;
+    }
+  }
+  const res = await fetch( `https://fantasydraftingtool.onrender.com/playerStats/${year}`);
   // const res = await fetch(`http://localhost:8080/stats/${year}`);
 
   if (!res.ok) {
@@ -86,11 +98,21 @@ export async function fetchPlayerStats(year) {
 
   const json = await res.json();
 
-  return {
+  const formattedData = {
     thisYear: json.players.thisYear,
     lastYear: json.players.lastYear,
     twoYearsAgo: json.players.twoYearsAgo,
   };
+
+  sessionStorage.setItem(
+    cacheKey,
+    JSON.stringify({
+      timestamp: Date.now(),
+      data: formattedData,
+    })
+  );
+
+  return formattedData;
 }
 
 export default function PlayerPool({ playerStatsByYear, isLoading, error, leagueName, year, leagueId, user, teams, draftedIDs, setDraftedIDs, draftLeague = "MLB" }) {
