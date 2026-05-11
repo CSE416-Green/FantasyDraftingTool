@@ -51,6 +51,8 @@ const draftHistoryRouter = require("./routes/draftHistory");
 app.use("/draftHistory", draftHistoryRouter);
 const presentationRouter = require("./routes/presentation");
 app.use("/presentation", presentationRouter);
+const depthChartRouter = require("./routes/depthChart");
+app.use("/depthChart", depthChartRouter);
 const port = 3000
 
 app.get('/', async (req, res) => {

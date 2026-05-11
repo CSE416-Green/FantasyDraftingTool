@@ -12,12 +12,13 @@ import JoinAnotherLeague from '../../features/league-config/JoinAnotherLeague'
 import CreateAnotherLeague from '../../features/league-config/CreateAnotherLeague'
 import TabularComparison from '../../features/Tabular/TabularComparison'
 import { fetchUnmatchedPlayers } from "../../features/Tabular/fetchUnmatchedPlayers";
+import DepthChart from '../../features/depthchart/DepthChart'
 import '../../css/mainPage.css'
 import '../../css/settingsPage.css'
 import Header from '../../shared/components/Header'
 import axios from "axios";
 import { useQuery } from '@tanstack/react-query';
-const pages = ['Main Page', 'Setting', "Estimations", "Scores"];
+const pages = ['Main Page', 'Setting', "Estimations", "Scores", "Depth Chart"];
 
 function MainPage({user,onLogout}) {
   const [team, setTeam] = useState("")
@@ -337,6 +338,9 @@ useEffect(() => {
                 totalTeams={totalTeams}
           />
         }
+        {currentPage === "Depth Chart" &&
+          <DepthChart/>
+          }
     </div>
   );
 }

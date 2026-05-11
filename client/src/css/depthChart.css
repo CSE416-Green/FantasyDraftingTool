@@ -1,0 +1,53 @@
+/* the sytles are partially from chatGPT */
+.depthChart-loading {
+    font-size: 36px;
+}
+
+.depthChart-search {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px;
+  margin: 0 auto 24px auto;
+  display: block;
+  font-size: 18px;
+}
+
+.depthChart-page {
+  padding: 24px;
+}
+
+.depthChart-title {
+  text-align: center;
+  font-size: 36px;
+}
+
+.depthChart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+}
+
+.depthChart-teamCard {
+  background-color: white;
+  padding: 20px;
+}
+
+.depthChart-teamName {
+  margin-bottom: 20px;
+  font-size: 32px;
+}
+
+.depthChart-positionTitle {
+  font-size: 28px;
+}
+
+.depthChart-table {
+  width: 100%;
+  font-size: 18px;
+}
+
+.depthChart-table th {
+  background-color: #305839;
+  color: white;
+  padding: 10px;
+  text-align: left;
+}
