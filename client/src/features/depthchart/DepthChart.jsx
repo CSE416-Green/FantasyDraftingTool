@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import "../../css/depthChart.css"
+import axios from "axios";
+
 
 function DepthChart() {
+
+    return (
+        <p style={{ color: "red" }}>Under Development</p>
+    )
     const [depthCharts, setDepthCharts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -39,15 +45,9 @@ function DepthChart() {
                 return;
                 }
             }
-
-            // const response = await fetch("/depthChart/fetch");
-            const response = await fetch("http://localhost:3000/depthChart/fetch");
-
-            if (!response.ok) {
-                throw new Error("Failed to fetch depth charts");
-            }
-
-            const data = await response.json();
+            // const response = await axios.get("http://localhost:3000/depthChart/fetch");
+            const response = await axios.get("/depthChart/fetch");
+            const data = response.data
             setDepthCharts(data);
 
             sessionStorage.setItem(

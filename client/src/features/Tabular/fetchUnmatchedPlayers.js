@@ -14,9 +14,21 @@ export async function fetchUnmatchedPlayers(unmatchedIDs, year) {
   }
 
   const fetchYear = Number(year) - 1;
-  const chunks = chunkArray(unmatchedIDs, 20);
-
   const allResults = [];
+  const idsToFetch = [];
+
+  for (const playerID of unmatchedIDs) {
+    const cacheKey = `player-stat-${fetchYear}-${playerID}`;
+    const cached = sessionStorage.getItem(cacheKey);
+
+    if (cached) {
+      allResults.push(JSON.parse(cached));
+    } else {
+      idsToFetch.push(playerID);
+    }
+  }
+
+  const chunks = chunkArray(idsToFetch, 10);
 
   for (const chunk of chunks) {
     const res = await fetch(
@@ -42,8 +54,14 @@ export async function fetchUnmatchedPlayers(unmatchedIDs, year) {
     }
 
     const data = JSON.parse(text);
+    const results = data.result || [];
 
-    allResults.push(...(data.result || []));
+    results.forEach((player) => {
+      const cacheKey = `player-stat-${fetchYear}-${player.id}`;
+      sessionStorage.setItem(cacheKey, JSON.stringify(player));
+
+      allResults.push(player);
+    });
   }
 
   return allResults;

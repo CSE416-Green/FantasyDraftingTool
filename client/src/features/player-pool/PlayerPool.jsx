@@ -89,7 +89,6 @@ export async function fetchPlayerStats(year) {
       return parsed.data;
     }
   }
-  console.log("fetching playerStats")
   const res = await fetch( `https://fantasydraftingtool.onrender.com/playerStats/${year}`);
   // const res = await fetch(`http://localhost:8080/stats/${year}`);
 
