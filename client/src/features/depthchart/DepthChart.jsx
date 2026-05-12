@@ -5,9 +5,6 @@ import axios from "axios";
 
 function DepthChart() {
 
-    return (
-        <p style={{ color: "red" }}>Under Development</p>
-    )
     const [depthCharts, setDepthCharts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");

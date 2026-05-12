@@ -5,8 +5,8 @@ const depthChartRouter = express.Router();
 depthChartRouter.get("/fetch", async (req, res) => {
   try {
     const response = await axios.get(
-      "http://localhost:8080/depthChart/fetch"
-    //   "https://fantasybaseballgateway.onrender.com/api/depthcharts/fetch"
+      // "http://localhost:8080/depthChart/fetch"
+      "https://fantasybaseballgateway.onrender.com/api/depthChart/fetch"
     );
 
     res.status(200).json(response.data);
