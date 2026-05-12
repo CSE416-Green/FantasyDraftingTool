@@ -19,6 +19,7 @@ playerStatsRouter.get("/:year", async (req, res) => {
         }
     );
     if (!response.ok) {
+        console.log(`Error fetching player stats for year ${year}: ${response.status} ${response.statusText}`);
         throw new Error(`Failed to fetch player stats for year ${year}: ${response.statusText}`);
     }
     const playerStats = await response.json();
