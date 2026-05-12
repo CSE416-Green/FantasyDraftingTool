@@ -445,4 +445,7 @@ if (require.main === module) {
   })
 }
 
+const { connectToReceiveNotifications } = require("./routes/receiveNotif");
+connectToReceiveNotifications();
+
 module.exports = { app, port };

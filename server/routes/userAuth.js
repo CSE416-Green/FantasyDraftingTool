@@ -6,7 +6,6 @@ const jwt=require("jsonwebtoken");
 const { protect }= require("../middleware/userAuth")
 const rateLimit = require("express-rate-limit"); // rate limit for otp 
 
-
 const { Resend } = require("resend");
 const resend = new Resend(process.env.RESEND_API_KEY);
 
