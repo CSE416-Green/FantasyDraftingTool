@@ -19,6 +19,7 @@ if (process.env.NODE_ENV !== 'test') {
 
 
 // npm install express and cors
+const http = require('http')
 const express = require('express')
 const cors = require("cors");
 const Team = require("./models/TeamSchema");
@@ -54,6 +55,8 @@ app.use("/presentation", presentationRouter);
 const depthChartRouter = require("./routes/depthChart");
 app.use("/depthChart", depthChartRouter);
 const port = 3000
+
+const { setupWebSocket } = require("./routes/receiveNotif");
 
 app.get('/', async (req, res) => {
   res.send("Hello World!");
@@ -439,11 +442,11 @@ app.post("/joinLeague", async (req, res) => {
 //   console.log(`fantasyDraftingTool server listening on port ${port}`)
 // })
 
-if (require.main === module) {
-  app.listen(port, () => {
-    console.log(`fantasyDraftingTool server listening on port ${port}`)
-  })
-}
+const server = http.createServer(app);
+server.listen(port, () => {
+  console.log(`fantasyDraftingTool server listening on port ${port}`)
+});
+setupWebSocket(server);
 
 const { connectToReceiveNotifications } = require("./routes/receiveNotif");
 connectToReceiveNotifications();
