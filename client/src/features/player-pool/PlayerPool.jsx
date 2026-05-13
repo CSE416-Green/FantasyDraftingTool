@@ -251,7 +251,7 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
       age: player.AGE,
       position: parsedPlayer.position,
       team: parsedPlayer.team,
-      depthChart: depthChartMap.get(parsedPlayer.name.toLowerCase()) || "",
+      depthChart: selectedStatsYear === "thisYear" ? depthChartMap.get(parsedPlayer.name.toLowerCase()) || "" : "",
 
       AB: Number(player.AB) ?? '',
       R: Number(player.R) ?? '',
@@ -287,7 +287,7 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
       age: player.age ?? '',
       position: player.position,
       team: player.team,
-      depthChart: depthChartMap.get(player.name.toLowerCase()) || "",
+      depthChart: selectedStatsYear === "thisYear" ? depthChartMap.get(player.name.toLowerCase()) || "" : "",
 
       AB: Number(player.AB) ?? '',
       R: Number(player.R) ?? '',
