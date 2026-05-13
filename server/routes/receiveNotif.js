@@ -16,7 +16,7 @@ export function setupWebSocket(server) {
     console.log('a user connected');
     setTimeout(() => {
         console.log("Sending news history to client:", socket.id);
-        //socket.emit("notif", newsHistory);
+        socket.emit("notif", newsHistory);
         clientMap.set(socket.id, socket);
     }, 5000);
 
