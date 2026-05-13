@@ -390,6 +390,9 @@ useEffect(() => {
           {/* <LeagueConfiguration /> */}
           <AddPlayerToPool leagueId={selectedLeagueId} userId={user._id}/>
 
+          <h1 className="settings-title">Manage Your Leagues</h1>
+          <LeagueConfiguration leagueId={selectedLeagueId} teams={teams} loadTeams={loadTeams} />
+
           <h1 className="settings-title">Join Another League</h1>
           <JoinAnotherLeague userId={user._id}/>
 
