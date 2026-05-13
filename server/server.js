@@ -388,6 +388,12 @@ app.post("/createLeague", async (req, res) => {
 app.post("/joinLeague", async (req, res) => {
   try {
     const { inviteCode, userId, teamName } = req.body;
+
+    const cleanedTeamName = teamName?.trim();
+
+    if (!cleanedTeamName) {
+      return res.status(400).json({ message: "Team name is required" });
+    }
     
     const league = await League.findOne({ InviteCode: inviteCode });
     if (!league) {
@@ -402,6 +408,23 @@ app.post("/joinLeague", async (req, res) => {
     if (user.league && user.league.includes(league._id)) {
       return res.status(400).json({ message: "User already in this league" });
     }
+
+    const existingTeams = await Team.find({
+      _id: { $in: league.TeamsID },
+    });
+
+    const duplicateTeam = existingTeams.find(
+      (team) =>
+        team.teamName.trim().toLowerCase() ===
+        cleanedTeamName.toLowerCase()
+    );
+
+    if (duplicateTeam) {
+      return res.status(400).json({
+        message: "A team with this name already exists in this league",
+      });
+    }
+
     if (!user.league) {
       user.league = [];
     }
@@ -409,7 +432,7 @@ app.post("/joinLeague", async (req, res) => {
     
 
     const newTeam = new Team({
-      teamName: teamName,
+      teamName: cleanedTeamName,
       rosterPlayers: [],
       farmPlayers: [],
       taxiPlayers: [],
@@ -434,6 +457,109 @@ app.post("/joinLeague", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 })
+
+app.post("/settings/league/teams", async (req, res) => {
+  try {
+    const { leagueId, teams } = req.body;
+
+    if (!leagueId) {
+      return res.status(400).json({ error: "leagueId is missing" });
+    }
+
+    if (!Array.isArray(teams)) {
+      return res.status(400).json({ error: "teams must be an array" });
+    }
+
+    const cleanedTeams = teams.map((team) => ({
+      _id: team._id || null,
+      teamName: team.teamName?.trim(),
+    }));
+
+    const invalidTeam = cleanedTeams.find((team) => !team.teamName);
+
+    if (invalidTeam) {
+      return res.status(400).json({ error: "Team name cannot be empty" });
+    }
+
+    // handles teams with the same names
+    const lowerCaseNames = cleanedTeams.map((team) =>
+      team.teamName.toLowerCase()
+    );
+
+    const hasDuplicateNames =
+      new Set(lowerCaseNames).size !== lowerCaseNames.length;
+
+    if (hasDuplicateNames) {
+      return res.status(400).json({
+        error: "Teams cannot have the same name (case insensitive)",
+      });
+    }
+
+    const league = await League.findById(leagueId);
+
+    if (!league) {
+      return res.status(404).json({ error: "League not found" });
+    }
+
+    const existingTeams = await Team.find({
+      _id: { $in: league.TeamsID },
+    });
+
+    const submittedExistingIds = cleanedTeams
+      .filter((team) => team._id)
+      .map((team) => team._id.toString());
+
+    // delete teams that are not in the req body
+    const teamsToDelete = existingTeams.filter(
+      (team) => !submittedExistingIds.includes(team._id.toString())
+    );
+
+    await Team.deleteMany({
+      _id: { $in: teamsToDelete.map((team) => team._id) },
+    });
+
+    const finalTeamIds = [];
+
+    for (const team of cleanedTeams) {
+      if (team._id) {
+        const updatedTeam = await Team.findByIdAndUpdate(
+          team._id,
+          { teamName: team.teamName },
+          { returnDocument: "after" }
+        );
+
+        if (updatedTeam) {
+          finalTeamIds.push(updatedTeam._id);
+        }
+      } else {
+        // new team missing id -> create a new team
+        const newTeam = await Team.create({
+          teamName: team.teamName,
+          rosterPlayers: [],
+          farmPlayers: [],
+          taxiPlayers: [],
+        });
+
+        finalTeamIds.push(newTeam._id);
+      }
+    }
+
+    league.TeamsID = finalTeamIds;
+    await league.save();
+
+    const updatedTeams = await Team.find({
+      _id: { $in: league.TeamsID },
+    });
+
+    res.json({
+      message: "League teams updated successfully",
+      teams: updatedTeams,
+    });
+  } catch (error) {
+    console.error("Error editing league:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 // app.listen(port, () => {
 //   console.log(`fantasyDraftingTool server listening on port ${port}`)
