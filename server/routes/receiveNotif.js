@@ -2,7 +2,7 @@ import { io } from "socket.io-client";
 import { Server } from 'socket.io';
 
 const clientMap = new Map();
-
+const newsHistory = [];
 export function setupWebSocket(server) {
   const io = new Server(server, {
     path: "/getPlayerNews",
@@ -14,7 +14,11 @@ export function setupWebSocket(server) {
 
   io.on('connection', (socket) => {
     console.log('a user connected');
-    clientMap.set(socket.id, socket);
+    setTimeout(() => {
+        console.log("Sending news history to client:", socket.id);
+        //socket.emit("notif", newsHistory);
+        clientMap.set(socket.id, socket);
+    }, 5000);
 
     socket.on('disconnect', () => {
       console.log('user disconnected');
@@ -46,6 +50,13 @@ export function connectToReceiveNotifications() {
             c.emit("notif", data);
         });
     });
+
+    client.on("history", (data) => {
+        console.log("History request received", data);
+        newsHistory.push(data);
+    });
+
+    client.emit("history");
 }
 
 export default connectToReceiveNotifications;

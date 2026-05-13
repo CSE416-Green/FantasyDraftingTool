@@ -42,5 +42,13 @@ export function initSocketConnection() {
 export function registerNotificationHandler (handler) {
     if (socket) {
         socket.on("notif", handler);
+        console.log("Registered notification handler");
+    }
+}
+
+export function unregisterNotificationHandler (handler) {
+    if (socket) {
+        socket.off("notif", handler);
+        console.log("Unregistered notification handler");
     }
 }
