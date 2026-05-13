@@ -17,6 +17,7 @@ import '../../css/mainPage.css'
 import '../../css/settingsPage.css'
 import Header from '../../shared/components/Header'
 import axios from "axios";
+import { initSocketConnection, disconnect, registerNotificationHandler } from '../../utils/websocket';
 import { useQuery } from '@tanstack/react-query';
 const pages = ['Main Page', 'Setting', "Estimations", "Scores", "Depth Chart"];
 
@@ -40,6 +41,8 @@ function MainPage({user,onLogout}) {
   const [totalTeams, setTotalTeams] = useState(0);
   const [draftLeague, setDraftLeague] = useState("MLB");  
   const [extraPlayerStats, setExtraPlayerStats] = useState([]);
+
+  const [playerNews, setPlayerNews] = useState([]);
 
   const [depthCharts, setDepthCharts] = useState([]);
   const [loading_depth, setLoading_depth] = useState(true);
@@ -77,9 +80,10 @@ useEffect(() => {
       try {
         const res = await axios.get("/settings/league");
 
+        console.log("League settings:", res.data);
         setTotalBudget(res.data.teamBudget);
       } catch (e) {
-        console.error("Failed to fetch league settings");
+        console.error("Failed to fetch league settings", e);
       }
     }
   
@@ -105,6 +109,25 @@ useEffect(() => {
       if (selectedLeagueId) loadLeagueInfo();
     }, [selectedLeagueId]);
 
+    useEffect(() => {
+      const checkConnection = () => {
+        initSocketConnection();
+        if (isConnected()) {
+          console.log("WebSocket connection is active");
+          registerNotificationHandler((data) => {
+            console.log("Received notification:", data);
+            setPlayerNews((prevNews) => [data, ...prevNews]);
+          });
+          clearInterval(intervalId);
+        }
+      };
+
+      checkConnection(); 
+      const intervalId = setInterval(checkConnection, 10000);
+      return () => {
+        clearInterval(intervalId);
+      };
+    }, [playerNews]);
 
     const fetchHistory = async () => {
       try {

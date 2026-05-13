@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
+import { useState, useEffect } from 'react';
 import "../../css/playerNews.css";
 import Drawer from './Drawer';
 
 export default function PlayerNews() {
+   
     const { data, isLoading, error } = useQuery({
     queryKey: ['news'],
     queryFn: async () => {

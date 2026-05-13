@@ -1,8 +1,32 @@
 import { io } from "socket.io-client";
+import { Server } from 'socket.io';
+
+const clientMap = new Map();
+
+export function setupWebSocket(server) {
+  const io = new Server(server, {
+    path: "/getPlayerNews",
+    cors: {
+      origin: "*",
+      methods: ["GET", "POST"]
+    }
+  });
+
+  io.on('connection', (socket) => {
+    console.log('a user connected');
+    clientMap.set(socket.id, socket);
+
+    socket.on('disconnect', () => {
+      console.log('user disconnected');
+      clientMap.delete(socket.id);
+    });
+  });
+
+}
 
 export function connectToReceiveNotifications() {
     console.log("Attempting to connect to WebSocket server for notifications...");
-    const client = io("ws://localhost:8080", 
+    const client = io("wss://fantasybaseballplayerstatsapi.onrender.com", 
     {
         path: "/getPlayerNews",
         reconnection: true,              // enable retry
@@ -13,11 +37,14 @@ export function connectToReceiveNotifications() {
     });
 
     client.on("connect", () => {
-    console.log("Connected to WebSocket server");
+        console.log("Connected to WebSocket server");
     });
 
     client.on("notif", (data) => {
-    console.log("Notification received:", data);
+        console.log("Notification received:", data);
+        clientMap.forEach((c) => {
+            c.emit("notif", data);
+        });
     });
 }
 
