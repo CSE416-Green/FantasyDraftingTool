@@ -115,8 +115,21 @@ export async function fetchPlayerStats(year) {
   return formattedData;
 }
 
-export default function PlayerPool({ playerStatsByYear, isLoading, error, leagueName, year, leagueId, user, teams, draftedIDs, setDraftedIDs, draftLeague = "MLB" }) {
-  const [draftedNames, setDraftedNames] = useState([]);
+export default function PlayerPool({ playerStatsByYear, isLoading, error, leagueName, year, leagueId, user, teams, draftedIDs, setDraftedIDs, draftLeague = "MLB", depthCharts }) {
+  
+  const depthChartMap = new Map();
+    depthCharts.forEach((team) => {
+      team.positions?.forEach((position) => {
+        position.players?.forEach((player) => {
+          depthChartMap.set(
+            player.name.toLowerCase(),
+            `${player.primaryPosition} #${player.depth}`
+          );
+        });
+      });
+    });
+
+    const [draftedNames, setDraftedNames] = useState([]);
 
   const fetchDraftedPlayers = async () => {
   try {
@@ -238,6 +251,7 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
       age: player.AGE,
       position: parsedPlayer.position,
       team: parsedPlayer.team,
+      depthChart: depthChartMap.get(parsedPlayer.name.toLowerCase()) || "",
 
       AB: Number(player.AB) ?? '',
       R: Number(player.R) ?? '',
@@ -273,6 +287,7 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
       age: player.age ?? '',
       position: player.position,
       team: player.team,
+      depthChart: depthChartMap.get(player.name.toLowerCase()) || "",
 
       AB: Number(player.AB) ?? '',
       R: Number(player.R) ?? '',
@@ -331,6 +346,11 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
     {
       accessorKey: 'team',
       header: 'Team',
+      size: 80,
+    },
+    {
+      accessorKey: 'depthChart',
+      header: 'Depth Chart',
       size: 80,
     },
     {

@@ -41,6 +41,10 @@ function MainPage({user,onLogout}) {
   const [draftLeague, setDraftLeague] = useState("MLB");  
   const [extraPlayerStats, setExtraPlayerStats] = useState([]);
 
+  const [depthCharts, setDepthCharts] = useState([]);
+  const [loading_depth, setLoading_depth] = useState(true);
+  const [error_depth, setError_depth] = useState("");
+
 const fetchTrades = async () => {
   try {
     const res = await axios.get(`/draftHistory/trades/${selectedLeagueId}`);
@@ -221,6 +225,53 @@ useEffect(() => {
     loadExtraPlayers();
   }, [unmatchedKey, year]);
 
+  useEffect(() => {
+
+    async function fetchDepthCharts() {
+        setLoading_depth(true);
+        setError_depth("");
+        try {
+        const today = new Date().toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+        });
+
+        const cacheKey = `depthcharts-${today}`;
+        const cached = sessionStorage.getItem(cacheKey);
+
+        if (cached) {
+            const parsed = JSON.parse(cached);
+
+            const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+
+            if (Date.now() - parsed.timestamp < TWENTY_FOUR_HOURS) {
+            setDepthCharts(parsed.data);
+            setLoading_depth(false);
+            return;
+            }
+        }
+        const response = await axios.get("/depthChart/fetch");
+        const data = response.data
+        setDepthCharts(data);
+
+        sessionStorage.setItem(
+            cacheKey,
+            JSON.stringify({
+            timestamp: Date.now(),
+            data,
+            })
+        );
+        } catch (err) {
+            setError_depth(err.message);
+        } finally {
+            setLoading_depth(false);
+        }
+    }
+
+    fetchDepthCharts();
+    }, []);
+
   return (
     <div className="main-page">
         <Header pages={pages} onPageChange={handlePageChange} onLogout={onLogout} user={user}/>
@@ -288,6 +339,7 @@ useEffect(() => {
                 draftedIDs={draftedIDs}
                 setDraftedIDs={setDraftedIDs}
                 draftLeague={draftLeague}
+                depthCharts={depthCharts}
               />
           </div>
           {/* </>} */}
@@ -339,7 +391,11 @@ useEffect(() => {
           />
         }
         {currentPage === "Depth Chart" &&
-          <DepthChart/>
+          <DepthChart
+            depthCharts={depthCharts}
+            loading_depth={loading_depth}
+            error_depth={error_depth}
+          />
           }
     </div>
   );
