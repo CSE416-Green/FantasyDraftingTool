@@ -1,13 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "../../css/depthChart.css"
-import axios from "axios";
 
 
-function DepthChart() {
+function DepthChart({ depthCharts, loading_depth, error_depth }) {
 
-    const [depthCharts, setDepthCharts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
     const [search, setSearch] = useState("");
 
     const filteredTeams = depthCharts.filter((team) => {
@@ -18,54 +14,8 @@ function DepthChart() {
         );
     });
 
-    useEffect(() => {
-        async function fetchDepthCharts() {
-            try {
-            const today = new Date().toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-            });
-
-            const cacheKey = `depthcharts-${today}`;
-
-            const cached = sessionStorage.getItem(cacheKey);
-
-            if (cached) {
-                const parsed = JSON.parse(cached);
-
-                const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
-
-                if (Date.now() - parsed.timestamp < TWENTY_FOUR_HOURS) {
-                setDepthCharts(parsed.data);
-                setLoading(false);
-                return;
-                }
-            }
-            // const response = await axios.get("http://localhost:3000/depthChart/fetch");
-            const response = await axios.get("/depthChart/fetch");
-            const data = response.data
-            setDepthCharts(data);
-
-            sessionStorage.setItem(
-                cacheKey,
-                JSON.stringify({
-                timestamp: Date.now(),
-                data,
-                })
-            );
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        fetchDepthCharts();
-        }, []);
-
-        if (loading) return <p className="depthChart-loading">Loading depth charts...</p>;
-    if (error) return <p style={{ color: "red" }}>{error}</p>;
+    if (loading_depth) return <p className="depthChart-loading">Loading depth charts...</p>;
+    if (error_depth) return <p style={{ color: "red" }}>{error}</p>;
 
     return (
     <div className="depthChart-page">
