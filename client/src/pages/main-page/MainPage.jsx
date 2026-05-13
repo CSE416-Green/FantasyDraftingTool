@@ -17,7 +17,7 @@ import '../../css/mainPage.css'
 import '../../css/settingsPage.css'
 import Header from '../../shared/components/Header'
 import axios from "axios";
-import { initSocketConnection, disconnect, registerNotificationHandler } from '../../utils/websocket';
+import { initSocketConnection, registerNotificationHandler, unregisterNotificationHandler, isConnected } from '../../utils/websocket';
 import { useQuery } from '@tanstack/react-query';
 const pages = ['Main Page', 'Setting', "Estimations", "Scores", "Depth Chart"];
 
@@ -110,22 +110,21 @@ useEffect(() => {
     }, [selectedLeagueId]);
 
     useEffect(() => {
-      const checkConnection = () => {
-        initSocketConnection();
-        if (isConnected()) {
-          console.log("WebSocket connection is active");
-          registerNotificationHandler((data) => {
-            console.log("Received notification:", data);
-            setPlayerNews((prevNews) => [data, ...prevNews]);
-          });
-          clearInterval(intervalId);
+      const socket = initSocketConnection();
+      console.log("WebSocket connection is active");
+      registerNotificationHandler((data) => {
+        console.log("Received notification:", data);
+        const newsItems = data[0];
+        if (Array.isArray(newsItems)) {
+          setPlayerNews([...newsItems]);
+        } else {
+           setPlayerNews((prevNews) => [newsItems, ...prevNews]);
         }
-      };
-
-      checkConnection(); 
-      const intervalId = setInterval(checkConnection, 10000);
+      });
+      //const intervalId = setInterval(checkConnection, 10000);
       return () => {
-        clearInterval(intervalId);
+        //clearInterval(intervalId);
+        unregisterNotificationHandler();
       };
     }, [playerNews]);
 
@@ -380,7 +379,9 @@ useEffect(() => {
               <TradeHistory leagueId={selectedLeagueId} trades={tradeHistory} fetchTrades={fetchTrades} />
           </div>
           <div className="news-history">
-            <Drawer/>
+            <Drawer 
+              playerNews={playerNews}
+            />
           </div>
         </div> }
         {currentPage === "Setting" &&        

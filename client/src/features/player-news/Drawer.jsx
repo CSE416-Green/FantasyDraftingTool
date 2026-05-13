@@ -41,7 +41,7 @@ const Puller = styled('div')(({ theme }) => ({
 }));
 
 function SwipeableEdgeDrawer(props) {
-  const { window } = props;
+  const { window, playerNews } = props;
   const [open, setOpen] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState('news');
 
@@ -111,7 +111,7 @@ function SwipeableEdgeDrawer(props) {
             </Button>
           </Box>
 
-          {activeTab === 'news' && <PlayerNews />}
+          {activeTab === 'news' && <PlayerNews playerNews={playerNews} />}
           {activeTab === 'injuries' && <Injuries />}
         </StyledBox>
       </SwipeableDrawer>
@@ -121,6 +121,7 @@ function SwipeableEdgeDrawer(props) {
 
 SwipeableEdgeDrawer.propTypes = {
   window: PropTypes.func,
+  playerNews: PropTypes.array,
 };
 
 export default SwipeableEdgeDrawer;

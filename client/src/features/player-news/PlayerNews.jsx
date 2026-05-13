@@ -3,40 +3,13 @@ import { useState, useEffect } from 'react';
 import "../../css/playerNews.css";
 import Drawer from './Drawer';
 
-export default function PlayerNews() {
-   
-    const { data, isLoading, error } = useQuery({
-    queryKey: ['news'],
-    queryFn: async () => {
-        const res = await fetch(
-        'https://www.rotowire.com/rss/news.php?sport=MLB'
-        );
-        const text = await res.text();
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(text, "text/xml");
-        const rssItems = Array.from(xmlDoc.querySelectorAll("item")).map(
-        (item) => ({
-            title: item.querySelector("title")?.textContent,
-            link: item.querySelector("link")?.textContent,
-            player: item.querySelector("title")?.textContent.split(":")[0],
-            description: item.querySelector("description")?.textContent,
-            pubDate: item.querySelector("pubDate")?.textContent,
-        })
-        );
-        return rssItems;
-    },
-    refetchInterval: 10000,    
-    refetchIntervalInBackground: true,
-    });
-
-    if (isLoading) return <p>Loading...</p>
-    if (error) return <p>Error loading player news</p>
-
-    return (
+export default function PlayerNews({ playerNews }) {
+  //console.log("Rendering PlayerNews with data:", playerNews);
+  return (
     <> 
     <div className="news-container">
-      {data.map((item, index) => (
-        <div key={index} className="news-card">
+      {playerNews.map((item) => (
+        <div key={item.id} className="news-card">
           {/* Left Section */}
           <div className="news-left">
             <div className="news-image">
@@ -60,9 +33,9 @@ export default function PlayerNews() {
           <div className="news-right">
             <p className="news-title">{item.title}</p>
             <p
-              className="news-description"
-              dangerouslySetInnerHTML={{ __html: item.description }}
-            />
+              className="news-description">
+              {item.description}
+            </p>
           </div>
         </div>
       ))}
