@@ -84,7 +84,7 @@ export default function CreateLeagueForm({ user, setUser }) {
                     />
                 </div>
                 <div className="form-row">
-                    <label>Team Name for your team':</label>
+                    <label>Team Name for your team:</label>
                     <input
                         className="form-input"
                         type="text"
@@ -94,10 +94,10 @@ export default function CreateLeagueForm({ user, setUser }) {
                     />
                 </div>
                 <div className="form-row" >
-                    <h4 style={{ marginRight:"70px", whiteSpace: "nowrap", paddingTop: "5px" }}>Hitter Stats:</h4>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "15px" }}>
+                    <h4 style={{ marginRight:"10px", whiteSpace: "nowrap", paddingTop: "5px" }}>Hitter Stats:</h4>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
                         {ALL_HITTER_STATS.map(stat => (
-                            <label key={stat} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                            <label key={stat} style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "14px" }}>
                                 <input
                                     type="checkbox"
                                     checked={hitterStats.includes(stat)}
@@ -109,10 +109,10 @@ export default function CreateLeagueForm({ user, setUser }) {
                     </div>
                 </div>
                 <div className="form-row">
-                <h4 style={{ marginRight:"15px", whiteSpace: "nowrap", paddingTop: "5px" }}>Pitcher Stats:</h4>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "25px"}}>
+                <h4 style={{ marginRight:"10px", whiteSpace: "nowrap", paddingTop: "5px" }}>Pitcher Stats:</h4>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "10px"}}>
                         {ALL_PITCHER_STATS.map(stat => (
-                            <label key={stat} style={{ display: "flex", alignItems: "center", gap: "4px", padding:"5px" }}>
+                            <label key={stat} style={{ display: "flex", alignItems: "center", gap: "4px",fontSize: "14px"}}>
                                 <input
                                     type="checkbox"
                                     checked={pitcherStats.includes(stat)}

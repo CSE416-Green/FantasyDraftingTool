@@ -85,11 +85,11 @@ export default function CreateAnotherLeague({ userId }) {
           />
         </div>
 
-        <div style={{ display: "flex", alignItems: "flex-start", gap: "30px", marginBottom: "10px" }}>
-          <h4 style={{ margin: 0, whiteSpace: "nowrap", paddingTop: "2px", minWidth: "100px" }}>Hitter Stats:</h4>
+        <div style={{ display: "flex", alignItems: "flex-start", marginBottom: "10px" }}>
+          <label style={{ margin: 10, whiteSpace: "nowrap", paddingTop: "2px", minWidth: "100px" }}>Hitter Stats:</label>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
               {ALL_HITTER_STATS.map(stat => (
-                  <label key={stat} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  <label key={stat} style={{ display: "flex", alignItems: "center", gap: "4px",fontSize: "15px" }}>
                       <input
                           type="checkbox"
                           checked={hitterStats.includes(stat)}
@@ -100,11 +100,11 @@ export default function CreateAnotherLeague({ userId }) {
               ))}
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "10px" }}>
-            <h4 style={{ margin: 0, whiteSpace: "nowrap", paddingTop: "2px", minWidth: "100px" }}>Pitcher Stats:</h4>
+        <div style={{ display: "flex", alignItems: "flex-start"}}>
+            <label style={{ margin: 10, whiteSpace: "nowrap", paddingTop: "2px" }}>Pitcher Stats:</label>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
                 {ALL_PITCHER_STATS.map(stat => (
-                    <label key={stat} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                    <label key={stat} style={{ display: "flex", alignItems: "center", gap: "4px",marginTop: "15px", fontSize: "15px"}}>
                         <input
                             type="checkbox"
                             checked={pitcherStats.includes(stat)}
