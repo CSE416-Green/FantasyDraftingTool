@@ -42,7 +42,7 @@ function Notification({notificationOpen, setNewsHistoryOpen, setNotificationOpen
         open={notificationOpen}
         autoHideDuration={6000}
         onClose={handleNotificationClose}
-        message={news.length > 0 ? `Latest news: ${news[0].title}` : "No news available"}
+        message={news?.[0]?.title ? `Latest news: ${news[0].title}` : "No news available"}
         action={action}
       />
     </div>
