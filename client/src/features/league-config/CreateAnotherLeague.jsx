@@ -1,6 +1,23 @@
+import { useState } from "react"; 
 import axios from "axios";
 
+const ALL_HITTER_STATS = ["AB", "R", "H", "Doubles", "Triples", "HR", "RBI", "BB", "K", "SB", "AVG", "OBP", "SLG"];
+const ALL_PITCHER_STATS = ["IP", "W", "SV", "K", "BB", "ERA", "WHIP"];
+
+
 export default function CreateAnotherLeague({ userId }) {
+  const [hitterStats, setHitterStats] = useState([...ALL_HITTER_STATS]);
+  const [pitcherStats, setPitcherStats] = useState([...ALL_PITCHER_STATS]);
+
+  //toggle on/off stats in table
+  function toggleStats(stat, list, setList) {
+    if (list.includes(stat)) {
+      setList(list.filter(s => s !== stat));
+    } else {
+      setList([...list, stat]);
+    }
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -15,6 +32,8 @@ export default function CreateAnotherLeague({ userId }) {
         year,
         userId,
         teamName,
+        hitterStats,
+        pitcherStats,
       });
 
       const updatedUser = res.data.user;
@@ -64,6 +83,37 @@ export default function CreateAnotherLeague({ userId }) {
             name="teamName"
             required
           />
+        </div>
+
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "30px", marginBottom: "10px" }}>
+          <h4 style={{ margin: 0, whiteSpace: "nowrap", paddingTop: "2px", minWidth: "100px" }}>Hitter Stats:</h4>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+              {ALL_HITTER_STATS.map(stat => (
+                  <label key={stat} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                      <input
+                          type="checkbox"
+                          checked={hitterStats.includes(stat)}
+                          onChange={() => toggleStats(stat, hitterStats, setHitterStats)}
+                      />
+                      {stat}
+                  </label>
+              ))}
+          </div>
+        </div>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "10px" }}>
+            <h4 style={{ margin: 0, whiteSpace: "nowrap", paddingTop: "2px", minWidth: "100px" }}>Pitcher Stats:</h4>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+                {ALL_PITCHER_STATS.map(stat => (
+                    <label key={stat} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                        <input
+                            type="checkbox"
+                            checked={pitcherStats.includes(stat)}
+                            onChange={() => toggleStats(stat, pitcherStats, setPitcherStats)}
+                        />
+                        {stat}
+                    </label>
+                ))}
+            </div>
         </div>
 
         <div className="form-button-group">

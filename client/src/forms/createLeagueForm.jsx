@@ -1,16 +1,30 @@
 import { useState } from "react";
 import axios from "axios";
 
+const ALL_HITTER_STATS = ["AB", "R", "H", "Doubles", "Triples", "HR", "RBI", "BB", "K", "SB", "AVG", "OBP", "SLG"];
+const ALL_PITCHER_STATS = ["IP", "W", "SV", "K", "BB", "ERA", "WHIP"];
+
 export default function CreateLeagueForm({ user, setUser }) {
 
     const userId = user._id;
     const [leagueName, setLeagueName] = useState("");
     const [year, setYear] = useState("");
     const [teamName, setTeamName] = useState("");
+    const [hitterStats,setHitterStats]=useState([...ALL_HITTER_STATS]);
+    const [pitcherStats,setPitcherStats]=useState([...ALL_PITCHER_STATS]);
+
+    //toggle on/off stats in table
+    function toggleStats(stat,list,setList){
+        if (list.includes(stat)) {
+            setList(list.filter(s => s !== stat));
+        } else {
+            setList([...list, stat]);
+        }
+    }
 
     async function handleSubmit(e) {
         e.preventDefault();
-
+ 
         if (!leagueName || !year || !teamName) {
             alert("Please fill in all fields");
             return;
@@ -22,12 +36,14 @@ export default function CreateLeagueForm({ user, setUser }) {
         }
 
         try {
-            // server req const { leagueName, year, userId, teamName } = req.body;
+            // server req const { leagueName, year, userId, teamName, stats for pitcher and hitter } = req.body;
             const res = await axios.post("/createLeague", {
                 leagueName,
                 year,
                 userId,
-                teamName
+                teamName,
+                hitterStats,
+                pitcherStats
             });
 
             const updatedUser = res.data.user;
@@ -76,6 +92,36 @@ export default function CreateLeagueForm({ user, setUser }) {
                         onChange={(e) => setTeamName(e.target.value)}
                         required
                     />
+                </div>
+                <div className="form-row" >
+                    <h4 style={{ marginRight:"70px", whiteSpace: "nowrap", paddingTop: "5px" }}>Hitter Stats:</h4>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "15px" }}>
+                        {ALL_HITTER_STATS.map(stat => (
+                            <label key={stat} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                                <input
+                                    type="checkbox"
+                                    checked={hitterStats.includes(stat)}
+                                    onChange={() => toggleStats(stat, hitterStats, setHitterStats)}
+                                />
+                                {stat}
+                            </label>
+                        ))}
+                    </div>
+                </div>
+                <div className="form-row">
+                <h4 style={{ marginRight:"15px", whiteSpace: "nowrap", paddingTop: "5px" }}>Pitcher Stats:</h4>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "25px"}}>
+                        {ALL_PITCHER_STATS.map(stat => (
+                            <label key={stat} style={{ display: "flex", alignItems: "center", gap: "4px", padding:"5px" }}>
+                                <input
+                                    type="checkbox"
+                                    checked={pitcherStats.includes(stat)}
+                                    onChange={() => toggleStats(stat, pitcherStats, setPitcherStats)}
+                                />
+                                {stat}
+                            </label>
+                        ))}
+                    </div>
                 </div>
                 <button type="submit">Create League</button>
             </form>

@@ -325,7 +325,7 @@ app.post("/tradePlayers", async (req, res) => {
 // create a new league 
 app.post("/createLeague", async (req, res) => {
   try {
-    const { leagueName, year, userId, teamName } = req.body;
+    const { leagueName, year, userId, teamName,hitterStats,pitcherStats } = req.body;
     let inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 
     while (await League.findOne({ InviteCode: inviteCode })) {
@@ -337,6 +337,8 @@ app.post("/createLeague", async (req, res) => {
       Year: year,
       TeamsID: [],
       InviteCode: inviteCode,
+      HitterStats: hitterStats || undefined,
+      PitcherStats: pitcherStats || undefined,
     });
 
 
@@ -561,6 +563,36 @@ app.post("/settings/league/teams", async (req, res) => {
   } catch (error) {
     console.error("Error editing league:", error);
     res.status(500).json({ error: "Server error" });
+  }
+});
+
+// get league stats settings
+app.get("/settings/league/stats/:leagueId", async (req, res) => {
+  try {
+    const league = await League.findById(req.params.leagueId);
+    if (!league) return res.status(404).json({ error: "League not found" });
+    res.json({
+      hitterStats: league.HitterStats,
+      pitcherStats: league.PitcherStats
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// save league stats settings
+app.post("/settings/league/stats", async (req, res) => {
+  try {
+    const { leagueId, hitterStats, pitcherStats } = req.body;
+    const league = await League.findByIdAndUpdate(
+      leagueId,
+      { HitterStats: hitterStats, PitcherStats: pitcherStats },
+      { new: true }
+    );
+    if (!league) return res.status(404).json({ error: "League not found" });
+    res.json({ message: "Stats updated successfully", league });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

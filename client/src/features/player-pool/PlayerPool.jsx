@@ -75,6 +75,7 @@ export function parsePlayerString(playerString) {
     team: rightSide,
   };
 }
+
 export async function fetchPlayerStats(year) {
   const cacheKey = `player-stats-${year}`;
 
@@ -190,6 +191,23 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
   const [playerType, setPlayerType] = useState("hitters");
   const [selectedStatsYear, setSelectedStatsYear] = useState("thisYear");
   const playerStats = playerStatsByYear?.[selectedStatsYear] || [];
+  const [savedHitterStats, setSavedHitterStats] = useState(null);
+  const [savedPitcherStats, setSavedPitcherStats] = useState(null);
+  const [columnStatsVisibility, setColumnStatsVisibility] = useState({});
+
+  useEffect(()=>{
+    async function fetchLeagueStats() {
+      try {
+        const res = await axios.get(`/settings/league/stats/${leagueId}`);
+        setSavedHitterStats(res.data.hitterStats);
+        setSavedPitcherStats(res.data.pitcherStats);
+      } catch (err) {
+        console.error("Failed to fetch league stats:", err);
+      }
+    }
+    if (leagueId) fetchLeagueStats();
+  },[leagueId]);
+
   async function fetchPlayerNote(playerName) {
     try {
       const res = await axios.get(`/playerNote/${leagueId}/${user._id}/${encodeURIComponent(playerName)}`);
@@ -237,6 +255,7 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
     }
     fetchManualPlayers();
   }, [leagueId]);
+
 
   const data = useMemo(() => {
   const isPitcher = (position) => position === "P" || position?.includes("P");
@@ -326,6 +345,28 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
   });
   }, [playerStats, draftedNames, manualPlayers, draftedIDs, playerType, draftLeague]);
 
+
+  const statsVisibility = useMemo(() => {
+    const visibility = {};
+    
+    const hitterCols = ['AB', 'R', 'H', 'Doubles', 'Triples', 'HR', 'RBI', 'BB', 'K', 'SB', 'AVG', 'OBP', 'SLG'];
+    const pitcherCols = ['IP', 'W', 'SV', 'K', 'BB', 'ERA', 'WHIP'];
+
+    hitterCols.forEach(col => {
+      visibility[col] = savedHitterStats ? savedHitterStats.includes(col) : true;
+    });
+
+    pitcherCols.forEach(col => {
+      visibility[col] = savedPitcherStats ? savedPitcherStats.includes(col) : true;
+    });
+
+    return visibility;
+  }, [savedHitterStats, savedPitcherStats]);
+
+  useEffect(() => {
+    setColumnStatsVisibility(statsVisibility);
+  }, [statsVisibility]);
+
  const columns = useMemo(() => {
   const baseColumns = [
     {
@@ -398,7 +439,8 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
     state: {
       isLoading,
       showAlertBanner: Boolean(error),
-    },
+      columnVisibility: columnStatsVisibility, 
+    }, onColumnVisibilityChange: setColumnStatsVisibility,
     initialState: {
       sorting: [
         {
@@ -457,46 +499,29 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
       
       <MaterialReactTable table={table} />
       {selectedPlayer && (
-      <div>
-        <button
-          onClick={() => setSelectedPlayer(null)}
-          style={{
-            position: "absolute",
-            top: "8px",
-            right: "8px",
-            background: "none",
-            border: "none",
-            fontSize: "18px",
-            cursor: "pointer",
-            color: "#666",
-            lineHeight: 1,
-          }}
-        >
-          ✕
-        </button>
-        <h3 style={{ margin: "0 0 8px 0", color: "#1d3a28" }}>
-          Notes for {selectedPlayer}
-        </h3>
+      <div style={{ marginTop: "10px", padding: "16px", backgroundColor: "#", borderRadius: "6px", border: "1px solid #ccc" }}>
+        <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+          <h3 style={{ margin: 0, color: "#1d3a28" }}>Notes for {selectedPlayer}</h3>
+          <button onClick={() => setSelectedPlayer(null)} style={{ background: "none", border: "none", fontSize: "18px", cursor: "pointer", color: "#666" }}>✕</button>
+        </div>
         <textarea
           value={playerNote}
           onChange={handleNoteChange}
           placeholder="Type your notes about this player..."
           rows={4}
-          style={{
-            width: "100%",
-            resize: "vertical",
-            boxSizing: "border-box",
-            padding: "10px",
-            backgroundColor: "#d9d9d9",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
+          style={{ 
+            width: "100%", 
+            resize: "vertical", 
+            boxSizing: "border-box", 
+            padding: "10px", 
+            backgroundColor: "#d9d9d9", 
+            border: "1px solid #ccc", 
+            borderRadius: "4px", 
             fontSize: "14px",
-            fontFamily: "inherit",
-            color: "#1d3a28",
-          }}
+            color: "#1d3a28" }}
         />
         {noteStatus && <p style={{ fontSize: "12px", color: "#666", margin: "4px 0 0 0" }}>{noteStatus}</p>}
       </div>
-          )}
+    )}
     </div>
   )};
