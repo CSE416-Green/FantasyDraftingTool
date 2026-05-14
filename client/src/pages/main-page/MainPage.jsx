@@ -84,7 +84,7 @@ useEffect(() => {
       try {
         const res = await axios.get("/settings/league");
 
-        console.log("League settings:", res.data);
+        // console.log("League settings:", res.data);
         setTotalBudget(res.data.teamBudget);
       } catch (e) {
         console.error("Failed to fetch league settings", e);
