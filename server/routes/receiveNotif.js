@@ -1,9 +1,9 @@
-import { io } from "socket.io-client";
-import { Server } from 'socket.io';
+const { io: clientIo } = require("socket.io-client");
+const { Server } = require("socket.io");
 
 const clientMap = new Map();
 const newsHistory = [];
-export function setupWebSocket(server) {
+function setupWebSocket(server) {
   const io = new Server(server, {
     path: "/getPlayerNews",
     cors: {
@@ -28,9 +28,9 @@ export function setupWebSocket(server) {
 
 }
 
-export function connectToReceiveNotifications() {
+function connectToReceiveNotifications() {
     console.log("Attempting to connect to WebSocket server for notifications...");
-    const client = io("wss://fantasybaseballplayerstatsapi.onrender.com", 
+    const client = clientIo("wss://fantasybaseballplayerstatsapi.onrender.com", 
     {
         path: "/getPlayerNews",
         reconnection: true,              // enable retry
@@ -59,4 +59,7 @@ export function connectToReceiveNotifications() {
     client.emit("history");
 }
 
-export default connectToReceiveNotifications;
+module.exports = {
+  setupWebSocket,
+  connectToReceiveNotifications,
+};
