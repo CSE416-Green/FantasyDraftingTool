@@ -120,7 +120,7 @@ useEffect(() => {
         console.log("Received notification:", data);
         const newsItems = data[0];
         if (Array.isArray(newsItems)) {
-          setPlayerNews([...newsItems]);
+          setPlayerNews([...newsItems].reverse());
         } else {
            setPlayerNews((prevNews) => [newsItems, ...prevNews]);
         }
