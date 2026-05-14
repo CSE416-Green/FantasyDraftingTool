@@ -4,7 +4,6 @@ const Team = require("../models/TeamSchema");
 const League = require("../models/LeagueSchema");
 const DraftHistory = require("../models/DraftHistorySchema");
 const User = require("../models/UserSchema");
-const LeaguePoint = require("../models/LeaguePointSchema")
 const bcrypt=require("bcrypt");
 
 async function predraft(data) {
@@ -242,10 +241,7 @@ presentationRouter.delete("/reset", async (req, res) => {
         await Team.deleteMany({
             _id: { $in: teamIds }
         });
-        await DraftHistory.findOneAndDelete({
-            League: leagueId
-        });
-        await LeaguePoint.findOneAndDelete({
+        await DraftHistory.deleteMany({
             League: leagueId
         });
 
@@ -273,8 +269,7 @@ presentationRouter.delete("/reset2", async (req, res) => {
             {
                 $set: {
                 rosterPlayers: [],
-                farmPlayers: [],
-                taxiPlayers: []
+                farmPlayers: []
                 }
             }
         );
@@ -287,9 +282,6 @@ presentationRouter.delete("/reset2", async (req, res) => {
                 }
             }
         );
-        await LeaguePoint.findOneAndDelete({
-            League: leagueId
-        });
 
         res.json({
             message: "Deleted draft history and team rosters/farm"
