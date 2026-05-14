@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+/* global describe, it, expect */
 import { convertToTeams } from "./convertToTeams";
 
 describe("convertToTeams", () => {
