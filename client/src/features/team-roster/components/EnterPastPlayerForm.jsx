@@ -3,7 +3,6 @@ import { useState } from "react";
 
 export default function EnterPastPlayerForm({ team, onSubmit, onCancel, maxNextCost, playerPool, draftedNames, draftedIDs }) {
 
-    const [playerName, setPlayerName] = useState("");
     const [position, setPosition] = useState("");
     const [cost, setCost] = useState("");
     const [status, setStatus] = useState("");

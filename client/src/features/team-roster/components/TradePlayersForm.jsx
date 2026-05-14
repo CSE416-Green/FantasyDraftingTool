@@ -1,21 +1,16 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import axios from "axios";
 
 export default function TradePlayersForm({ teams, currentTeamId, onCancel, onTrade }) {
     const [fromTeamId, setFromTeamId] = useState(currentTeamId || "");
-    const [toTeamId, setToTeamId] = useState("");
 
     const [fromView, setFromView] = useState("roster");
     const [toView, setToView] = useState("roster");
 
-    useEffect(() => {
-        if (teams.length > 0 && !toTeamId) {
-            const otherTeam = teams.find(t => t._id !== fromTeamId);
-            if (otherTeam) {
-                setToTeamId(otherTeam._id);
-            }
-        }
-    }, [teams, fromTeamId]);
+    const [toTeamId, setToTeamId] = useState(() => {
+        const otherTeam = teams.find((t) => t._id !== (currentTeamId || ""));
+        return otherTeam?._id || "";
+    });
   
     const fromTeam = useMemo(
         () => teams.find((t) => t._id === fromTeamId),

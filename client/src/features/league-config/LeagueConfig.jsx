@@ -1,17 +1,14 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function LeagueConfiguration({ leagueId, teams = [], loadTeams }) {
-  const [teamInputs, setTeamInputs] = useState([]);
-
-  useEffect(() => { // initial form
-    setTeamInputs(
-      teams.map((team) => ({
-        _id: team._id,
-        teamName: team.teamName || "",
-      }))
-    );
-  }, [teams]);
+  
+  const [teamInputs, setTeamInputs] = useState(() =>
+    teams.map((team) => ({
+      _id: team._id,
+      teamName: team.teamName || "",
+    }))
+  );
 
   function handleTeamNameChange(index, value) {
     setTeamInputs((prev) =>

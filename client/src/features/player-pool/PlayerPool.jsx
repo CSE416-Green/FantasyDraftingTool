@@ -1,4 +1,5 @@
-import { useMemo, useEffect, useState, useRef } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import { useMemo, useEffect, useState, useRef, useCallback } from 'react';
 import axios from 'axios';
 import {
   MaterialReactTable,
@@ -76,6 +77,11 @@ export function parsePlayerString(playerString) {
   };
 }
 
+function getValueOrEmpty(value) {
+  return value === undefined || value === null || value === "" ? "" : Number(value);
+}
+
+
 export async function fetchPlayerStats(year) {
   const cacheKey = `player-stats-${year}`;
 
@@ -116,13 +122,16 @@ export async function fetchPlayerStats(year) {
   return formattedData;
 }
 
-export default function PlayerPool({ playerStatsByYear, isLoading, error, leagueName, year, leagueId, user, teams, draftedIDs, setDraftedIDs, draftLeague = "MLB", depthCharts }) {
+
+export default function PlayerPool({ playerStatsByYear, isLoading, error, year, leagueId, user, teams, draftedIDs, setDraftedIDs, draftLeague = "MLB", depthCharts }) {
   
-  const depthChartMap = new Map();
+  const depthChartMap = useMemo(() => {
+    const map = new Map();
+
     depthCharts.forEach((team) => {
       team.positions?.forEach((position) => {
         position.players?.forEach((player) => {
-          depthChartMap.set(
+          map.set(
             player.name.toLowerCase(),
             `${player.primaryPosition} #${player.depth}`
           );
@@ -130,9 +139,12 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
       });
     });
 
+    return map;
+  }, [depthCharts]);
+
     const [draftedNames, setDraftedNames] = useState([]);
 
-  const fetchDraftedPlayers = async () => {
+  const fetchDraftedPlayers = useCallback(async () => {
   try {
     const res = await axios.post('/draftHistory/league', { leagueId: leagueId });
     const names = res.data.DraftedPlayers.map((p) => p.PlayerName);
@@ -176,13 +188,13 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
     setDraftedIDs([]);
     setDraftedNames([]);
   }
-  };
+  }, [leagueId, teams, setDraftedIDs]);
 
   useEffect(() => {
     if (leagueId && year && teams.length > 0) {
-        fetchDraftedPlayers();
-  }
-  }, [leagueId, year, teams]);
+      fetchDraftedPlayers();
+    }
+  }, [leagueId, year, teams, fetchDraftedPlayers]);
 
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [playerNote, setPlayerNote] = useState("");
@@ -190,7 +202,6 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
   const debounceTimer = useRef(null);
   const [playerType, setPlayerType] = useState("hitters");
   const [selectedStatsYear, setSelectedStatsYear] = useState("thisYear");
-  const playerStats = playerStatsByYear?.[selectedStatsYear] || [];
   const [savedHitterStats, setSavedHitterStats] = useState(null);
   const [savedPitcherStats, setSavedPitcherStats] = useState(null);
   const [columnStatsVisibility, setColumnStatsVisibility] = useState({});
@@ -247,7 +258,10 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
       try {
         if (!leagueId) return; 
         const res = await axios.get(`/addedPlayerPool/manualPlayers/${leagueId}`);
-        const data = res.data.map(({ _id, ...rest }) => rest);
+        const data = res.data.map((player) => {
+          const { _id: _unusedId, ...rest } = player;
+          return rest;
+        });
         setManualPlayers(data);
       } catch (err) {
         console.error('Failed to fetch manual players:', err);
@@ -258,9 +272,9 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
 
 
   const data = useMemo(() => {
-  const isPitcher = (position) => position === "P" || position?.includes("P");
-
-  const apiPlayers = playerStats.map((player) => {
+    const playerStats = playerStatsByYear?.[selectedStatsYear] || [];
+    const isPitcher = (position) => position === "P" || position?.includes("P");
+    const apiPlayers = playerStats.map((player) => {
     const parsedPlayer = parsePlayerString(player.Player ?? '');
     const isDrafted = draftedIDs.includes(player.ID) || draftedNames.includes(parsedPlayer.name);
 
@@ -272,25 +286,24 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
       team: parsedPlayer.team,
       depthChart: selectedStatsYear === "thisYear" ? depthChartMap.get(parsedPlayer.name.toLowerCase()) || "" : "",
 
-      AB: Number(player.AB) ?? '',
-      R: Number(player.R) ?? '',
-      H: Number(player.H) ?? '',
-      Doubles: Number(player.Doubles) ?? '',
-      Triples: Number(player.Triples) ?? '',
-      HR: Number(player.HR) ?? '',
-      RBI: Number(player.RBI) ?? '',
-      BB: Number(player.BB) ?? '',
-      K: Number(player.K) ?? '',
-      SB: Number(player.SB) ?? '',
-      AVG: Number(player.AVG) ?? '',
-      OBP: Number(player.OBP) ?? '',
-      SLG: Number(player.SLG) ?? '',
-
-      IP: Number(player.IP) ?? '',
-      W: Number(player.W) ?? '',
-      SV: Number(player.SV) ?? '',
-      ERA: Number(player.ERA) ?? '',
-      WHIP: Number(player.WHIP) ?? '',
+      AB: getValueOrEmpty(player.AB),
+      R: getValueOrEmpty(player.R),
+      H: getValueOrEmpty(player.H),
+      Doubles: getValueOrEmpty(player.Doubles),
+      Triples: getValueOrEmpty(player.Triples),
+      HR: getValueOrEmpty(player.HR),
+      RBI: getValueOrEmpty(player.RBI),
+      BB: getValueOrEmpty(player.BB),
+      K: getValueOrEmpty(player.K),
+      SB: getValueOrEmpty(player.SB),
+      AVG: getValueOrEmpty(player.AVG),
+      OBP: getValueOrEmpty(player.OBP),
+      SLG: getValueOrEmpty(player.SLG),
+      IP: getValueOrEmpty(player.IP),
+      W: getValueOrEmpty(player.W),
+      SV: getValueOrEmpty(player.SV),
+      ERA: getValueOrEmpty(player.ERA),
+      WHIP: getValueOrEmpty(player.WHIP),
       FPTS: Number(player.FPTS) || 0,
       isDrafted,
       playerType: isPitcher(parsedPlayer.position) ? "pitchers" : "hitters",
@@ -308,25 +321,25 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
       team: player.team,
       depthChart: selectedStatsYear === "thisYear" ? depthChartMap.get(player.name.toLowerCase()) || "" : "",
 
-      AB: Number(player.AB) ?? '',
-      R: Number(player.R) ?? '',
-      H: Number(player.H) ?? '',
-      Doubles: Number(player.Doubles) ?? '',
-      Triples: Number(player.Triples) ?? '',      
-      HR: Number(player.HR) ?? '',
-      RBI: Number(player.RBI) ?? '',
-      BB: Number(player.BB) ?? '',
-      K: Number(player.K) ?? '',
-      SB: Number(player.SB) ?? '',
-      AVG: Number(player.AVG) ?? '',
-      OBP: Number(player.OBP) ?? '',
-      SLG: Number(player.SLG) ?? '',
+      AB: getValueOrEmpty(player.AB),
+      R: getValueOrEmpty(player.R),
+      H: getValueOrEmpty(player.H),
+      Doubles: getValueOrEmpty(player.Doubles),
+      Triples: getValueOrEmpty(player.Triples),      
+      HR: getValueOrEmpty(player.HR),
+      RBI: getValueOrEmpty(player.RBI),
+      BB: getValueOrEmpty(player.BB),
+      K: getValueOrEmpty(player.K),
+      SB: getValueOrEmpty(player.SB),
+      AVG: getValueOrEmpty(player.AVG),
+      OBP: getValueOrEmpty(player.OBP),
+      SLG: getValueOrEmpty(player.SLG),
 
-      IP: Number(player.IP) ?? '',
-      W: Number(player.W) ?? '',
-      SV: Number(player.SV) ?? '',
-      ERA: Number(player.ERA) ?? '',
-      WHIP: Number(player.WHIP) ?? '',
+      IP: getValueOrEmpty(player.IP),
+      W: getValueOrEmpty(player.W),
+      SV: getValueOrEmpty(player.SV),
+      ERA: getValueOrEmpty(player.ERA),
+      WHIP: getValueOrEmpty(player.WHIP),
       FPTS: Number(player.FPTS) || 0,
       isDrafted,
       playerType: isPitcher(player.position) ? "pitchers" : "hitters",
@@ -343,7 +356,7 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, league
 
     return matchesPlayerType && matchesDraftLeague;
   });
-  }, [playerStats, draftedNames, manualPlayers, draftedIDs, playerType, draftLeague]);
+  }, [playerStatsByYear, selectedStatsYear, draftedNames, manualPlayers, draftedIDs, playerType, draftLeague, depthChartMap]);
 
 
   const statsVisibility = useMemo(() => {

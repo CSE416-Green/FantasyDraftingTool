@@ -1,4 +1,5 @@
 const { io } = require("socket.io-client");
+
 const { Server } = require("socket.io");
 
 const clientMap = new Map();
@@ -38,6 +39,7 @@ function connectToReceiveNotifications() {
         reconnectionDelay: 1000,         // initial delay
         reconnectionDelayMax: 5000,      // max delay cap
         timeout: 20000,                 // connection timeout
+
         extraHeaders: {
           "Authorization": `apikey ${process.env.API_KEY}`,
         },

@@ -1,4 +1,4 @@
-export default function TradeHistory({ leagueId, trades = [], fetchTrades }) {
+export default function TradeHistory({ trades = [] }) {
     // remove the useEffect and useState entirely
     return (
       <div>

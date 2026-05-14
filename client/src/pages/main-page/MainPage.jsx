@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import TeamRoster from '../../features/team-roster/TeamRoster'
 import PlayerPool, { fetchPlayerStats } from '../../features/player-pool/PlayerPool'
 import Note from '../../shared/components/Note'
@@ -17,7 +17,7 @@ import '../../css/mainPage.css'
 import '../../css/settingsPage.css'
 import Header from '../../shared/components/Header'
 import axios from "axios";
-import { initSocketConnection, registerNotificationHandler, unregisterNotificationHandler, isConnected } from '../../utils/websocket';
+import { initSocketConnection, registerNotificationHandler, unregisterNotificationHandler } from '../../utils/websocket';
 import { useQuery } from '@tanstack/react-query';
 import Notification from "../../features/player-news/Notification";
 
@@ -52,18 +52,18 @@ function MainPage({user,onLogout}) {
   const [loading_depth, setLoading_depth] = useState(true);
   const [error_depth, setError_depth] = useState("");
 
-const fetchTrades = async () => {
+const fetchTrades = useCallback(async () => {
   try {
     const res = await axios.get(`/draftHistory/trades/${selectedLeagueId}`);
     setTradeHistory(res.data.trades);
   } catch (err) {
     console.error("Failed to fetch trade history:", err);
   }
-};
+}, [selectedLeagueId, ]);
 
 useEffect(() => {
   if (selectedLeagueId) fetchTrades();
-}, [selectedLeagueId]);
+}, [selectedLeagueId, fetchTrades]);
 
   const {
       data: playerStatsByYear = {},
@@ -95,7 +95,7 @@ useEffect(() => {
       loadLeagueSettings();
     }, []);
 
-    const loadLeagueInfo = async () => {
+    const loadLeagueInfo = useCallback(async () => {
       try {
         const res = await axios.post("/league/info", {
           leagueId: selectedLeagueId
@@ -104,17 +104,17 @@ useEffect(() => {
         setLeagueInviteCode(res.data.InviteCode);
         setYear(res.data.Year);
         setTotalTeams(res.data.TeamsID.length)
-      } catch (err) {
+      } catch {
         console.error("Failed to fetch league information");
       }
-    };
-
-    useEffect(() => {
-      if (selectedLeagueId) loadLeagueInfo();
     }, [selectedLeagueId]);
 
     useEffect(() => {
-      const socket = initSocketConnection();
+      if (selectedLeagueId) loadLeagueInfo();
+    }, [selectedLeagueId, loadLeagueInfo]);
+
+    useEffect(() => {
+      initSocketConnection();
       console.log("WebSocket connection is active");
       registerNotificationHandler((data) => {
         console.log("Received notification:", data);
@@ -133,7 +133,7 @@ useEffect(() => {
       };
     }, [playerNews, notificationOpen]);
 
-    const fetchHistory = async () => {
+    const fetchHistory = useCallback(async () => {
       try {
         const res = await axios.post("/draftHistory/league", {
           leagueId: selectedLeagueId
@@ -153,14 +153,14 @@ useEffect(() => {
       } catch (err) {
         console.error("Failed to fetch draft history:", err);
       }
-    };
+    }, [selectedLeagueId]);
 
     useEffect(() => {
       if (selectedLeagueId) fetchHistory();
-    }, [selectedLeagueId]);
+    }, [selectedLeagueId, fetchHistory]);
 
     //  to reload teams
-  const loadTeams = async () => {
+  const loadTeams = useCallback(async () => {
     try {
       const res = await axios.post("/allteams", {
         leagueId: selectedLeagueId
@@ -180,14 +180,14 @@ useEffect(() => {
     } catch (e) {
       console.error("Failed to fetch teams: ", e);
     }
-  };
+  }, [selectedLeagueId]);
 
   useEffect(() => {
     if (selectedLeagueId) loadTeams();
-  }, [selectedLeagueId]);
+  }, [selectedLeagueId, loadTeams]);
 
 
-  const loadUserLeagues = async () => {
+  const loadUserLeagues = useCallback(async () => {
     try {
       if (!user?.league || user.league.length === 0) return;
 
@@ -203,11 +203,11 @@ useEffect(() => {
     } catch (err) {
       console.error("Failed to load user leagues:", err);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     loadUserLeagues();
-  }, [user]);
+  }, [user, loadUserLeagues]);
 
 
   const unmatchedIDs = useMemo(() => {
@@ -250,7 +250,7 @@ useEffect(() => {
     }
 
     loadExtraPlayers();
-  }, [unmatchedKey, year]);
+  }, [unmatchedKey, unmatchedIDs, year]);
 
   useEffect(() => {
 
