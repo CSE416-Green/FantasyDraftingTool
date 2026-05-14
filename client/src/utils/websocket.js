@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 let socket = null;
 
 function getURL() {
-  if (process.env.NODE_ENV === "production") {
+  if (import.meta.env.PROD) {
     return "https://fantasydraftingtool.onrender.com";
   }
   return "http://localhost:3000";

@@ -15,7 +15,7 @@ function DepthChart({ depthCharts, loading_depth, error_depth }) {
     });
 
     if (loading_depth) return <p className="depthChart-loading">Loading depth charts...</p>;
-    if (error_depth) return <p style={{ color: "red" }}>{error}</p>;
+    if (error_depth) return <p style={{ color: "red" }}>{error_depth}</p>;
 
     return (
     <div className="depthChart-page">

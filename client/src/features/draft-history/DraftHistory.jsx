@@ -1,16 +1,8 @@
-import axios from "axios";
-import { useState, useEffect } from "react";
 // css
 import "../../css/mainPage.css";
 
 
-const fakeHistory = [
-    {'name': "Loading...", 'order': "1", 'team': "-", 'cost': "-"}
-
-];
-
-
-export default function DraftHistory({leagueName, year, leagueId, history}) {
+export default function DraftHistory({leagueName, history}) {
 
   return (
     <div className="historyWrapper">

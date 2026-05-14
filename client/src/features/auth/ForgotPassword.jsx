@@ -21,7 +21,7 @@ export default function ForgotPassword({ onBackToLogin }) {
     try {
       await axios.post("/user/forgot-password", { email });
       setStep("otp");
-    } catch (err) {
+    } catch {
       setError("Something went wrong, please try again.");
     } finally {
       setLoading(false);
@@ -35,7 +35,7 @@ export default function ForgotPassword({ onBackToLogin }) {
     try {
       await axios.post("/user/verify-otp", { email, otp });
       setStep("password");
-    } catch (err) {
+    } catch {
       const attempts = otpAttempts + 1;
       setOtpAttempts(attempts);
       if (attempts >= 3) {
@@ -67,7 +67,7 @@ export default function ForgotPassword({ onBackToLogin }) {
     try {
       await axios.post("/user/reset-password", { email, otp, password });
       setStep("done");
-    } catch (err) {
+    } catch {
       setError("Invalid or expired OTP. Please start over.");
       setStep("email");
     } finally {
