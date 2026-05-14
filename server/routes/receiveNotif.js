@@ -30,14 +30,17 @@ function setupWebSocket(server) {
 
 function connectToReceiveNotifications() {
     console.log("Attempting to connect to WebSocket server for notifications...");
-    const client = clientIo("wss://fantasybaseballplayerstatsapi.onrender.com", 
+    const client = clientIo("wss://fantasybaseballgateway-nginx.onrender.com",
     {
-        path: "/getPlayerNews",
-        reconnection: true,              // enable retry
-        reconnectionAttempts: Infinity,  // retry forever
-        reconnectionDelay: 1000,         // initial delay
-        reconnectionDelayMax: 5000,      // max delay cap
-        timeout: 20000                   // connection timeout
+        path: "/ws/getPlayerNews",
+        reconnection: true,
+        reconnectionAttempts: Infinity,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        timeout: 20000,
+        extraHeaders: {
+          "Authorization": `apikey ${process.env.API_KEY}`,
+        },
     });
 
     client.on("connect", () => {
