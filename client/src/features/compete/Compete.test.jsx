@@ -1,3 +1,4 @@
+/* global describe, it, expect */
 import { convertToTeams } from "./convertToTeams";
 
 describe("convertToTeams", () => {

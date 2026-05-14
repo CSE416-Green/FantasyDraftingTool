@@ -3,7 +3,7 @@ const { Server } = require("socket.io");
 
 const clientMap = new Map();
 const newsHistory = [];
-export function setupWebSocket(server) {
+function setupWebSocket(server) {
   const io = new Server(server, {
     path: "/getPlayerNews",
     cors: {
@@ -28,7 +28,7 @@ export function setupWebSocket(server) {
 
 }
 
-export function connectToReceiveNotifications() {
+function connectToReceiveNotifications() {
     console.log("Attempting to connect to WebSocket server for notifications...");
     const client = io("wss://fantasybaseballgateway-nginx.onrender.com", 
     {
@@ -38,6 +38,7 @@ export function connectToReceiveNotifications() {
         reconnectionDelay: 1000,         // initial delay
         reconnectionDelayMax: 5000,      // max delay cap
         timeout: 20000,                 // connection timeout
+
         extraHeaders: {
           "Authorization": `apikey ${process.env.API_KEY}`,
         },

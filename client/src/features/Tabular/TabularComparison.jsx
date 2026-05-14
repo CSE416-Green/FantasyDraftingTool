@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useMemo } from "react";
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -71,20 +71,8 @@ function calculateTeamWeightedStats(players) {
   );
 }
 
-
-function chunkArray(array, size) {
-  const chunks = [];
-
-  for (let i = 0; i < array.length; i += size) {
-    chunks.push(array.slice(i, i + size));
-  }
-
-  return chunks;
-}
-
 export default function TabularComparison({
   playerStatsByYear,
-  year,
   teams = [],
   leagueName,
   extraPlayerStats = [],
@@ -165,60 +153,61 @@ export default function TabularComparison({
     });
     }, [teams, playerStatsByYear, extraPlayerStats]);
 
-    const pitcherCellStyle = {
-    sx: {
-        backgroundColor: "#d9d9d9",
-    },
-    };
-    const columns = useMemo(
-    () => [
-      {
-        accessorKey: "teamName",
-        header: "Team",
-        size: 150,
-      },
-      {
-        accessorKey: "players",
-        header: "Players",
-        size: 80,
-      },
-      {
-        accessorKey: "FPTS",
-        header: "Total FPTS",
-        size: 100,
-        Cell: ({ cell }) => Number(cell.getValue()).toFixed(1),
-      },
+    const columns = useMemo(() => {
 
-      {
-        header: "Hitting Points",
-        columns: [
-          { accessorKey: "Singles", header: "1B", size: 70 },
-          { accessorKey: "Doubles", header: "2B", size: 70 },
-          { accessorKey: "Triples", header: "3B", size: 70 },
-          { accessorKey: "HR", header: "HR", size: 70 },
-          { accessorKey: "RBI", header: "RBI", size: 70 },
-          { accessorKey: "R", header: "R", size: 70 },
-          { accessorKey: "BB", header: "BB", size: 70 },
-          { accessorKey: "SB", header: "SB", size: 70 },
-          { accessorKey: "HitterK", header: "K", size: 70 },
-        ],
-      },
+      const pitcherCellStyle = {
+        sx: {
+          backgroundColor: "#d9d9d9",
+        },
+      };
 
-      {
-        header: "Pitching Points",
-        columns: [
-          { accessorKey: "IP", header: "IP", size: 70, muiTableBodyCellProps: pitcherCellStyle },
-          { accessorKey: "PitcherK", header: "K", size: 70, muiTableBodyCellProps: pitcherCellStyle },
-          { accessorKey: "W", header: "W", size: 70, muiTableBodyCellProps: pitcherCellStyle },
-          { accessorKey: "SV", header: "SV", size: 70, muiTableBodyCellProps: pitcherCellStyle },
-          { accessorKey: "ER", header: "ER", size: 70, muiTableBodyCellProps: pitcherCellStyle, Cell: ({ cell }) => Number(cell.getValue()).toFixed(1), },
-          { accessorKey: "HAllowed", header: "H", size: 70, muiTableBodyCellProps: pitcherCellStyle },
-          { accessorKey: "PitcherBB", header: "BB", size: 70, muiTableBodyCellProps: pitcherCellStyle },
-        ],
-      },
-    ],
-    []
-  );
+      return [
+        {
+          accessorKey: "teamName",
+          header: "Team",
+          size: 150,
+        },
+        {
+          accessorKey: "players",
+          header: "Players",
+          size: 80,
+        },
+        {
+          accessorKey: "FPTS",
+          header: "Total FPTS",
+          size: 100,
+          Cell: ({ cell }) => Number(cell.getValue()).toFixed(1),
+        },
+
+        {
+          header: "Hitting Points",
+          columns: [
+            { accessorKey: "Singles", header: "1B", size: 70 },
+            { accessorKey: "Doubles", header: "2B", size: 70 },
+            { accessorKey: "Triples", header: "3B", size: 70 },
+            { accessorKey: "HR", header: "HR", size: 70 },
+            { accessorKey: "RBI", header: "RBI", size: 70 },
+            { accessorKey: "R", header: "R", size: 70 },
+            { accessorKey: "BB", header: "BB", size: 70 },
+            { accessorKey: "SB", header: "SB", size: 70 },
+            { accessorKey: "HitterK", header: "K", size: 70 },
+          ],
+        },
+
+        {
+          header: "Pitching Points",
+          columns: [
+            { accessorKey: "IP", header: "IP", size: 70, muiTableBodyCellProps: pitcherCellStyle },
+            { accessorKey: "PitcherK", header: "K", size: 70, muiTableBodyCellProps: pitcherCellStyle },
+            { accessorKey: "W", header: "W", size: 70, muiTableBodyCellProps: pitcherCellStyle },
+            { accessorKey: "SV", header: "SV", size: 70, muiTableBodyCellProps: pitcherCellStyle },
+            { accessorKey: "ER", header: "ER", size: 70, muiTableBodyCellProps: pitcherCellStyle, Cell: ({ cell }) => Number(cell.getValue()).toFixed(1) },
+            { accessorKey: "HAllowed", header: "H", size: 70, muiTableBodyCellProps: pitcherCellStyle },
+            { accessorKey: "PitcherBB", header: "BB", size: 70, muiTableBodyCellProps: pitcherCellStyle },
+          ],
+        },
+      ];
+    }, []);
 
   const table = useMaterialReactTable({
     columns,

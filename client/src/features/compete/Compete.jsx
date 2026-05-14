@@ -11,8 +11,6 @@ export function Compete({ teamsData, startDate, endDate, leagueId }) {
     useEffect(() => {
         if (!teamsData || teamsData.length === 0) return;
 
-        setGame(null);
-
         async function fetchGame() {
         try {
         if (!teamsData || !startDate || !endDate || !leagueId) return;
@@ -99,7 +97,6 @@ export function Compete({ teamsData, startDate, endDate, leagueId }) {
 }
 
 export function CompeteAddHistory({ teamsData, startDate, endDate, leagueId }) {
-  const [game, setGame] = useState(null);
   const hasRun = useRef(false); // do not trigger a re render when changed
 
   useEffect(() => {
@@ -113,7 +110,7 @@ export function CompeteAddHistory({ teamsData, startDate, endDate, leagueId }) {
       try {
         const teams = convertToTeams(teamsData);
 
-        const res = await axios.post(
+        await axios.post(
             // "/compete/teams/addHistory", 
             "https://fantasydraftingtool.onrender.com/compete/teams/addHistory", 
             {
@@ -123,7 +120,6 @@ export function CompeteAddHistory({ teamsData, startDate, endDate, leagueId }) {
           endDate,
         });
 
-        setGame(res.data);
       } catch (err) {
         console.error(
           "Failed to add history:",

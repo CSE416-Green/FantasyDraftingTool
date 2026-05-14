@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import EditRosterForm from "./components/EditRosterForm";
 import DraftPlayerForm from "./components/DraftPlayerForm";
 import EnterPastPlayerForm from "./components/EnterPastPlayerForm";
@@ -10,7 +10,7 @@ import DraftHistory from "../draft-history/DraftHistory";
 import EditTaxiOrder from "./components/EditTaxiOrder";
 axios.defaults.baseURL = "http://localhost:3000";
 
-if (process.env.NODE_ENV == "production") {
+if (import.meta.env.PROD) {
   axios.defaults.baseURL = "https://fantasydraftingtool.onrender.com/";
 }
 
@@ -62,7 +62,6 @@ export default function TeamRoster({
   playerStats,
   leagueName,
   year,
-  user,
   setDraftHistory,
   draftHistory,
   teams,
@@ -101,7 +100,7 @@ useEffect(() => {
     const parsed = parsePlayerString(player.Player ?? "");
 
     const positions = parsed.position
-      ? parsed.position.split(/[\/,]/).map(p => p.trim())
+      ? parsed.position.split(/[/,]/).map(p => p.trim())
       : [];
 
     return {
@@ -130,7 +129,7 @@ useEffect(() => {
     if (teams.length > 0 && !team) {
       onTeamChange?.(teams[0].teamName);
     }
-  }, [teams, team]);
+  }, [teams, team, onTeamChange]);
 
 
 
