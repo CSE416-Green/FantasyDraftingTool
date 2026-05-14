@@ -19,6 +19,8 @@ import Header from '../../shared/components/Header'
 import axios from "axios";
 import { initSocketConnection, registerNotificationHandler, unregisterNotificationHandler, isConnected } from '../../utils/websocket';
 import { useQuery } from '@tanstack/react-query';
+import Notification from "../../features/player-news/Notification";
+
 const pages = ['Main Page', 'Setting', "Estimations", "Scores", "Depth Chart"];
 
 function MainPage({user,onLogout}) {
@@ -43,6 +45,8 @@ function MainPage({user,onLogout}) {
   const [extraPlayerStats, setExtraPlayerStats] = useState([]);
 
   const [playerNews, setPlayerNews] = useState([]);
+  const [newsHistoryOpen, setNewsHistoryOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
 
   const [depthCharts, setDepthCharts] = useState([]);
   const [loading_depth, setLoading_depth] = useState(true);
@@ -120,13 +124,14 @@ useEffect(() => {
         } else {
            setPlayerNews((prevNews) => [newsItems, ...prevNews]);
         }
+        setNotificationOpen(true);
       });
       //const intervalId = setInterval(checkConnection, 10000);
       return () => {
         //clearInterval(intervalId);
         unregisterNotificationHandler();
       };
-    }, [playerNews]);
+    }, [playerNews, notificationOpen]);
 
     const fetchHistory = async () => {
       try {
@@ -378,9 +383,17 @@ useEffect(() => {
               />
               <TradeHistory leagueId={selectedLeagueId} trades={tradeHistory} fetchTrades={fetchTrades} />
           </div>
+          <Notification 
+            notificationOpen={notificationOpen} 
+            setNewsHistoryOpen={setNewsHistoryOpen} 
+            setNotificationOpen={setNotificationOpen} 
+            news={playerNews}
+          />
           <div className="news-history">
             <Drawer 
               playerNews={playerNews}
+              open={newsHistoryOpen}
+              setOpen={setNewsHistoryOpen}
             />
           </div>
         </div> }
