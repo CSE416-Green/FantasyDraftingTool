@@ -56,7 +56,7 @@ const depthChartRouter = require("./routes/depthChart");
 app.use("/depthChart", depthChartRouter);
 const port = 3000
 
-const { setupWebSocket } = require("./routes/receiveNotif");
+const { setupWebSocket, connectToReceiveNotifications } = require("./routes/receiveNotif");
 
 app.get('/', async (req, res) => {
   res.send("Hello World!");
@@ -606,7 +606,6 @@ server.listen(port, () => {
 });
 setupWebSocket(server);
 
-const { connectToReceiveNotifications } = require("./routes/receiveNotif");
 connectToReceiveNotifications();
 
 module.exports = { app, port };
