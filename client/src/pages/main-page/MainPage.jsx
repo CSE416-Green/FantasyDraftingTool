@@ -43,7 +43,7 @@ function MainPage({user,onLogout}) {
         const res = await axios.get("/settings/league");
 
         setTotalBudget(res.data.teamBudget);
-      } catch (e) {
+      } catch {
         console.error("Failed to fetch league settings");
       }
     }
@@ -58,13 +58,14 @@ function MainPage({user,onLogout}) {
         setLeagueName(res.data.Name);
         setLeagueInviteCode(res.data.InviteCode);
         setYear(res.data.Year);
-      } catch (err) {
+      } catch {
         console.error("Failed to fetch league information")
       }
     }
 
     useEffect(() => {
       loadLeagueInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
 
@@ -84,13 +85,14 @@ function MainPage({user,onLogout}) {
 
         setDraftHistory(data);
 
-    } catch (err) {
-        console.error("Failed to fetch draft history:", err);
+    } catch {
+        console.error("Failed to fetch draft history:");
       }
     };
 
   useEffect(() => {
     fetchHistory();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   

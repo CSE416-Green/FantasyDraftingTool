@@ -38,7 +38,7 @@ export default function RecommendedSalary({ player, maxNextCost, remainingSpots 
     }
 
     calculateSalary();
-  }, [player, maxNextCost]);
+  }, [player, maxNextCost, remainingSpots]);
 
   return (
     <div>

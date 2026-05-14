@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { useMemo, useEffect, useState } from 'react';
 import axios from 'axios';
 // import { useQuery } from '@tanstack/react-query';
@@ -55,7 +56,7 @@ export async function fetchPlayerStats() {
   }
 }
 
-export default function PlayerPool({ playerStats, isLoading, error, leagueName, year, leagueId }) {
+export default function PlayerPool({ playerStats, isLoading, error, year, leagueId }) {
   // const {
   //   data: playerStats = [],
   //   isLoading,
@@ -66,7 +67,6 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
   // });
 
   const [draftedNames, setDraftedNames] = useState([]);
-  
 
   const fetchDraftedPlayers = async () => {
   try {
@@ -83,6 +83,7 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
     if (leagueId && year) {
       fetchDraftedPlayers();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leagueId, year]);
 
   //fetch manual players from DB
@@ -97,6 +98,7 @@ export default function PlayerPool({ playerStats, isLoading, error, leagueName, 
       }
     }
     fetchManualPlayers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 

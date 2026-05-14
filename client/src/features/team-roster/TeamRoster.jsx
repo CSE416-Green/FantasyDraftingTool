@@ -1,22 +1,20 @@
 import axios from "axios";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import EditRosterForm from "./components/EditRosterForm";
 import DraftPlayerForm from "./components/DraftPlayerForm";
 import EnterPastPlayerForm from "./components/EnterPastPlayerForm";
 import { parsePlayerString } from "../player-pool/PlayerPool";
 import TradePlayersForm from "./components/TradePlayersForm";
-import DraftHistory from "../draft-history/DraftHistory";
 axios.defaults.baseURL = "http://localhost:3000";
 
-if (process.env.NODE_ENV == "production") {
+if (import.meta.env.MODE === "production") {
   axios.defaults.baseURL = "https://fantasydraftingtool.onrender.com/";
 }
-console.log("Current environment:", process.env.NODE_ENV);
 
 const maxNumberofMembers = 23;
 
 export default function TeamRoster({
-  budget = budget,
+  budget = 0,
   team = "",
   view = "roster",
   onTeamChange,
@@ -46,6 +44,7 @@ export default function TeamRoster({
       }
     }
     fetchManualPlayers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
  
   const playerPool = [
@@ -53,7 +52,7 @@ export default function TeamRoster({
     const parsed = parsePlayerString(player.Player ?? "");
 
     const positions = parsed.position
-      ? parsed.position.split(/[\/,]/).map(p => p.trim())
+      ? parsed.position.split(/[/,]/).map(p => p.trim())
       : [];
 
     return {
@@ -84,12 +83,14 @@ export default function TeamRoster({
     if (user?.league) {
       loadTeams();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.league]);
 
   useEffect(() => {
     if (teams.length > 0 && !team) {
       onTeamChange?.(teams[0].teamName);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teams, team]);
 
 

@@ -9,13 +9,14 @@ export default function TradePlayersForm({ teams, currentTeamId, onCancel, onTra
     const [toView, setToView] = useState("roster");
 
     useEffect(() => {
-        if (teams.length > 0 && !toTeamId) {
-            const otherTeam = teams.find(t => t._id !== fromTeamId);
-            if (otherTeam) {
-                setToTeamId(otherTeam._id);
-            }
+    if (teams.length > 0 && !toTeamId) {
+        const otherTeam = teams.find(t => t._id !== fromTeamId);
+        if (otherTeam) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setToTeamId(otherTeam._id);
         }
-    }, [teams, fromTeamId]);
+    }
+}, [teams, fromTeamId, toTeamId]);
   
     const fromTeam = useMemo(
         () => teams.find((t) => t._id === fromTeamId),

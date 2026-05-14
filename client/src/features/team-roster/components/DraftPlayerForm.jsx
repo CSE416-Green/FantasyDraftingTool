@@ -1,34 +1,17 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import RecommendedSalary from './RecommendedSalary';
 
 // desired format
 // name: string
 // position: string array
-const fakePool = [
-    {name: "Shohei Ohtani", position: ["P", "U", "GOAT"]},
-    {name: "Juan Soto", position: ["OF"]},
-    {name: "Kyle Tucker", position: ["OF"]},
-    {name: "Fernando Tatis Jr.", position: ["OF"]},
-    {name: "Francisco Lindor", position: ["SS"]},
-    {name: "Trea Turner", position: ["SS"]},
-    {name: "Corbin Carroll", position: ["OF"]},
-    {name: "Elly De La Cruz", position: ["SS"]},
-    {name: "Ketel Marte", position: ["2B"]},
-    {name: "Luis Robert", position: ["OF"]},
-    {name: "Oneil Cruz", position: ["OF"]},
-    {name: "Kyle Schwarber", position: ["DH"]},
-    {name: "Paul Skenes", position: ["P"]},
-    {name: "Yoshinobu Yamamoto", position: ["P"]},
-    {name: "Tarik Skubal", position: ["P"]},
-]
+
 export default function DraftPlayerForm({ 
     team, 
     onDraft, 
     onCancel, 
     playerPool, 
     maxNextCost, 
-    leagueName, 
     year, 
     teams, 
     leagueId,
