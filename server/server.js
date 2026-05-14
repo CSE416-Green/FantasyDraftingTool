@@ -601,11 +601,13 @@ app.post("/settings/league/stats", async (req, res) => {
 // })
 
 const server = http.createServer(app);
-server.listen(port, () => {
-  console.log(`fantasyDraftingTool server listening on port ${port}`)
-});
-setupWebSocket(server);
+if (process.env.NODE_ENV !== "test") {
+  server.listen(port, () => {
+    console.log(`fantasyDraftingTool server listening on port ${port}`);
+  });
 
-connectToReceiveNotifications();
+  setupWebSocket(server);
+  connectToReceiveNotifications();
+}
 
-module.exports = { app, port };
+module.exports = { app, port, server };
