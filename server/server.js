@@ -56,7 +56,7 @@ const depthChartRouter = require("./routes/depthChart");
 app.use("/depthChart", depthChartRouter);
 const port = 3000
 
-const { setupWebSocket } = require("./routes/receiveNotif");
+const { setupWebSocket, connectToReceiveNotifications } = require("./routes/receiveNotif");
 
 app.get('/', async (req, res) => {
   res.send("Hello World!");
@@ -601,12 +601,13 @@ app.post("/settings/league/stats", async (req, res) => {
 // })
 
 const server = http.createServer(app);
-server.listen(port, () => {
-  console.log(`fantasyDraftingTool server listening on port ${port}`)
-});
-setupWebSocket(server);
+if (process.env.NODE_ENV !== "test") {
+  server.listen(port, () => {
+    console.log(`fantasyDraftingTool server listening on port ${port}`);
+  });
 
-const { connectToReceiveNotifications } = require("./routes/receiveNotif");
-connectToReceiveNotifications();
+  setupWebSocket(server);
+  connectToReceiveNotifications();
+}
 
-module.exports = { app, port };
+module.exports = { app, port, server };
