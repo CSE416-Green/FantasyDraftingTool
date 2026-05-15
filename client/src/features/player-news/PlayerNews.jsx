@@ -6,7 +6,7 @@ export default function PlayerNews({ playerNews }) {
   return (
     <> 
     <div className="news-container">
-      {playerNews.map((item) => (
+      {playerNews?.filter((item) => item).map((item) => (
         <div key={item.id} className="news-card">
           {/* Left Section */}
           <div className="news-left">
