@@ -132,8 +132,12 @@ router.post("/forgot-password", otpLimiter, async (req, res) => {
     }
   });
   
-  router.post("/verify-otp", async (req, res) => {
+  router.post("/verify-otp", otpLimiter, async (req, res) => {
     const { email, otp } = req.body;
+    //valid otp
+    if (!/^\d{6}$/.test(otp)) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
     try {
       const user = await User.findOne({
         email,
@@ -151,6 +155,11 @@ router.post("/forgot-password", otpLimiter, async (req, res) => {
   
   router.post("/reset-password", async (req, res) => {
     const { email, otp, password } = req.body;
+
+    //valid otp 
+    if (!/^\d{6}$/.test(otp)) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
     try {
       const user = await User.findOne({
         email,

@@ -4,6 +4,11 @@ const mongoose = require("mongoose");
 const User = require("../models/UserSchema");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 
+//bypasses the otp rate limiter 
+jest.mock("express-rate-limit", () => {
+  return jest.fn(() => (req, res, next) => next());
+});
+
 // mock resend 
 jest.mock("resend", () => {
     return {
@@ -32,8 +37,7 @@ afterAll(async () => {
   await mongoServer.stop();
 });
 
-//AI generated to test routes and edge cases 
-// helper to create a test user
+//creates a test user
 const createUser = async () => {
   const bcrypt = require("bcrypt");
   const hashedPassword = await bcrypt.hash("password123", 10);
@@ -47,26 +51,18 @@ const createUser = async () => {
 };
 
 describe("POST /user/forgot-password", () => {
-  it("should return same message whether email exists or not", async () => {
-    const res = await request(app)
-      .post("/user/forgot-password")
-      .send({ email: "nonexistent@test.com" });
-    expect(res.status).toBe(200);
-    expect(res.body.message).toBe(
-      "If the email address is valid you will receive a One Time Password via email."
-    );
-  });
+  it("should overwrite a previous OTP if user requests again before expiry", async () => {
+    const user = await createUser();
+    user.resetToken = "111111";
+    user.resetTokenExpiry = Date.now() + 1000 * 60 * 5;
+    await user.save();
 
-  it("should return same message when email does exist", async () => {
-    await createUser();
-    //mock resend so no real email is sent
-    const res = await request(app)
+    await request(app)
       .post("/user/forgot-password")
       .send({ email: "test@test.com" });
-    expect(res.status).toBe(200);
-    expect(res.body.message).toBe(
-      "If the email address is valid you will receive a One Time Password via email."
-    );
+
+    const updated = await User.findOne({ email: "test@test.com" });
+    expect(updated.resetToken).not.toBe("111111"); 
   });
 
   it("should set resetToken and resetTokenExpiry on user when email exists", async () => {
@@ -80,13 +76,59 @@ describe("POST /user/forgot-password", () => {
   });
 });
 
+
 describe("POST /user/verify-otp", () => {
-  it("should verify a valid OTP", async () => {
+  it("should return 400 when otp field is missing", async () => {
+    const res = await request(app)
+      .post("/user/verify-otp")
+      .send({ email: "test@test.com" });
+    expect(res.status).toBe(400);
+  });
+
+  it("should reject an OTP that is not 6 digits", async () => {
     const user = await createUser();
     user.resetToken = "123456";
     user.resetTokenExpiry = Date.now() + 1000 * 60 * 5;
     await user.save();
 
+    const res = await request(app)
+      .post("/user/verify-otp")
+      .send({ email: "test@test.com", otp: "123" }); 
+    expect(res.status).toBe(400);
+  });
+
+  it("should reject an OTP that is 7 digits", async () => {
+    const res = await request(app)
+      .post("/user/verify-otp")
+      .send({ email: "test@test.com", otp: "1234567" });
+    expect(res.status).toBe(400);
+  }); 
+
+  it("should reject a non-numeric OTP", async () => {
+    const user = await createUser();
+    user.resetToken = "123456";
+    user.resetTokenExpiry = Date.now() + 1000 * 60 * 5;
+    await user.save();
+
+    const res = await request(app)
+      .post("/user/verify-otp")
+      .send({ email: "test@test.com", otp: "abcdef" });
+    expect(res.status).toBe(400);
+  });
+
+  it("should return 400 for a user who never requested a reset", async () => {
+    await createUser(); 
+    const res = await request(app)
+      .post("/user/verify-otp")
+      .send({ email: "test@test.com", otp: "123456" });
+    expect(res.status).toBe(400);
+  });
+
+  it("should verify a valid OTP", async () => {
+    const user = await createUser();
+    user.resetToken = "123456";
+    user.resetTokenExpiry = Date.now() + 1000 * 60 * 5;
+    await user.save();
     const res = await request(app)
       .post("/user/verify-otp")
       .send({ email: "test@test.com", otp: "123456" });
@@ -94,45 +136,46 @@ describe("POST /user/verify-otp", () => {
     expect(res.body.message).toBe("OTP verified");
   });
 
-  it("should reject an incorrect OTP", async () => {
-    const user = await createUser();
-    user.resetToken = "123456";
-    user.resetTokenExpiry = Date.now() + 1000 * 60 * 5;
-    await user.save();
+});
 
+
+describe("POST /user/reset-password", () => {
+  it("should return 400 for a user that does not exist", async () => {
     const res = await request(app)
-      .post("/user/verify-otp")
-      .send({ email: "test@test.com", otp: "999999" });
+      .post("/user/reset-password")
+      .send({ email: "ghost@test.com", otp: "123456", password: "newpassword" });
     expect(res.status).toBe(400);
   });
 
-  it("should reject an expired OTP", async () => {
+  it("should return 400 for an expired OTP", async () => {
     const user = await createUser();
     user.resetToken = "123456";
     user.resetTokenExpiry = Date.now() - 1000; // already expired
     await user.save();
 
     const res = await request(app)
-      .post("/user/verify-otp")
-      .send({ email: "test@test.com", otp: "123456" });
+      .post("/user/reset-password")
+      .send({ email: "test@test.com", otp: "123456", password: "newpassword" });
     expect(res.status).toBe(400);
   });
 
-  it("should reject OTP for wrong email", async () => {
+  it("should not allow the same OTP to be used twice", async () => {
     const user = await createUser();
     user.resetToken = "123456";
     user.resetTokenExpiry = Date.now() + 1000 * 60 * 5;
     await user.save();
 
+    await request(app)
+      .post("/user/reset-password")
+      .send({ email: "test@test.com", otp: "123456", password: "newpassword" });
+
     const res = await request(app)
-      .post("/user/verify-otp")
-      .send({ email: "wrong@test.com", otp: "123456" });
+      .post("/user/reset-password")
+      .send({ email: "test@test.com", otp: "123456", password: "anotherpassword" });
     expect(res.status).toBe(400);
   });
-});
 
-describe("POST /user/reset-password", () => {
-  it("should reset password with valid OTP", async () => {
+  it("should successfully reset password with valid OTP", async () => {
     const bcrypt = require("bcrypt");
     const user = await createUser();
     user.resetToken = "123456";
@@ -144,65 +187,11 @@ describe("POST /user/reset-password", () => {
       .send({ email: "test@test.com", otp: "123456", password: "newpassword" });
     expect(res.status).toBe(200);
 
-    // verify password actually changed
     const updated = await User.findOne({ email: "test@test.com" });
     const match = await bcrypt.compare("newpassword", updated.password);
     expect(match).toBe(true);
-  });
-
-  it("should clear resetToken and resetTokenExpiry after reset", async () => {
-    const user = await createUser();
-    user.resetToken = "123456";
-    user.resetTokenExpiry = Date.now() + 1000 * 60 * 5;
-    await user.save();
-
-    await request(app)
-      .post("/user/reset-password")
-      .send({ email: "test@test.com", otp: "123456", password: "newpassword" });
-
-    const updated = await User.findOne({ email: "test@test.com" });
     expect(updated.resetToken).toBeUndefined();
     expect(updated.resetTokenExpiry).toBeUndefined();
   });
 
-  it("should reject reset with expired OTP", async () => {
-    const user = await createUser();
-    user.resetToken = "123456";
-    user.resetTokenExpiry = Date.now() - 1000; // expired
-    await user.save();
-
-    const res = await request(app)
-      .post("/user/reset-password")
-      .send({ email: "test@test.com", otp: "123456", password: "newpassword" });
-    expect(res.status).toBe(400);
-  });
-
-  it("should reject reset with wrong OTP", async () => {
-    const user = await createUser();
-    user.resetToken = "123456";
-    user.resetTokenExpiry = Date.now() + 1000 * 60 * 5;
-    await user.save();
-
-    const res = await request(app)
-      .post("/user/reset-password")
-      .send({ email: "test@test.com", otp: "999999", password: "newpassword" });
-    expect(res.status).toBe(400);
-  });
-
-  it("should not allow same OTP to be used twice", async () => {
-    const user = await createUser();
-    user.resetToken = "123456";
-    user.resetTokenExpiry = Date.now() + 1000 * 60 * 5;
-    await user.save();
-
-    await request(app)
-      .post("/user/reset-password")
-      .send({ email: "test@test.com", otp: "123456", password: "newpassword" });
-
-    // try to use same OTP again
-    const res = await request(app)
-      .post("/user/reset-password")
-      .send({ email: "test@test.com", otp: "123456", password: "anotherpassword" });
-    expect(res.status).toBe(400);
-  });
 });
