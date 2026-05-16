@@ -131,7 +131,7 @@ const {
         if (Array.isArray(newsItems)) {
           setPlayerNews([...newsItems].reverse());
         } else {
-           setPlayerNews((prevNews) => [newsItems, ...prevNews]);
+           setPlayerNews((prevNews) => [data, ...prevNews]);
         }
         setNotificationOpen(true);
       });
