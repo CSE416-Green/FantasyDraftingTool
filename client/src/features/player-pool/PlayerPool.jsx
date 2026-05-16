@@ -78,7 +78,7 @@ export function parsePlayerString(playerString) {
 }
 
 function getValueOrEmpty(value) {
-  return value === undefined || value === null || value === "" ? "" : Number(value);
+  return value === undefined || value === null || value === "" ? 0 : Number(value);
 }
 
 
