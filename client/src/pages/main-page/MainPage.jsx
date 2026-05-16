@@ -22,6 +22,7 @@ import { useQuery } from '@tanstack/react-query';
 import Notification from "../../features/player-news/Notification";
 
 const pages = ['Main Page', 'Setting', "Estimations", "Scores", "Depth Chart"];
+const EMPTY_STATS={};
 
 function MainPage({user,onLogout}) {
   const [team, setTeam] = useState("")
@@ -65,15 +66,23 @@ useEffect(() => {
   if (selectedLeagueId) fetchTrades();
 }, [selectedLeagueId, fetchTrades]);
 
-  const {
-      data: playerStatsByYear = {},
-      isLoading,
-      error,
-    } = useQuery({
-      queryKey: ["player-stats", year],
-      queryFn: () => fetchPlayerStats(year),
-      enabled: !!year
-    });
+  // const {
+  //     data: playerStatsByYear = {},
+  //     isLoading,
+  //     error,
+  //   } = useQuery({
+  //     queryKey: ["player-stats", year],
+  //     queryFn: () => fetchPlayerStats(year),
+  //     enabled: !!year
+  //   });
+const { 
+  data: playerStatsByYear = EMPTY_STATS, 
+  isLoading,
+  error,} = useQuery(
+    {queryKey: ["player-stats", year],
+    queryFn: () => fetchPlayerStats(year),
+    enabled: !!year 
+});
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
