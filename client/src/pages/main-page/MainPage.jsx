@@ -358,6 +358,7 @@ const {
                     leagueId={selectedLeagueId}
                     draftLeague={draftLeague}
                     setDraftLeague={setDraftLeague}
+                    playerStatsByYear={playerStatsByYear}
               />
           </div>
           {/* {draftState && <> */}
