@@ -71,7 +71,8 @@ export default function TeamRoster({
   draftedIDs,
   leagueId,
   draftLeague,
-  setDraftLeague
+  setDraftLeague,
+  playerStatsByYear
 }) {
   const [isEditingTeam, setIsEditingTeam] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);
@@ -79,6 +80,43 @@ export default function TeamRoster({
   const [isTrading, setIsTrading] = useState(false);
   const [isTaxi, setIsTaxi] = useState(false);
   const [manualPlayers, setManualPlayers] = useState([]);
+
+  const combinedPlayers = [
+    ...(playerStatsByYear?.thisYear || []),
+    ...(playerStatsByYear?.lastYear || []),
+    ...(playerStatsByYear?.twoYearsAgo || [])
+  ];
+
+  const playerStatsAll = [
+    ...new Map(
+      combinedPlayers.map(player => [player.ID ?? player.Player, player])
+    ).values()
+  ];
+
+  const playerPoolForEnterPastPlayer = [
+      ...playerStatsAll.map((player) => {
+          const parsed = parsePlayerString(player.Player ?? "");
+
+          const positions = parsed.position
+              ? parsed.position.split(/[/,]/).map(p => p.trim())
+              : [];
+
+          return {
+              name: parsed.name,
+              position: positions,
+              ID: player.ID,
+              MLBTeam: parsed.team
+          };
+      }),
+
+      ...manualPlayers.map((player) => ({
+          name: player.name,
+          position: [player.position],
+          ID: player.playerID || null,
+          MLBTeam: player.team
+      }))
+  ];
+
 
 useEffect(() => {
   if (!leagueId) return;
@@ -255,7 +293,7 @@ useEffect(() => {
                 }
                 }
                 maxNextCost={maxNextCost}
-                playerPool={playerPool}
+                playerPool={playerPoolForEnterPastPlayer}
                 draftedNames={draftHistory.map(p => p.PlayerName)}
                 draftedIDs={draftedIDs}
               />
