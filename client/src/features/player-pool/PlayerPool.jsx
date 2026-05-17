@@ -284,7 +284,7 @@ export default function PlayerPool({ playerStatsByYear, isLoading, error, year, 
       age: player.AGE,
       position: parsedPlayer.position,
       team: parsedPlayer.team,
-      depthChart: selectedStatsYear === "thisYear" ? depthChartMap.get(parsedPlayer.name.toLowerCase()) || "" : "",
+      depthChart: year === 2026 && selectedStatsYear === "thisYear" ? depthChartMap.get(parsedPlayer.name.toLowerCase()) || "" : "",
 
       AB: getValueOrEmpty(player.AB),
       R: getValueOrEmpty(player.R),
