@@ -9,7 +9,7 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
     "U",
     "P"
   ];
-  const availablePositions = getAvailablePositions(team.rosterPlayers);
+  const availablePositions = view === "roster" ? getAvailablePositions(team.rosterPlayers) : POSITION_OPTIONS;
 
   const players = view === "roster" ? team.rosterPlayers : team.farmPlayers;
   
