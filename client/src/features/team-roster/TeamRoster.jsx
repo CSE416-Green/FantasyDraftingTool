@@ -257,7 +257,7 @@ useEffect(() => {
             <div>Total Roster Salary: ${spent}</div>
             <div>Total Farm Salary: ${getBudget(farmPlayers)}</div>
             <div>Budget left: ${left}</div>
-            <div>Max Salary on Next Player: ${maxNextCost}</div>
+            {maxNumberofMembers === rosterPlayers.length ? <></> : <div>Max Salary on Next Player: ${maxNextCost}</div>}
         </div>
 
         <div>
@@ -308,6 +308,8 @@ useEffect(() => {
                   setIsEditingTeam(false);
                 }}
                 maxNextCost={maxNextCost}
+                left={left}
+                maxNumberofMembers={maxNumberofMembers}
               />
             )}
             {isDrafting && (

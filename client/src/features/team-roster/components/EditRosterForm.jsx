@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 
-export default function EditRosterForm({ team, view = "roster", onSave, onCancel, maxNextCost }) {
+export default function EditRosterForm({ team, view = "roster", onSave, onCancel, maxNextCost, left, maxNumberofMembers }) {
   const POSITION_OPTIONS = [
     "C",
     "1B", "2B", "3B", "SS", "MI", "CI",
@@ -17,7 +17,7 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
   const [position, setPosition] = useState(players[0]?.position || "");
   const [status, setStatus] = useState(players[0]?.status || "");
   const [cost, setCost] = useState(players[0]?.cost || "");
-  const oldCost = cost;
+
   function handlePlayerChange(e) {
     const index = Number(e.target.value);
     const player = players[index];
@@ -32,6 +32,8 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
     e.preventDefault();
 
     const selectedPlayer = players[selectedIndex];
+    const newCost = Number(cost);
+    const oldCost = Number(selectedPlayer.cost);
 
     const updatedInfo = {
       teamId: team._id,
@@ -47,8 +49,24 @@ export default function EditRosterForm({ team, view = "roster", onSave, onCancel
         return;
     }
 
-    if (cost > oldCost && (cost <= 0 || cost > maxNextCost)) {
-      alert(`Cost must be between 1 and ${maxNextCost}`);
+    if (newCost <= 0) {
+      alert("Cost must be greater than 0");
+      return;
+    }
+
+    const finalBudgetLeft = left + oldCost - newCost;
+
+    if (view === "roster" && team.rosterPlayers.length < maxNumberofMembers) {
+      const remainingSlots = maxNumberofMembers - team.rosterPlayers.length;
+
+      if (finalBudgetLeft < remainingSlots) {
+        alert("You won't be able to finish the draft with the adjusted salary");
+        return;
+      }
+    }
+    
+    if (finalBudgetLeft < 0) {
+      alert(`Cost cannot be higher than ${oldCost + left}`);
       return;
     }
 
